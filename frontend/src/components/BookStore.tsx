@@ -3,6 +3,7 @@ import {Button} from "@/components/ui/button";
 import {BookHeart} from "lucide-react";
 import {BookType} from "@/lib/types";
 import {Separator} from "@/components/ui/separator";
+import Image from "next/image";
 
 export default function BookStore({books}: { books: BookType[] }) {
     console.log("books", books);
@@ -15,7 +16,7 @@ export default function BookStore({books}: { books: BookType[] }) {
                     <Card key={book.id} className="flex flex-col">
                         <CardHeader>
                             {book.cover ? (
-                                <img
+                                <Image
                                     src={"/Hemingway_farewell.png"}
                                     alt={`Cover of ${book.title}`}
                                     className="w-48 h-48 object-cover rounded-md"
