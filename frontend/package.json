@@ -1,5 +1,5 @@
 {
-  "name": "jan-portfolio",
+  "name": "prairie-books-frontend",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -21,12 +21,9 @@
     "@radix-ui/react-separator": "^1.0.3",
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-switch": "^1.0.3",
-    "@vercel/analytics": "^1.2.2",
-    "aos": "^2.3.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "cmdk": "^0.2.1",
-    "framer-motion": "^10.16.16",
     "geist": "^1.2.0",
     "lucide-react": "^0.298.0",
     "next": "^14.2.3",
@@ -36,8 +33,7 @@
     "react-dom": "^18",
     "react-icons": "^4.12.0",
     "tailwind-merge": "^2.1.0",
-    "tailwindcss-animate": "^1.0.7",
-    "typewriter-effect": "^2.21.0"
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@types/aos": "^3.0.7",
