@@ -27,10 +27,6 @@ jobs:
 
       - name: Build and push frontend image
         uses: docker/build-push-action@v5
-        env:
-          ADMIN_USERNAME: ${{ secrets.USERNAME }}
-          ADMIN_PASSWORD: ${{ secrets.PASSWORD }}
-        secret-:
         with:
           context: ./frontend
           push: true
