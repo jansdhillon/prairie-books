@@ -18,7 +18,7 @@ const Page = async () => {
           <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 ">
             <div className="container px-6 ">
 
-              <BookStore books={books} />
+              {/*<BookStore books={books} />*/}
             </div>
           </section>
         </main>
