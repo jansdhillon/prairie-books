@@ -6,10 +6,10 @@ import { Book } from "lucide-react";
 import BookStore from "@/components/BookStore";
 
 const Page = async () => {
-  const pb = await startAdmin();
-  const books = await getBooks(pb);
-
-  console.log(books);
+  // const pb = await startAdmin();
+  // const books = await getBooks(pb);
+  //
+  // console.log(books);
   return (
     <>
       <Nav />
