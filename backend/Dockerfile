@@ -1,11 +1,31 @@
-# syntax=docker/dockerfile:1
+##
+## Build
+##
 
-FROM golang:1.20-alpine
+FROM golang:1.16 AS build
 
 WORKDIR /app
 
-COPY . .
+COPY go.mod .
+COPY go.sum .
+RUN go mod download
 
-RUN go mod init example.com/backend && go build -o main .
+COPY *.go ./
 
-CMD ["./main"]
+RUN go build -o /docker-gs-ping-roach
+
+##
+## Deploy
+##
+
+FROM gcr.io/distroless/base-debian10
+
+WORKDIR /
+
+COPY --from=build /docker-gs-ping-roach /docker-gs-ping-roach
+
+EXPOSE 8080
+
+USER nonroot:nonroot
+
+ENTRYPOINT ["/docker-gs-ping-roach"]
