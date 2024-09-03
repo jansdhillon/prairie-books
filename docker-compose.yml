@@ -12,7 +12,7 @@ services:
       - frontend
 
   backend:
-    build: ./go-server
+    build: ./backend
     environment:
       - DATABASE_URL=postgres://user:password@db:5432/database
       - STRIPE_API_KEY=${STRIPE_SECRET_KEY}
