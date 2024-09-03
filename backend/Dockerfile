@@ -6,6 +6,6 @@ WORKDIR /app
 
 COPY . .
 
-RUN go mod init example.com/go-server && go build -o main .
+RUN go mod init example.com/backend && go build -o main .
 
 CMD ["./main"]
