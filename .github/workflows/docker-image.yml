@@ -9,9 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      ADMIN_USERNAME: ${{ secrets.USERNAME }}
-      ADMIN_PASSWORD: ${{ secrets.PASSWORD }}
+
 
 
     steps:
@@ -29,6 +27,9 @@ jobs:
 
       - name: Build and push frontend image
         uses: docker/build-push-action@v5
+        env:
+          USERNAME: ${{ secrets.USERNAME }}
+          PASSWORD: ${{ secrets.PASSWORD }}
         with:
           context: ./frontend
           push: true
