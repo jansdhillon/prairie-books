@@ -62,9 +62,12 @@ EXPOSE 3000
 
 ENV PORT 3000
 
-ENV NEXT_PUBLIC_SUPABASE_URL ${NEXT_PUBLIC_SUPABASE_URL}
+RUN echo "NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}" >> .env
 
-ENV NEXT_PUBLIC_SUPABASE_ANON_KEY ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+RUN echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}" >> .env
+
+
+
 
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output
