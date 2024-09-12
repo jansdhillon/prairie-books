@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { createClient } from "@/utils/supabase/server";
+import { Book, ShoppingCart, User } from "lucide-react";
+import { Input } from "./ui/input";
 
 export default async function AuthButton() {
   const {
@@ -48,11 +50,16 @@ export default async function AuthButton() {
   }
   return user ? (
     <div className="flex items-center gap-4">
-      Hey, {user.email}!
+
+      <Input placeholder="Search books..." />
+      <Button variant="outline">
+        <ShoppingCart className="h-4" />
+      </Button>
       <form action={signOutAction}>
-        <Button type="submit" variant={"outline"}>
+        {/* <Button type="submit" variant={"outline"}>
           Sign out
-        </Button>
+        </Button> */}
+        <User className="h-4" />
       </form>
     </div>
   ) : (
