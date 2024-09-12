@@ -62,11 +62,9 @@ EXPOSE 3000
 
 ENV PORT 3000
 
-RUN echo "NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}" >> .env
+ENV NEXT_PUBLIC_SUPABASE_URL=/secrets/supabase-url
 
-RUN echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}" >> .env
-
-
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=/secrets/supabase-anon-key
 
 
 # server.js is created by next build from the standalone output
