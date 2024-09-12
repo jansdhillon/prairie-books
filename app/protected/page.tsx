@@ -23,16 +23,20 @@ export default async function ProtectedPage() {
           user
         </div>
       </div>
+      <main className="flex-1 flex flex-col gap-6 px-4 w-full h-full  ">
+        <h2 className="font-medium text-xl mb-4">Ich liebe dich sehr ❤️</h2>
+
+      </main>
       <div className="flex flex-col gap-2 items-start">
         <h2 className="font-bold text-2xl mb-4">Your user details</h2>
         <pre className="text-xs font-mono p-3 rounded border max-h-32 overflow-auto">
           {JSON.stringify(user, null, 2)}
         </pre>
       </div>
-      <div>
+      {/* <div>
         <h2 className="font-bold text-2xl mb-4">Next steps</h2>
         <FetchDataSteps />
-      </div>
+      </div> */}
     </div>
   );
 }
