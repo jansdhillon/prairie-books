@@ -15,7 +15,7 @@ export default async function AuthButton() {
   if (!hasEnvVars) {
     return (
       <>
-      f
+
         <div className="flex gap-4 items-center">
           <div>
             <Badge

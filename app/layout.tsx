@@ -40,7 +40,7 @@ export default function RootLayout({
 
                   </div>
                   <div className="flex items-center gap-4">
-                    {!hasEnvVars ? <Button>No</Button> : <HeaderAuth />}
+                    <HeaderAuth />
                     <ThemeSwitcher />
                   </div>
                 </div>
