@@ -18,13 +18,6 @@ export default async function ProtectedPage() {
   const { data: books, error } = await supabase.from("books").select("*");
 
 
-  try{
-    const res = await fetch("http://localhost:3000/api/send", {method: "POST"});
-    console.log(res);
-
-  } catch (error) {
-    console.error(error);
-  }
 
 
 
