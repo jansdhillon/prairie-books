@@ -2,9 +2,7 @@ import { EmailTemplate } from '@/components/email-template';
 import { Resend } from 'resend';
 
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-console.log("resend", resend);
+console.log("resend", process.env.RESEND_API_KEY);
 
 
 
