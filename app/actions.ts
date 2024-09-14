@@ -5,6 +5,8 @@ import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { Database } from "@/utils/database.types";
+
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
@@ -49,7 +51,11 @@ export const signInAction = async (formData: FormData) => {
     return encodedRedirect("error", "/sign-in", error.message);
   }
 
-  return redirect("/protected");
+  if (email === process.env.ADMIN_EMAIL) {
+    return redirect("/admin");
+  }else {
+    return redirect("/protected");
+  }
 };
 
 export const forgotPasswordAction = async (formData: FormData) => {
@@ -127,4 +133,48 @@ export const signOutAction = async () => {
   const supabase = createClient();
   await supabase.auth.signOut();
   return redirect("/sign-in");
+};
+
+export const addBookAction = async (formData: FormData) => {
+  const supabase = createClient();
+
+  const title = formData.get("title")?.toString().trim();
+  const author = formData.get("author")?.toString().trim();
+  const isbn = formData.get("isbn")?.toString().trim();
+  const priceStr = formData.get("price")?.toString().trim();
+  const price = priceStr ? parseFloat(priceStr) : null;
+  const genre = formData.get("genre")?.toString().trim() || null;
+  const description = formData.get("description")?.toString().trim() || null;
+  const publisher = formData.get("publisher")?.toString().trim() || null;
+  const language = formData.get("language")?.toString().trim() || null;
+  const cover_image_url = formData.get("cover_image_url")?.toString().trim() || null;
+
+  if (!title || !author || !isbn || price === null || isNaN(price)) {
+    return encodedRedirect(
+      "error",
+      "/protected",
+      "Title, Author, ISBN, and Price are required and Price must be a number."
+    );
+  }
+
+  const newBook: Database["public"]["Tables"]["books"]["Insert"] = {
+    title,
+    author,
+    isbn,
+    price,
+    genre,
+    description,
+    publisher,
+    language,
+    cover_image_url,
+  };
+
+  const { error } = await supabase.from("books").insert([newBook]);
+
+  if (error) {
+    console.error("Error adding book:", error.message);
+    return encodedRedirect("error", "/protected", "Failed to add the book. Please try again.");
+  }
+
+  return encodedRedirect("success", "/protected", "Book added successfully!");
 };
