@@ -11,12 +11,12 @@ export const Book = ({ book }: BookProps) => {
       <CardHeader>
         <img src={book.cover_image_url || ""} alt={book.title} className="h-48 w-full object-cover" />
         <h2 className="text-xl font-semibold">{book.title}</h2>
-        <p className="text-gray-600">Author: {book.author}</p>
+        <p >Author: {book.author}</p>
       </CardHeader>
       <CardContent>
-        <p className="text-gray-600">ISBN: {book.isbn}</p>
-        <p className="text-gray-600">Price: ${book.price}</p>
-        <p className="text-gray-600">Genre: {book.genre}</p>
+        <p >ISBN: {book.isbn}</p>
+        <p >Price: ${book.price}</p>
+        <p >Genre: {book.genre}</p>
       </CardContent>
 
 

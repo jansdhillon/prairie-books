@@ -6,6 +6,8 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { Database } from "@/utils/database.types";
+import { stripe } from "@/utils/stripe/config";
+import { upsertPriceRecord, upsertProductRecord } from "@/utils/supabase/admin";
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
@@ -175,6 +177,30 @@ export const addBookAction = async (formData: FormData) => {
     console.error("Error adding book:", error.message);
     return encodedRedirect("error", "/protected", "Failed to add the book. Please try again.");
   }
+
+
+  const product = await stripe.products.create({
+    name: title,
+    metadata: {
+      author,
+      isbn,
+      genre,
+      publisher,
+      language,
+    },
+  });
+
+  const stripePrice = await stripe.prices.create({
+    unit_amount: price,
+    currency: 'cad',
+    product: product.id,
+  });
+
+  await upsertProductRecord(product);
+  await upsertPriceRecord(stripePrice);
+
+
+  console.log(`Book ${title} added successfully.`);
 
   return encodedRedirect("success", "/protected", "Book added successfully!");
 };
