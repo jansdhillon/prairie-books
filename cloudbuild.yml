@@ -31,4 +31,5 @@ steps:
 images:
   - 'gcr.io/$PROJECT_ID/prairie-books:$COMMIT_SHA'
 
-logging: 'CLOUD_LOGGING_ONLY '
+options:
+  logging: "CLOUD_LOGGING_ONLY"
