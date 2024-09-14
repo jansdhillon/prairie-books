@@ -58,10 +58,10 @@ jobs:
             --build-arg NEXT_PUBLIC_SUPABASE_URL="$SUPABASE_URL" \
             --build-arg SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY" \
             --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY" \
-            -t gcr.io/prairie-books/prairie-books:${{ github.sha }} \
+            -t gcr.io/prairie-books/docker-repo/prairie-books:${{ github.sha }} \
             .
 
-          docker push gcr.io/prairie-books/prairie-books:${{ github.sha }}
+          docker push gcr.io/prairie-books/docker-repo/prairie-books:${{ github.sha }}
 
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v1
