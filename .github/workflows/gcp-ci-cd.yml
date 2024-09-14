@@ -29,7 +29,8 @@ jobs:
 
       - name: Configure Docker for GCR
         run: |
-          gcloud auth configure-docker
+          gcloud auth configure-docker \
+            us-central1-docker.pkg.dev
 
       - name: Build and Push Docker Image
         run: |
@@ -58,15 +59,15 @@ jobs:
             --build-arg NEXT_PUBLIC_SUPABASE_URL="$SUPABASE_URL" \
             --build-arg SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY" \
             --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY" \
-            -t gcr.io/prairie-books/cloud-run-source-deploy/prairie-books:${{ github.sha }} \
+            -t gcr.io/prairie-books/cloud-run-source-deploy/prairie-books/prairie-books/prairie-books:${{ github.sha }} \
             .
 
-          docker push gcr.io/prairie-books/cloud-run-source-deploy/prairie-books:${{ github.sha }}
+          docker push gcr.io/prairie-books/cloud-run-source-deploy/prairie-books/prairie-books/prairie-books:${{ github.sha }}
 
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v1
         with:
           service: prairie-books
-          image: gcr.io/prairie-books/cloud-run-source-deploy/prairie-books:${{ github.sha }}
+          image: gcr.io/prairie-books/cloud-run-source-deploy/prairie-books/prairie-books/prairie-books:${{ github.sha }}
           region: us-central1
           project_id: prairie-books
