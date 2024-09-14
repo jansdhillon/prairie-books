@@ -67,6 +67,6 @@ jobs:
         uses: google-github-actions/deploy-cloudrun@v1
         with:
           service: prairie-books
-          image: gcr.io/prairie-books/prairie-books:${{ github.sha }}
+          image: gcr.io/prairie-books/docker-repo/prairie-books:${{ github.sha }}
           region: us-central1
           project_id: prairie-books
