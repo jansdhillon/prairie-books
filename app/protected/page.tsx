@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@/app/utils/supabase/server";
 import { redirect } from "next/navigation";
 import BookDisplay from "@/components/book-display";
 import AddBookForm from "@/components/add-book-form";

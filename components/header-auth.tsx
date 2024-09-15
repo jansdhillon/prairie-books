@@ -2,7 +2,7 @@ import { signOutAction } from "@/app/actions";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@/app/utils/supabase/server";
 import { Book, ShoppingCart, User, User2Icon, UserCircleIcon } from "lucide-react";
 import { Input } from "./ui/input";
 

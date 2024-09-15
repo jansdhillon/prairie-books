@@ -1,9 +1,8 @@
-import type { Tables } from '@/utils/database.types';
+import type { Tables } from '@/app/utils/database.types';
 
 type Price = Tables<'prices'>;
 
 export const getURL = (path: string = '') => {
-  // Check if NEXT_PUBLIC_SITE_URL is set and non-empty. Set this to your site URL in production env.
   let url = process.env.NODE_ENV === 'production' ? "https://kathrinsbooks.com" :  'http://localhost:3000/';
 
   // Trim the URL and remove trailing slash if exists.

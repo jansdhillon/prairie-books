@@ -1,6 +1,4 @@
-// app/page.tsx
-
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@/app/utils/supabase/server";
 import BookDisplay from "@/components/book-display";
 
 export default async function HomePage() {
@@ -10,7 +8,6 @@ export default async function HomePage() {
 
   if (error) {
     console.error("Error fetching books:", error.message);
-    // Optionally, handle the error (e.g., display a message to the user)
   }
 
   return (
