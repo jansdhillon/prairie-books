@@ -1,44 +1,111 @@
 steps:
+  # Step 1: Access STRIPE_SECRET_KEY and store it in a file
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud secrets versions access latest --secret=STRIPE_SECRET_KEY --format='get(payload.data)' \
+        | tr '_-' '/+' | base64 -d > stripe_secret_key.txt
+
+  # Step 2: Access STRIPE_PUBLIC_KEY and store it in a file
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud secrets versions access latest --secret=STRIPE_PUBLIC_KEY --format='get(payload.data)' \
+        | tr '_-' '/+' | base64 -d > stripe_public_key.txt
+
+  # Step 3: Access RESEND_API_KEY and store it in a file
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud secrets versions access latest --secret=RESEND_API_KEY --format='get(payload.data)' \
+        | tr '_-' '/+' | base64 -d > resend_api_key.txt
+
+  # Step 4: Access SUPABASE_URL and store it in a file
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud secrets versions access latest --secret=SUPABASE_URL --format='get(payload.data)' \
+        | tr '_-' '/+' | base64 -d > supabase_url.txt
+
+  # Step 5: Access SUPABASE_ANON_KEY and store it in a file
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud secrets versions access latest --secret=SUPABASE_ANON_KEY --format='get(payload.data)' \
+        | tr '_-' '/+' | base64 -d > supabase_anon_key.txt
+
+  # Step 6: Access SUPABASE_SERVICE_ROLE_KEY and store it in a file
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud secrets versions access latest --secret=SUPABASE_SERVICE_ROLE_KEY --format='get(payload.data)' \
+        | tr '_-' '/+' | base64 -d > supabase_service_role_key.txt
+
+  # Step 7: Access STRIPE_WEBHOOK_SECRET and store it in a file
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud secrets versions access latest --secret=STRIPE_WEBHOOK_SECRET --format='get(payload.data)' \
+        | tr '_-' '/+' | base64 -d > stripe_webhook_secret.txt
+
+  # Step 8: Access ADMIN_EMAIL and store it in a file
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud secrets versions access latest --secret=ADMIN_EMAIL --format='get(payload.data)' \
+        | tr '_-' '/+' | base64 -d > admin_email.txt
+
+  # Step 9: Build the Docker image using the secrets from files
   - name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         docker build \
-          --build-arg STRIPE_SECRET_KEY=$$STRIPE_SECRET_KEY \
-          --build-arg NEXT_PUBLIC_STRIPE_PUBLIC_KEY=$$NEXT_PUBLIC_STRIPE_PUBLIC_KEY \
-          --build-arg RESEND_API_KEY=$$RESEND_API_KEY \
-          --build-arg NEXT_PUBLIC_SUPABASE_URL=$$NEXT_PUBLIC_SUPABASE_URL \
-          --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY=$$NEXT_PUBLIC_SUPABASE_ANON_KEY \
-          --build-arg SUPABASE_SERVICE_ROLE_KEY=$$SUPABASE_SERVICE_ROLE_KEY \
-          --build-arg STRIPE_WEBHOOK_SECRET=$$STRIPE_WEBHOOK_SECRET \
-          --build-arg ADMIN_EMAIL=$$ADMIN_EMAIL \
-          -t us-central1-docker.pkg.dev/prairie-books/prairie-books/prairie-books:$COMMIT_SHA .
-    secretEnv: ['STRIPE_SECRET_KEY', 'NEXT_PUBLIC_STRIPE_PUBLIC_KEY', 'RESEND_API_KEY', 'NEXT_PUBLIC_SUPABASE_URL', 'NEXT_PUBLIC_SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY', 'STRIPE_WEBHOOK_SECRET', 'ADMIN_EMAIL']
+          --build-arg STRIPE_SECRET_KEY="$(cat stripe_secret_key.txt)" \
+          --build-arg STRIPE_PUBLIC_KEY="$(cat stripe_public_key.txt)" \
+          --build-arg RESEND_API_KEY="$(cat resend_api_key.txt)" \
+          --build-arg SUPABASE_URL="$(cat supabase_url.txt)" \
+          --build-arg SUPABASE_ANON_KEY="$(cat supabase_anon_key.txt)" \
+          --build-arg SUPABASE_SERVICE_ROLE_KEY="$(cat supabase_service_role_key.txt)" \
+          --build-arg STRIPE_WEBHOOK_SECRET="$(cat stripe_webhook_secret.txt)" \
+          --build-arg ADMIN_EMAIL="$(cat admin_email.txt)" \
+          -t gcr.io/prairie-books/prairie-books \
+          .
+
+  # Step 10: Push the Docker image to Container Registry
   - name: 'gcr.io/cloud-builders/docker'
     args:
-      - push
-      - 'us-central1-docker.pkg.dev/prairie-books/prairie-books:$COMMIT_SHA'
+      - 'push'
+      - 'gcr.io/prairie-books/prairie-books'
+
+  # Step 11: Deploy to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
-    args: ['run','deploy', 'prairie-books --image us-central1-docker.pkg.dev/prairie-books/prairie-books:$COMMIT_SHA', '--region', 'us-central1']
-availableSecrets:
-  secretManager:
-    - versionName: projects/$PROJECT_ID/secrets/STRIPE_SECRET_KEY/versions/latest
-      env: 'STRIPE_SECRET_KEY'
-    - versionName: projects/$PROJECT_ID/secrets/NEXT_PUBLIC_STRIPE_PUBLIC_KEY/versions/latest
-      env: 'NEXT_PUBLIC_STRIPE_PUBLIC_KEY'
-    - versionName: projects/$PROJECT_ID/secrets/RESEND_API_KEY/versions/latest
-      env: 'RESEND_API_KEY'
-    - versionName: projects/$PROJECT_ID/secrets/NEXT_PUBLIC_SUPABASE_URL/versions/latest
-      env: 'NEXT_PUBLIC_SUPABASE_URL'
-    - versionName: projects/$PROJECT_ID/secrets/NEXT_PUBLIC_SUPABASE_ANON_KEY/versions/latest
-      env: 'NEXT_PUBLIC_SUPABASE_ANON_KEY'
-    - versionName: projects/$PROJECT_ID/secrets/SUPABASE_SERVICE_ROLE_KEY/versions/latest
-      env: 'SUPABASE_SERVICE_ROLE_KEY'
-    - versionName: projects/$PROJECT_ID/secrets/STRIPE_WEBHOOK_SECRET/versions/latest
-      env: 'STRIPE_WEBHOOK_SECRET'
-    - versionName: projects/$PROJECT_ID/secrets/ADMIN_EMAIL/versions/latest
-      env: 'ADMIN_EMAIL'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'prairie-books'
+      - '--image'
+      - 'gcr.io/prairie-books/prairie-books'
+      - '--region'
+      - 'us-central1'
+
 options:
   logging: CLOUD_LOGGING_ONLY
