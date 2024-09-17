@@ -1,5 +1,4 @@
 import Stripe from 'stripe';
-import '@/envConfig.ts'
 
 export const stripe = new Stripe(
   process.env.STRIPE_SECRET_KEY_LIVE ?? process.env.STRIPE_SECRET_KEY ?? '',

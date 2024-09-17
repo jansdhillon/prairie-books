@@ -6,7 +6,6 @@ import {
   deleteProductRecord,
   deletePriceRecord
 } from '@/utils/supabase/admin';
-import '@/envConfig.ts'
 
 const relevantEvents = new Set([
   'product.created',

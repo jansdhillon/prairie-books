@@ -1,5 +1,4 @@
 import type { Tables } from '@/utils/database.types';
-import '@/envConfig.ts'
 type Price = Tables<'prices'>;
 
 export const getURL = (path: string = '') => {

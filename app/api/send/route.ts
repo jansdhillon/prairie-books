@@ -1,6 +1,5 @@
 import { EmailTemplate } from '@/components/email-template';
 import { Resend } from 'resend';
-import '@/envConfig.ts'
 
 
 

@@ -3,7 +3,6 @@ import { stripe } from '@/utils/stripe/config';
 import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
 import type { Database, Tables, TablesInsert } from '../database.types';
-import '@/envConfig.ts'
 
 type Product = Tables<'products'>;
 type Price = Tables<'prices'>;

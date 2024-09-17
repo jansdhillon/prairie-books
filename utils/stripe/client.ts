@@ -1,5 +1,4 @@
 import { loadStripe, Stripe } from '@stripe/stripe-js';
-import '@/envConfig.ts'
 
 let stripePromise: Promise<Stripe | null>;
 
