@@ -12,7 +12,7 @@ steps:
           --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY=$$NEXT_PUBLIC_SUPABASE_ANON_KEY \
           --build-arg SUPABASE_SERVICE_ROLE_KEY=$$SUPABASE_SERVICE_ROLE_KEY \
           --build-arg STRIPE_WEBHOOK_SECRET=$$STRIPE_WEBHOOK_SECRET \
-          --build-arg ADMIN_EMAIL=$$ADMIN_EMAIL
+          --build-arg ADMIN_EMAIL=$$ADMIN_EMAIL \
           -t us-central1-docker.pkg.dev/prairie-books/prairie-books/prairie-books:$COMMIT_SHA .
     secretEnv: ['STRIPE_SECRET_KEY', 'NEXT_PUBLIC_STRIPE_PUBLIC_KEY', 'RESEND_API_KEY', 'NEXT_PUBLIC_SUPABASE_URL', 'NEXT_PUBLIC_SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY', 'STRIPE_WEBHOOK_SECRET', 'ADMIN_EMAIL']
   - name: 'gcr.io/cloud-builders/docker'
