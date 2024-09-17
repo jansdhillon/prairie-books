@@ -20,17 +20,17 @@ export default function CheckoutWrapper({clientSecret, dpmCheckerLink}: {clientS
 
 
   const options: StripeElementsOptions = {
-    clientSecret
+    clientSecret,
+    appearance: { theme: "stripe" },
   };
 
   return (
     <div className="container mx-auto p-6">
-      <EmbeddedCheckoutProvider
-        stripe={stripePromise}
-        options={options}
-      >
-        <EmbeddedCheckout />
-      </EmbeddedCheckoutProvider>
+      {clientSecret && (
+        <Elements stripe={stripePromise} options={options}>
+           {confirmed ? <CompletePage clientSecret={clientSecret} /> : <CheckoutForm dpmCheckerLink={dpmCheckerLink} />}
+        </Elements>
+      )}
     </div>
   );
 }
