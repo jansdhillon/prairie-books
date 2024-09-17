@@ -8,14 +8,14 @@ steps:
         gcloud secrets versions access latest --secret=STRIPE_SECRET_KEY --format='get(payload.data)' \
         | tr '_-' '/+' | base64 -d > stripe_secret_key.txt
 
-  # Step 2: Access STRIPE_PUBLIC_KEY and store it in a file
+  # Step 2: Access NEXT_PUBLIC_STRIPE_PUBLIC_KEY and store it in a file
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        gcloud secrets versions access latest --secret=STRIPE_PUBLIC_KEY --format='get(payload.data)' \
-        | tr '_-' '/+' | base64 -d > stripe_public_key.txt
+        gcloud secrets versions access latest --secret=NEXT_PUBLIC_STRIPE_PUBLIC_KEY --format='get(payload.data)' \
+        | tr '_-' '/+' | base64 -d > next_public_stripe_public_key.txt
 
   # Step 3: Access RESEND_API_KEY and store it in a file
   - name: 'gcr.io/cloud-builders/gcloud'
@@ -26,23 +26,23 @@ steps:
         gcloud secrets versions access latest --secret=RESEND_API_KEY --format='get(payload.data)' \
         | tr '_-' '/+' | base64 -d > resend_api_key.txt
 
-  # Step 4: Access SUPABASE_URL and store it in a file
+  # Step 4: Access NEXT_PUBLIC_SUPABASE_URL and store it in a file
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        gcloud secrets versions access latest --secret=SUPABASE_URL --format='get(payload.data)' \
-        | tr '_-' '/+' | base64 -d > supabase_url.txt
+        gcloud secrets versions access latest --secret=NEXT_PUBLIC_SUPABASE_URL --format='get(payload.data)' \
+        | tr '_-' '/+' | base64 -d > next_public_supabase_url.txt
 
-  # Step 5: Access SUPABASE_ANON_KEY and store it in a file
+  # Step 5: Access NEXT_PUBLIC_SUPABASE_ANON_KEY and store it in a file
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        gcloud secrets versions access latest --secret=SUPABASE_ANON_KEY --format='get(payload.data)' \
-        | tr '_-' '/+' | base64 -d > supabase_anon_key.txt
+        gcloud secrets versions access latest --secret=NEXT_PUBLIC_SUPABASE_ANON_KEY --format='get(payload.data)' \
+        | tr '_-' '/+' | base64 -d > next_public_supabase_anon_key.txt
 
   # Step 6: Access SUPABASE_SERVICE_ROLE_KEY and store it in a file
   - name: 'gcr.io/cloud-builders/gcloud'
@@ -79,10 +79,10 @@ steps:
       - |
         docker build \
           --build-arg STRIPE_SECRET_KEY="$(cat stripe_secret_key.txt)" \
-          --build-arg STRIPE_PUBLIC_KEY="$(cat stripe_public_key.txt)" \
+          --build-arg NEXT_PUBLIC_STRIPE_PUBLIC_KEY="$(cat next_public_stripe_public_key.txt)" \
           --build-arg RESEND_API_KEY="$(cat resend_api_key.txt)" \
-          --build-arg SUPABASE_URL="$(cat supabase_url.txt)" \
-          --build-arg SUPABASE_ANON_KEY="$(cat supabase_anon_key.txt)" \
+          --build-arg NEXT_PUBLIC_SUPABASE_URL="$(cat next_public_supabase_url.txt)" \
+          --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY="$(cat next_public_supabase_anon_key.txt)" \
           --build-arg SUPABASE_SERVICE_ROLE_KEY="$(cat supabase_service_role_key.txt)" \
           --build-arg STRIPE_WEBHOOK_SECRET="$(cat stripe_webhook_secret.txt)" \
           --build-arg ADMIN_EMAIL="$(cat admin_email.txt)" \
