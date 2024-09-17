@@ -6,14 +6,15 @@ steps:
       - |
         docker build \
           --build-arg STRIPE_SECRET_KEY=$$STRIPE_SECRET_KEY \
-          --build-arg STRIPE_PUBLIC_KEY=$$STRIPE_PUBLIC_KEY \
+          --build-arg NEXT_PUBLIC_STRIPE_PUBLIC_KEY=$$NEXT_PUBLIC_STRIPE_PUBLIC_KEY \
           --build-arg RESEND_API_KEY=$$RESEND_API_KEY \
-          --build-arg SUPABASE_URL=$$SUPABASE_URL \
-          --build-arg SUPABASE_ANON_KEY=$$SUPABASE_ANON_KEY \
+          --build-arg NEXT_PUBLIC_SUPABASE_URL=$$NEXT_PUBLIC_SUPABASE_URL \
+          --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY=$$NEXT_PUBLIC_SUPABASE_ANON_KEY \
           --build-arg SUPABASE_SERVICE_ROLE_KEY=$$SUPABASE_SERVICE_ROLE_KEY \
           --build-arg STRIPE_WEBHOOK_SECRET=$$STRIPE_WEBHOOK_SECRET \
+          --build-arg ADMIN_EMAIL=$$ADMIN_EMAIL
           -t us-central1-docker.pkg.dev/prairie-books/prairie-books/prairie-books:$COMMIT_SHA .
-    secretEnv: ['STRIPE_SECRET_KEY', 'STRIPE_PUBLIC_KEY', 'RESEND_API_KEY', 'SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY', 'STRIPE_WEBHOOK_SECRET']
+    secretEnv: ['STRIPE_SECRET_KEY', 'NEXT_PUBLIC_STRIPE_PUBLIC_KEY', 'RESEND_API_KEY', 'NEXT_PUBLIC_SUPABASE_URL', 'NEXT_PUBLIC_SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY', 'STRIPE_WEBHOOK_SECRET', 'ADMIN_EMAIL']
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - push
@@ -25,17 +26,19 @@ availableSecrets:
   secretManager:
     - versionName: projects/$PROJECT_ID/secrets/STRIPE_SECRET_KEY/versions/latest
       env: 'STRIPE_SECRET_KEY'
-    - versionName: projects/$PROJECT_ID/secrets/STRIPE_PUBLIC_KEY/versions/latest
-      env: 'STRIPE_PUBLIC_KEY'
+    - versionName: projects/$PROJECT_ID/secrets/NEXT_PUBLIC_STRIPE_PUBLIC_KEY/versions/latest
+      env: 'NEXT_PUBLIC_STRIPE_PUBLIC_KEY'
     - versionName: projects/$PROJECT_ID/secrets/RESEND_API_KEY/versions/latest
       env: 'RESEND_API_KEY'
-    - versionName: projects/$PROJECT_ID/secrets/SUPABASE_URL/versions/latest
-      env: 'SUPABASE_URL'
-    - versionName: projects/$PROJECT_ID/secrets/SUPABASE_ANON_KEY/versions/latest
-      env: 'SUPABASE_ANON_KEY'
+    - versionName: projects/$PROJECT_ID/secrets/NEXT_PUBLIC_SUPABASE_URL/versions/latest
+      env: 'NEXT_PUBLIC_SUPABASE_URL'
+    - versionName: projects/$PROJECT_ID/secrets/NEXT_PUBLIC_SUPABASE_ANON_KEY/versions/latest
+      env: 'NEXT_PUBLIC_SUPABASE_ANON_KEY'
     - versionName: projects/$PROJECT_ID/secrets/SUPABASE_SERVICE_ROLE_KEY/versions/latest
       env: 'SUPABASE_SERVICE_ROLE_KEY'
     - versionName: projects/$PROJECT_ID/secrets/STRIPE_WEBHOOK_SECRET/versions/latest
       env: 'STRIPE_WEBHOOK_SECRET'
+    - versionName: projects/$PROJECT_ID/secrets/ADMIN_EMAIL/versions/latest
+      env: 'ADMIN_EMAIL'
 options:
   logging: CLOUD_LOGGING_ONLY
