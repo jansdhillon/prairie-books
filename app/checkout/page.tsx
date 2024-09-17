@@ -7,7 +7,7 @@ import CheckoutForm from "@/components/checkout-form";
 import { useRouter } from "next/navigation";
 
 const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
+  process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY || ""
 );
 
 export default function CheckoutPage() {
@@ -18,7 +18,7 @@ export default function CheckoutPage() {
     let isMounted = true;
 
     // Fetch client secret from server
-    fetch("/api/create-payment-intent", {
+    fetch("/api/webhooks", {
       method: "POST",
     })
       .then((res) => res.json())
@@ -58,7 +58,7 @@ export default function CheckoutPage() {
   return (
     <div className="container mx-auto p-6">
       <Elements stripe={stripePromise} options={options}>
-        <CheckoutForm />
+        <CheckoutForm dpmCheckerLink={undefined} />
       </Elements>
     </div>
   );

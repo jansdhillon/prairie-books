@@ -307,16 +307,20 @@ export const removeFromCartAction = async (formData: FormData) => {
     return encodedRedirect("error", "/cart", "Cart item ID is required.");
   }
 
-  // Get the current user
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
 
-  if (!session || !session.user) {
-    return encodedRedirect("error", "/sign-in", "You must be signed in to modify the cart.");
+  if (userError || !user) {
+    return encodedRedirect(
+      "error",
+      "/sign-in",
+      "You must be signed in to add items to the cart."
+    );
   }
 
-  const userId = session.user.id;
+  const userId = user.id;
 
   // Ensure the cart item belongs to the user's cart
   const { data: cartItem, error: cartItemError } = await supabase
@@ -355,16 +359,20 @@ export const removeFromCartAction = async (formData: FormData) => {
 export const getCartItemsAction = async () => {
   const supabase = createClient();
 
-  // Get the current user
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
 
-  if (!session || !session.user) {
-    return { cartItems: [] };
+  if (userError || !user) {
+    return encodedRedirect(
+      "error",
+      "/sign-in",
+      "You must be signed in to add items to the cart."
+    );
   }
 
-  const userId = session.user.id;
+  const userId = user.id;
 
   // Get the user's cart
   const { data: cart, error: cartError } = await supabase
