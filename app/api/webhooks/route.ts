@@ -57,10 +57,10 @@ export async function POST(req: Request) {
             console.log(`🔔  Payment received: ${checkoutSession.payment_status}`);
           }
           break;
-        case 'payment_intent.succeeded':
+        case 'payment_intent.created':
           const paymentIntent = event.data.object as Stripe.PaymentIntent;
-          upsertPaymentRecord(paymentIntent);
-          console.log(`🔔  Payment received: ${paymentIntent.status}`);
+          await upsertPaymentRecord(paymentIntent);
+          console.log(`🔔  Payment intent created: ${paymentIntent.status}`);
 
           break;
         default:

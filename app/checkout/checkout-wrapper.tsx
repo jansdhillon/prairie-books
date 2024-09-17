@@ -6,6 +6,10 @@ import { checkoutAction } from "../actions/checkout";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import CompletePage from "@/components/complete-page";
+import {
+  EmbeddedCheckoutProvider,
+  EmbeddedCheckout
+} from '@stripe/react-stripe-js';
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY ?? ""
@@ -22,11 +26,12 @@ export default function CheckoutWrapper({clientSecret, dpmCheckerLink}: {clientS
 
   return (
     <div className="container mx-auto p-6">
-      {clientSecret && (
-        <Elements stripe={stripePromise} options={options}>
-           {confirmed ? <CompletePage clientSecret={clientSecret} /> : <CheckoutForm dpmCheckerLink={dpmCheckerLink} />}
-        </Elements>
-      )}
+      <EmbeddedCheckoutProvider
+        stripe={stripePromise}
+        options={options}
+      >
+        <EmbeddedCheckout />
+      </EmbeddedCheckoutProvider>
     </div>
   );
 }
