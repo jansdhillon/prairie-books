@@ -20,8 +20,7 @@ export default function CheckoutWrapper({clientSecret, dpmCheckerLink}: {clientS
 
 
   const options: StripeElementsOptions = {
-    clientSecret,
-    appearance: { theme: "stripe" },
+    clientSecret
   };
 
   return (
