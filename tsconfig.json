@@ -23,6 +23,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/cart/page.jsx", "app/checkout/page.jsx", "app/cart/page.jsx", "app/cart/page.jsx", "app/cart/page.jsx", "components/checkout-form.jsx", "app/checkout/page.jsx", "components/checkout-form.jsx"],
   "exclude": ["node_modules"]
 }

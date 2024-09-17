@@ -32,7 +32,7 @@ export default async function ProtectedPage() {
       <AddBookForm addBookAction={addBookAction} />
 
       {/* Books List */}
-      <BookDisplay books={books || []} />
+      {/* <BookDisplay books={books || []} /> */}
     </div>
   );
 }

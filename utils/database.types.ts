@@ -59,6 +59,66 @@ export type Database = {
           },
         ]
       }
+      cart: {
+        Row: {
+          id: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_user"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cart_items: {
+        Row: {
+          book: any
+          book_id: string
+          cart_id: string
+          id: string
+          quantity: number
+        }
+        Insert: {
+          book_id: string
+          cart_id: string
+          id?: string
+          quantity: number
+        }
+        Update: {
+          book_id?: string
+          cart_id?: string
+          id?: string
+          quantity?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_book"
+            columns: ["book_id"]
+            isOneToOne: true
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_cart"
+            columns: ["cart_id"]
+            isOneToOne: false
+            referencedRelation: "cart"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customers: {
         Row: {
           id: string
@@ -82,38 +142,111 @@ export type Database = {
           },
         ]
       }
-      orders: {
+      order_items: {
         Row: {
           book_id: string
           id: string
-          ordered_at: string
-          user_id: string
+          order_id: string
+          price: number
+          quantity: number
         }
         Insert: {
           book_id: string
           id?: string
-          ordered_at?: string
-          user_id: string
+          order_id: string
+          price: number
+          quantity: number
         }
         Update: {
           book_id?: string
           id?: string
-          ordered_at?: string
-          user_id?: string
+          order_id?: string
+          price?: number
+          quantity?: number
         }
         Relationships: [
           {
-            foreignKeyName: "orders_book_id_fkey"
+            foreignKeyName: "fk_book_order"
             columns: ["book_id"]
             isOneToOne: false
             referencedRelation: "books"
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "fk_order"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          id: string
+          ordered_at: string
+          payment_intent_id: string | null
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          ordered_at?: string
+          payment_intent_id?: string | null
+          user_id: string
+        }
+        Update: {
+          id?: string
+          ordered_at?: string
+          payment_intent_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
             foreignKeyName: "orders_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string | null
+          currency: string
+          id: string
+          order_id: string
+          payment_intent_id: string
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          currency: string
+          id?: string
+          order_id: string
+          payment_intent_id: string
+          status: string
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          currency?: string
+          id?: string
+          order_id?: string
+          payment_intent_id?: string
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_order_payment"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
             referencedColumns: ["id"]
           },
         ]
@@ -193,6 +326,7 @@ export type Database = {
           created_at: string
           full_name: string
           id: string
+          is_admin: boolean | null
           payment_method: Json | null
         }
         Insert: {
@@ -201,6 +335,7 @@ export type Database = {
           created_at?: string
           full_name: string
           id: string
+          is_admin?: boolean | null
           payment_method?: Json | null
         }
         Update: {
@@ -209,6 +344,7 @@ export type Database = {
           created_at?: string
           full_name?: string
           id?: string
+          is_admin?: boolean | null
           payment_method?: Json | null
         }
         Relationships: [

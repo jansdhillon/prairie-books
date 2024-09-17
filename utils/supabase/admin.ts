@@ -207,6 +207,25 @@ const copyBillingDetailsToCustomer = async (
   if (updateError) throw new Error(`Customer update failed: ${updateError.message}`);
 };
 
+export const upsertPaymentRecord = async (paymentIntent: Stripe.PaymentIntent) => {
+
+  const paymentData: Database["public"]["Tables"]["payments"]["Insert"] = {
+    order_id: "",
+    payment_intent_id: paymentIntent.id,
+    amount: paymentIntent.amount_received / 100,
+    currency: paymentIntent.currency.toUpperCase(),
+    status: paymentIntent.status,
+  };
+
+  const { error } = await supabaseAdmin
+    .from("payments")
+    .upsert(paymentData, { onConflict: "payment_intent_id" });
+
+  if (error) {
+    console.error("Error upserting payment record:", error.message);
+  }
+};
+
 
 
 export {

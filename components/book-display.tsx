@@ -1,5 +1,7 @@
+import { Database } from "@/utils/database.types";
 import { Book } from "./book";
-import { BookType } from "@/types/book";
+
+export type BookType = Database["public"]["Tables"]["books"]["Row"];
 
 type BookDisplayProps = {
   books: BookType[];
@@ -12,7 +14,7 @@ const BookDisplay = ({ books }: BookDisplayProps) => {
 
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {books.map((book) => (
+      {books.map((book: BookType) => (
         <Book key={book.id} book={book} />
       ))}
     </div>
