@@ -4,7 +4,7 @@ import { encodedRedirect } from "@/utils/utils"
 import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-
+import '@/envConfig.ts'
 import { Database } from "@/utils/database.types";
 import { stripe } from "@/utils/stripe/config";
 import { upsertPriceRecord, upsertProductRecord } from "@/utils/supabase/admin";
