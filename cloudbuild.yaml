@@ -1,7 +1,7 @@
 steps:
   - name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
-    args: ['-c', 'docker build --build-arg STRIPE_SECRET_KEY=$$STRIPE_SECRET_KEY --build-arg STRIPE_PUBLIC_KEY=$$STRIPE_PUBLIC_KEY --build-arg RESEND_API_KEY=$$RESEND_API_KEY --build-arg SUPABASE_URL=$$SUPABASE_URL --build-arg SUPABASE_ANON_KEY=$$SUPABASE_ANON_KEY --build-arg SUPABASE_SERVICE_ROLE_KEY=$$SUPABASE_SERVICE_ROLE_KEY --build-arg STRIPE_WEBHOOK_SECRET=$$STRIPE_WEBHOOK_SECRET', '-t us-central1-docker.pkg.dev/prairie-books/prairie-books:$COMMIT_SHA']
+    args: ['docker build --build-arg STRIPE_SECRET_KEY=$$STRIPE_SECRET_KEY --build-arg STRIPE_PUBLIC_KEY=$$STRIPE_PUBLIC_KEY --build-arg RESEND_API_KEY=$$RESEND_API_KEY --build-arg SUPABASE_URL=$$SUPABASE_URL --build-arg SUPABASE_ANON_KEY=$$SUPABASE_ANON_KEY --build-arg SUPABASE_SERVICE_ROLE_KEY=$$SUPABASE_SERVICE_ROLE_KEY --build-arg STRIPE_WEBHOOK_SECRET=$$STRIPE_WEBHOOK_SECRET', '-t', 'us-central1-docker.pkg.dev/prairie-books/prairie-books:$$COMMIT_SHA']
     secretEnv: ['STRIPE_SECRET_KEY', 'STRIPE_PUBLIC_KEY', 'RESEND_API_KEY', 'SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY', 'STRIPE_WEBHOOK_SECRET']
   - name: 'gcr.io/cloud-builders/docker'
     args:
