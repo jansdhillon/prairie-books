@@ -23,19 +23,19 @@ steps:
     args: ['run','deploy', 'prairie-books --image us-central1-docker.pkg.dev/prairie-books/prairie-books:$COMMIT_SHA', '--region', 'us-central1']
 availableSecrets:
   secretManager:
-    - versionName: projects/prairie-books/secrets/STRIPE_SECRET_KEY/versions/latest
+    - versionName: projects/$PROJECT_ID/secrets/STRIPE_SECRET_KEY/versions/latest
       env: 'STRIPE_SECRET_KEY'
-    - versionName: projects/prairie-books/secrets/STRIPE_PUBLIC_KEY/versions/latest
+    - versionName: projects/$PROJECT_ID/secrets/STRIPE_PUBLIC_KEY/versions/latest
       env: 'STRIPE_PUBLIC_KEY'
-    - versionName: projects/prairie-books/secrets/RESEND_API_KEY/versions/latest
+    - versionName: projects/$PROJECT_ID/secrets/RESEND_API_KEY/versions/latest
       env: 'RESEND_API_KEY'
-    - versionName: projects/prairie-books/secrets/SUPABASE_URL/versions/latest
+    - versionName: projects/$PROJECT_ID/secrets/SUPABASE_URL/versions/latest
       env: 'SUPABASE_URL'
-    - versionName: projects/prairie-books/secrets/SUPABASE_ANON_KEY/versions/latest
+    - versionName: projects/$PROJECT_ID/secrets/SUPABASE_ANON_KEY/versions/latest
       env: 'SUPABASE_ANON_KEY'
-    - versionName: projects/prairie-books/secrets/SUPABASE_SERVICE_ROLE_KEY/versions/latest
+    - versionName: projects/$PROJECT_ID/secrets/SUPABASE_SERVICE_ROLE_KEY/versions/latest
       env: 'SUPABASE_SERVICE_ROLE_KEY'
-    - versionName: projects/prairie-books/secrets/STRIPE_WEBHOOK_SECRET/versions/latest
+    - versionName: projects/$PROJECT_ID/secrets/STRIPE_WEBHOOK_SECRET/versions/latest
       env: 'STRIPE_WEBHOOK_SECRET'
 options:
   logging: CLOUD_LOGGING_ONLY
