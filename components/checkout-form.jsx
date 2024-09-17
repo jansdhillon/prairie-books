@@ -1,3 +1,4 @@
+"use client"
 import React from "react";
 import {
   PaymentElement,
@@ -28,7 +29,7 @@ export default function CheckoutForm({dpmCheckerLink}) {
       elements,
       confirmParams: {
         // Make sure to change this to your payment completion page
-        return_url: "http://localhost:3000",
+        return_url: "/complete",
       },
     });
 
@@ -41,6 +42,7 @@ export default function CheckoutForm({dpmCheckerLink}) {
       setMessage(error.message);
     } else {
       setMessage("An unexpected error occurred.");
+      console.error(error);
     }
 
     setIsLoading(false);

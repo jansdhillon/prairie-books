@@ -16,8 +16,6 @@ const relevantEvents = new Set([
   'price.updated',
   'price.deleted',
   'checkout.session.completed',
-  'payment_intent.succeeded',
-  'payment_intent.payment_failed'
 ]);
 
 export async function POST(req: Request) {

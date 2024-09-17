@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import BookDisplay from "@/components/book-display";
 import AddBookForm from "@/components/add-book-form";
 import Feedback from "@/components/feedback";
-import { addBookAction } from "../actions";
+import { addBookAction } from "@/app/actions/add-book";
 
 export default async function ProtectedPage() {
   const supabase = createClient();
@@ -20,7 +20,6 @@ export default async function ProtectedPage() {
 
   if (error) {
     console.error("Error fetching books:", error.message);
-    // Optionally, handle the error (e.g., display a message to the user)
   }
 
   return (

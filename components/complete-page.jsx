@@ -43,7 +43,7 @@ const STATUS_CONTENT_MAP = {
   }
 };
 
-export default function CompletePage() {
+export default function CompletePage({clientSecret}) {
   const stripe = useStripe();
 
   const [status, setStatus] = React.useState("default");
@@ -54,13 +54,6 @@ export default function CompletePage() {
       return;
     }
 
-    const clientSecret = new URLSearchParams(window.location.search).get(
-      "payment_intent_client_secret"
-    );
-
-    if (!clientSecret) {
-      return;
-    }
 
     stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
       if (!paymentIntent) {

@@ -1,11 +1,13 @@
-// app/cart/page.tsx
-
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import { getCartItemsAction, removeFromCartAction } from "@/app/actions";
+
 import { Button } from "@/components/ui/button";
 import { Database } from "@/utils/database.types";
 import { fixOneToOne } from "../fixOneToOne";
+import { getCartItemsAction } from "../actions/get-cart-items";
+import { removeFromCartAction } from "../actions/remove-from-cart";
+import { checkoutAction } from "../actions/checkout";
+import Link from "next/link";
 
 export type CartItemType = Database["public"]["Tables"]["cart_items"]["Row"]
 
@@ -76,11 +78,11 @@ export default async function CartPage() {
         <h3 className="text-lg font-semibold">
           Total: ${totalAmount.toFixed(2)}
         </h3>
-        <form action="/checkout" method="GET">
-          <Button type="submit" variant={"default"}>
+
+          <Link href="/checkout">
             Proceed to Checkout
-          </Button>
-        </form>
+          </Link>
+
       </div>
     </div>
   );

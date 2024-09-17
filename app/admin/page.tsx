@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { addBookAction } from "../actions";
+import { addBookAction } from "@/app/actions/add-book";
 
 export default async function HomePage() {
 

@@ -23,6 +23,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/cart/page.tsx", "app/checkout/page.jsx", "app/cart/page.tsx", "app/cart/page.tsx", "app/cart/page.tsx", "components/checkout-form.jsx", "app/checkout/page.jsx", "components/checkout-form.jsx", "app/complete/page.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/cart/page.tsx", "app/checkout/page.jsx", "app/cart/page.tsx", "app/cart/page.tsx", "app/cart/page.tsx", "components/checkout-form.jsx", "app/checkout/page.jsx", "components/checkout-form.jsx", "app/[client-secret]/page.jsx"],
   "exclude": ["node_modules"]
 }

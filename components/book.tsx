@@ -5,7 +5,7 @@
 import { BookType } from "./book-display";
 import { Card, CardContent, CardHeader } from "./ui/card";
 import { Button } from "./ui/button";
-import { addToCartAction } from "@/app/actions";
+import { addToCartAction } from "@/app/actions/add-to-cart";
 import { useTransition } from "react";
 import Image from "next/image";
 
