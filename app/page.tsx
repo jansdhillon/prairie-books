@@ -1,4 +1,4 @@
-import { createClient } from "@/app/utils/supabase/server";
+import { createClient } from "@/utils/supabase/server";
 import BookDisplay from "@/components/book-display";
 
 export default async function HomePage() {

@@ -1,4 +1,4 @@
-import type { Tables } from '@/app/utils/database.types';
+import type { Tables } from '@/utils/database.types';
 
 type Price = Tables<'prices'>;
 

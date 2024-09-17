@@ -1,46 +1,30 @@
 steps:
-  - name: 'gcr.io/cloud-builders/gcloud'
+  - name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e  # Exit immediately if a command exits with a non-zero status
-
-        # Fetch secrets from Secret Manager
-        export STRIPE_SECRET_KEY=$(gcloud secrets versions access latest --secret="STRIPE_SECRET_KEY")
-        export STRIPE_PUBLIC_KEY=$(gcloud secrets versions access latest --secret="STRIPE_PUBLIC_KEY")
-        export RESEND_API_KEY=$(gcloud secrets versions access latest --secret="RESEND_API_KEY")
-        export SUPABASE_URL=$(gcloud secrets versions access latest --secret="SUPABASE_URL")
-        export SUPABASE_ANON_KEY=$(gcloud secrets versions access latest --secret="SUPABASE_ANON_KEY")
-
-        docker build \
-          --build-arg STRIPE_SECRET_KEY="$STRIPE_SECRET_KEY" \
-          --build-arg STRIPE_PUBLIC_KEY="$STRIPE_PUBLIC_KEY" \
-          --build-arg RESEND_API_KEY="$RESEND_API_KEY" \
-          --build-arg SUPABASE_URL="$SUPABASE_URL" \
-          --build-arg SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY" \
-          -t us-central1-docker.pkg.dev/prairie-books/prairie-books:$COMMIT_SHA \
-          .
-
+    args: ['-c', 'docker build --build-arg STRIPE_SECRET_KEY=$$STRIPE_SECRET_KEY --build-arg STRIPE_PUBLIC_KEY=$$STRIPE_PUBLIC_KEY --build-arg RESEND_API_KEY=$$RESEND_API_KEY --build-arg SUPABASE_URL=$$SUPABASE_URL --build-arg SUPABASE_ANON_KEY=$$SUPABASE_ANON_KEY --build-arg SUPABASE_SERVICE_ROLE_KEY=$$SUPABASE_SERVICE_ROLE_KEY --build-arg STRIPE_WEBHOOK_SECRET=$$STRIPE_WEBHOOK_SECRET', '-t us-central1-docker.pkg.dev/prairie-books/prairie-books:$COMMIT_SHA']
+    secretEnv: ['STRIPE_SECRET_KEY', 'STRIPE_PUBLIC_KEY', 'RESEND_API_KEY', 'SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY', 'STRIPE_WEBHOOK_SECRET']
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - push
       - 'us-central1-docker.pkg.dev/prairie-books/prairie-books:$COMMIT_SHA'
-
-
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e  # Exit immediately if a command exits with a non-zero status
-
-        gcloud run deploy prairie-books \
-          --image us-central1-docker.pkg.dev/prairie-books/prairie-books:$COMMIT_SHA \
-          --region us-central1 \
-          --platform managed \
-          --allow-unauthenticated \
-          --update-env-vars SUPABASE_URL=$SUPABASE_URL,ANON_KEY=$SUPABASE_ANON_KEY,STRIPE_PUBLIC_KEY=$SUPABASE_ANON_KEY
-
+    entrypoint: 'gcloud'
+    args: ['run','deploy', 'prairie-books --image us-central1-docker.pkg.dev/prairie-books/prairie-books:$COMMIT_SHA', '--region', 'us-central1']
+availableSecrets:
+  secretManager:
+    - versionName: projects/prairie-books/secrets/STRIPE_SECRET_KEY
+      env: 'STRIPE_SECRET_KEY'
+    - versionName: projects/prairie-books/secrets/STRIPE_PUBLIC_KEY
+      env: 'STRIPE_PUBLIC_KEY'
+    - versionName: projects/prairie-books/secrets/RESEND_API_KEY
+      env: 'RESEND_API_KEY'
+    - versionName: projects/prairie-books/secrets/SUPABASE_URL
+      env: 'SUPABASE_URL'
+    - versionName: projects/prairie-books/secrets/SUPABASE_ANON_KEY
+      env: 'SUPABASE_ANON_KEY'
+    - versionName: projects/prairie-books/secrets/SUPABASE_SERVICE_ROLE_KEY
+      env: 'SUPABASE_SERVICE_ROLE_KEY'
+    - versionName: projects/prairie-books/secrets/STRIPE_WEBHOOK_SECRET
+      env: 'STRIPE_WEBHOOK_SECRET'
 options:
   logging: CLOUD_LOGGING_ONLY

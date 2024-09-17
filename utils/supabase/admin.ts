@@ -1,5 +1,5 @@
 import { toDateTime } from '../helpers';
-import { stripe } from '@/app/utils/stripe/config';
+import { stripe } from '@/utils/stripe/config';
 import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
 import type { Database, Tables, TablesInsert } from '../database.types';
