@@ -13,11 +13,11 @@ export default async function AuthButton() {
   return user ? (
     <div className="flex items-center gap-4">
       <Input placeholder="Search books..." />
-      <Button asChild variant="outline">
-        <Link href="/cart">
+      <Link href="/cart">
+        <Button variant={"outline"}>
           <ShoppingCart className="h-4" />
-        </Link>
-      </Button>
+        </Button>
+      </Link>
       <form action={signOutAction}>
         <Button type="submit" variant="outline">
           Sign out

@@ -8,6 +8,7 @@ import { Database } from "@/utils/database.types";
 import { stripe } from "@/utils/stripe/config";
 import { upsertPriceRecord, upsertProductRecord } from "@/utils/supabase/admin";
 import { fixOneToOne } from "./fixOneToOne";
+import { CartItemType } from "./cart/page";
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
@@ -215,16 +216,20 @@ export const addToCartAction = async (formData: FormData) => {
     return encodedRedirect("error", "/books", "Book ID is required.");
   }
 
-  // Get the current user
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
 
-  if (!session || !session.user) {
-    return encodedRedirect("error", "/sign-in", "You must be signed in to add items to the cart.");
+  if (userError || !user) {
+    return encodedRedirect(
+      "error",
+      "/sign-in",
+      "You must be signed in to add items to the cart."
+    );
   }
 
-  const userId = session.user.id;
+  const userId = user.id;
 
   // Get or create the user's cart
   let { data: cart, error: cartError } = await supabase
@@ -252,7 +257,7 @@ export const addToCartAction = async (formData: FormData) => {
     return encodedRedirect("error", "/books", "Failed to fetch cart.");
   }
 
-  // Check if the item is already in the cart
+
   const { data: existingCartItem, error: cartItemError } = await supabase
     .from("cart_items")
     .select("*")
@@ -374,7 +379,7 @@ export const getCartItemsAction = async () => {
   }
 
   // Get cart items with book details
-  const { data: cartItems, error: cartItemsError } = await supabase
+  const { data: cartItemsData, error: cartItemsError } = await supabase
     .from("cart_items")
     .select("id, quantity, book:books(*)")
     .eq("cart_id", cart.id);
@@ -384,6 +389,8 @@ export const getCartItemsAction = async () => {
     return { cartItems: [] };
   }
 
+  const cartItems = fixOneToOne(cartItemsData) as unknown as CartItemType[];
+
   return { cartItems };
 };
 
@@ -391,16 +398,20 @@ export const getCartItemsAction = async () => {
 export const checkoutAction = async () => {
   const supabase = createClient();
 
-  // Get the current user
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
 
-  if (!session || !session.user) {
-    return encodedRedirect("error", "/sign-in", "You must be signed in to checkout.");
+  if (userError || !user) {
+    return encodedRedirect(
+      "error",
+      "/sign-in",
+      "You must be signed in to checkout."
+    );
   }
 
-  const userId = session.user.id;
+  const userId = user.id;
 
   // Get the user's cart
   const { data: cart, error: cartError } = await supabase

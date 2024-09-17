@@ -5,9 +5,9 @@ import { redirect } from "next/navigation";
 import { getCartItemsAction, removeFromCartAction } from "@/app/actions";
 import { Button } from "@/components/ui/button";
 import { Database } from "@/utils/database.types";
+import { fixOneToOne } from "../fixOneToOne";
 
-
-export type CartItemType = Database["public"]["Tables"]["cart_items"]["Row"];
+export type CartItemType = Database["public"]["Tables"]["cart_items"]["Row"]
 
 export default async function CartPage() {
   const supabase = createClient();
@@ -77,7 +77,7 @@ export default async function CartPage() {
           Total: ${totalAmount.toFixed(2)}
         </h3>
         <form action="/checkout" method="GET">
-          <Button type="submit" variant="primary">
+          <Button type="submit" variant={"default"}>
             Proceed to Checkout
           </Button>
         </form>
