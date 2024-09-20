@@ -11,13 +11,14 @@ export const Nav = () => {
         { href: "#featured", label: "Featured" },
         { href: "#new", label: "New" },
         { href: "#all", label: "All" },
+        { href: "#about", label: "About" },
       ];
 
   return (
     <nav className="container mx-auto w-full flex justify-center m border-b border-b-foreground/10 h-16">
       <div className="w-full max-w-5xl flex justify-between items-center p-4  text-sm">
-      <Link href="/" className="text-primary text-lg font-bold tracking-wide hover:text-muted-foreground">
-            Kathrin's Books
+      <Link href="/" className="text-primary text-lg font-bold tracking-wide ml-1 hover:text-muted-foreground">
+            Kathrin's Books 📚
           </Link>
 
           <nav className="hidden md:flex space-x-6 items-center ">

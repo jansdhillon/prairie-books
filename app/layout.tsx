@@ -11,8 +11,8 @@ const defaultUrl = process.env.NODE_ENV === "production" ? "https://kathrinsbook
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Prairie Books",
-  description: "A simple book store",
+  title: "Kathrin's Books",
+  description: "A curated online book store",
 };
 
 export default function RootLayout({
@@ -29,16 +29,15 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <main className="min-h-screen flex flex-col items-center">
-            <div className="flex-1 w-full flex flex-col gap-10 items-center">
-              <Nav/>
-              <div className="flex flex-1 flex-col gap-20 max-w-5xl p-5">
+          <div className="flex min-h-screen flex-col">
+            <Nav />
+            <main className="flex-1">
+              <div className="container  mx-auto max-w-5xl px-4 py-8">
                 {children}
               </div>
-
-              <Footer/>
-            </div>
-          </main>
+            </main>
+            <Footer />
+          </div>
         </ThemeProvider>
       </body>
     </html>

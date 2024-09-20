@@ -15,7 +15,7 @@ export default function AddBookForm({addBookAction}: {addBookAction: (formData: 
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 max-w-2xl mx-auto">
+    <form action={addBookAction} className="space-y-8 max-w-2xl mx-auto">
       <div className="space-y-2">
         <h2 className="text-2xl font-bold">Add New Book</h2>
         <p className="text-muted-foreground">Fill in the details to add a new book to the store.</p>

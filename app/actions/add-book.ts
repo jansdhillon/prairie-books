@@ -9,10 +9,6 @@ import { Storage } from "@google-cloud/storage";
 export const addBookAction = async (formData: FormData) => {
   const supabase = createClient();
 
-
-
-
-
   const title = formData.get("title")?.toString().trim();
   const author = formData.get("author")?.toString().trim();
   const isbn = formData.get("isbn")?.toString().trim();
@@ -25,9 +21,12 @@ export const addBookAction = async (formData: FormData) => {
   const file = formData.get("book-cover");
   const is_featured = formData.get("is-featured") === "true";
 
+  let hasImage = false;
+
   if (file && typeof file === 'object') {
     const buffer = Buffer.from(await file.arrayBuffer());
     const filename = `${isbn}.png`;
+    hasImage = true;
 
     console.log("filename", filename);
     try {
@@ -68,7 +67,7 @@ export const addBookAction = async (formData: FormData) => {
     description,
     publisher,
     language,
-    cover_img_url: `https://storage.googleapis.com/kathrins-books-images/${isbn}.png`,
+    cover_img_url: hasImage ? `https://storage.googleapis.com/kathrins-books-images/${isbn}.png` : "https://storage.googleapis.com/kathrins-books-images/placeholder.png",
     is_featured,
   };
 
@@ -91,7 +90,6 @@ export const addBookAction = async (formData: FormData) => {
       genre,
       publisher,
       language,
-      cover_img_url: `https://storage.googleapis.com/kathrins-books-images/${isbn}.png`,
     },
   });
 
@@ -106,5 +104,5 @@ export const addBookAction = async (formData: FormData) => {
 
   console.log(`Book ${title} added successfully.`);
 
-  return encodedRedirect("success", "/protected", "Book added successfully!");
+  return encodedRedirect("success", "/", "Book added successfully!");
 };
