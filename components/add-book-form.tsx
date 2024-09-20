@@ -1,7 +1,11 @@
-"use client";
+'use client'
 
-import React, { FormEventHandler } from "react";
-import { Button } from "@/components/ui/button";
+import React from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox"
 
 export default function AddBookForm({addBookAction}: {addBookAction: (formData: FormData) => void;}) {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -9,107 +13,72 @@ export default function AddBookForm({addBookAction}: {addBookAction: (formData: 
     const formData = new FormData(event.currentTarget);
     addBookAction(formData);
   }
+
   return (
-      <form onSubmit={handleSubmit} method="POST">
-        <div >
-          <label htmlFor="title">
-            Title<span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            name="title"
-            id="title"
-            required
-          />
+    <form onSubmit={handleSubmit} className="space-y-8 max-w-2xl mx-auto">
+      <div className="space-y-2">
+        <h2 className="text-2xl font-bold">Add New Book</h2>
+        <p className="text-muted-foreground">Fill in the details to add a new book to the store.</p>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <Label htmlFor="title">
+            Title<span className="text-destructive">*</span>
+          </Label>
+          <Input type="text" name="title" id="title" required />
         </div>
-        <div >
-          <label htmlFor="author">
-            Author<span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            name="author"
-            id="author"
-            required
-          />
+        <div className="space-y-2">
+          <Label htmlFor="author">
+            Author<span className="text-destructive">*</span>
+          </Label>
+          <Input type="text" name="author" id="author" required />
         </div>
-        <div >
-          <label htmlFor="isbn">
-            ISBN<span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            name="isbn"
-            id="isbn"
-            required
-          />
+        <div className="space-y-2">
+          <Label htmlFor="isbn">
+            ISBN<span className="text-destructive">*</span>
+          </Label>
+          <Input type="text" name="isbn" id="isbn" required />
         </div>
-        <div >
-          <label htmlFor="price">
-            Price ($)<span className="text-red-500">*</span>
-          </label>
-          <input
-            type="number"
-            name="price"
-            id="price"
-            step="0.01"
-            required
-          />
+        <div className="space-y-2">
+          <Label htmlFor="price">
+            Price ($)<span className="text-destructive">*</span>
+          </Label>
+          <Input type="number" name="price" id="price" step="0.01" required />
         </div>
-        {/* Genre */}
-        <div >
-          <label htmlFor="genre" >
-            Genre
-          </label>
-          <input
-            type="text"
-            name="genre"
-            id="genre"
-          />
+        <div className="space-y-2">
+          <Label htmlFor="genre">Genre</Label>
+          <Input type="text" name="genre" id="genre" />
         </div>
-        <div >
-          <label htmlFor="description">
-            Description
-          </label>
-          <textarea
-            name="description"
-            id="description"
-            rows={4}
-          ></textarea>
+        <div className="space-y-2">
+          <Label htmlFor="publisher">Publisher</Label>
+          <Input type="text" name="publisher" id="publisher" />
         </div>
-        <div >
-          <label htmlFor="publisher">
-            Publisher
-          </label>
-          <input
-            type="text"
-            name="publisher"
-            id="publisher"
-          />
+        <div className="space-y-2">
+          <Label htmlFor="language">Language</Label>
+          <Input type="text" name="language" id="language" />
         </div>
-        <div >
-          <label htmlFor="language">
-            Language
-          </label>
-          <input
-            type="text"
-            name="language"
-            id="language"
-          />
+        <div className="space-y-2">
+          <Label htmlFor="book-cover">Cover Image</Label>
+          <Input type="file" name="book-cover" id="book-cover" accept="image/*" />
         </div>
-        <div >
-          <label htmlFor="book-cover">
-            Cover Image
-          </label>
-          <input
-            type="file"
-            name="book-cover"
-            id="book-cover"
-          />
-        </div>
-        <div>
-          <Button type="submit">Add Book</Button>
-        </div>
-      </form>
-  );
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="description">Description</Label>
+        <Textarea name="description" id="description" rows={4} />
+      </div>
+
+      <div className="flex items-center space-x-2">
+        <Checkbox id="is-featured" name="is-featured" />
+        <Label htmlFor="is-featured">Feature this book</Label>
+      </div>
+
+      <Button type="submit" className="w-full sm:w-auto">
+        Add Book
+      </Button>
+
+
+    </form>
+  )
 }

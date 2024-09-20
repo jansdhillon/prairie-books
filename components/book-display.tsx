@@ -1,14 +1,15 @@
+"use client";
 import { Database } from "@/utils/database.types";
 import { Book } from "./book";
+import { useEffect } from "react";
 
 export type BookType = Database["public"]["Tables"]["books"]["Row"];
 
-type BookDisplayProps = {
-  books: BookType[];
-};
+const BookDisplay = ({books}: {books: BookType[]}) => {
 
-const BookDisplay = ({ books }: BookDisplayProps) => {
-  if (books.length === 0) {
+
+  console.log("Books:", books);
+  if (!books || books.length === 0) {
     return <p className="text-center">No books available at the moment.</p>;
   }
 

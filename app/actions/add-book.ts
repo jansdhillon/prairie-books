@@ -9,6 +9,10 @@ import { Storage } from "@google-cloud/storage";
 export const addBookAction = async (formData: FormData) => {
   const supabase = createClient();
 
+
+
+
+
   const title = formData.get("title")?.toString().trim();
   const author = formData.get("author")?.toString().trim();
   const isbn = formData.get("isbn")?.toString().trim();
@@ -19,10 +23,12 @@ export const addBookAction = async (formData: FormData) => {
   const publisher = formData.get("publisher")?.toString().trim() || null;
   const language = formData.get("language")?.toString().trim() || null;
   const file = formData.get("book-cover");
-  //TODO refactor to no longer store image url in db
+  const is_featured = formData.get("is-featured") === "true";
+
   if (file && typeof file === 'object') {
     const buffer = Buffer.from(await file.arrayBuffer());
     const filename = `${isbn}.png`;
+
     console.log("filename", filename);
     try {
       const bucketName = "kathrins-books-images";
@@ -34,10 +40,13 @@ export const addBookAction = async (formData: FormData) => {
         console.log(`${filename} uploaded to ${bucketName}`);
       };
 
-      await uploadFile();
+      const data = await uploadFile();
+      console.log("data", data);
     } catch (error) {
       console.log("Error occured ", error);
     }
+
+
   }
 
 
@@ -59,7 +68,8 @@ export const addBookAction = async (formData: FormData) => {
     description,
     publisher,
     language,
-    cover_image_url: `https://storage.googleapis.com/kathrins-books-images/${isbn}.png`,
+    cover_img_url: `https://storage.googleapis.com/kathrins-books-images/${isbn}.png`,
+    is_featured,
   };
 
   const { error } = await supabase.from("books").insert([newBook]);
@@ -81,7 +91,7 @@ export const addBookAction = async (formData: FormData) => {
       genre,
       publisher,
       language,
-      cover_image_url: `https://storage.googleapis.com/kathrins-books-images/${isbn}.png`,
+      cover_img_url: `https://storage.googleapis.com/kathrins-books-images/${isbn}.png`,
     },
   });
 

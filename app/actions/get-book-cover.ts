@@ -6,6 +6,9 @@ export const getBookCover = async (isbn: string) => {
   const bookCoverImage = await storage
     .bucket("kathrins-books-images")
     .file(`${isbn}.png`)
-    .download();
-  return bookCoverImage;
+    .download({"decompress": true});
+
+    const blob = new Blob(bookCoverImage, {type: "image/png"});
+
+    return blob;
 };

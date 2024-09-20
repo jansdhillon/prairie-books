@@ -9,7 +9,6 @@ import { removeFromCartAction } from "../actions/remove-from-cart";
 import { checkoutAction } from "../actions/checkout";
 import Link from "next/link";
 
-export type CartItemType = Database["public"]["Tables"]["cart_items"]["Row"]
 
 export default async function CartPage() {
   const supabase = createClient();
@@ -33,7 +32,7 @@ export default async function CartPage() {
   }
 
   const totalAmount = cartItems.reduce(
-    (total: number, item: CartItemType) =>
+    (total: number, item:any) =>
       total + item.quantity * item.book.price,
     0
   );
@@ -52,7 +51,7 @@ export default async function CartPage() {
           </tr>
         </thead>
         <tbody>
-          {cartItems.map((item: CartItemType) => (
+          {cartItems.map((item:any) => (
             <tr key={item.id}>
               <td className="border px-4 py-2">{item.book.title}</td>
               <td className="border px-4 py-2">{item.quantity}</td>

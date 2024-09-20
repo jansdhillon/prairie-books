@@ -1,20 +1,30 @@
 import { createClient } from "@/utils/supabase/server";
 import BookDisplay from "@/components/book-display";
+import { fetchBooks } from "./actions/fetch-books";
+import { Separator } from "@/components/ui/separator";
+
 
 export default async function HomePage() {
-  const supabase = createClient();
 
-  const { data: books, error } = await supabase.from("books").select("*");
+  const books = await fetchBooks();
 
-  if (error) {
-    console.error("Error fetching books:", error.message);
-  }
+
+
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6 text-center">
-        Welcome to Kathrin's Books 📚
+    <div className="flex flex-1  flex-col space-y-6 ">
+      <h1 className="text-5xl font-bold  text-left">
+        Find your next read.
       </h1>
+      <Separator/>
+      {/*Featured*/}
+      <h2 className="text-2xl font-bold text-left">Featured</h2>
+      <BookDisplay books={books || []} />
+      <Separator/>
+      <h2 className="text-2xl font-bold text-left">New</h2>
+      <BookDisplay books={books || []} />
+      <Separator/>
+      <h2 className="text-2xl font-bold text-left">All Books</h2>
       <BookDisplay books={books || []} />
     </div>
   );

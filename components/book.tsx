@@ -1,13 +1,11 @@
 "use client";
 
 import { BookType } from "./book-display";
-import { Card, CardContent, CardHeader } from "./ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
 import { Button } from "./ui/button";
 import { addToCartAction } from "@/app/actions/add-to-cart";
-import { use, useEffect, useState, useTransition } from "react";
+import { useTransition } from "react";
 import Image from "next/image";
-import { getBookCover } from "@/app/actions/get-book-cover";
-import { DownloadResponse } from "@google-cloud/storage";
 
 type BookProps = {
   book: BookType;
@@ -25,51 +23,39 @@ export const Book = ({ book }: BookProps) => {
     });
   };
 
-  const [bookCover, setBookCover] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchBookCover = async () => {
-      const coverImageFile = await getBookCover(book.isbn);
-      if (coverImageFile instanceof Buffer) {
-        const blob = new Blob([coverImageFile], {type: "image/png"});
-        const url = URL.createObjectURL(blob);
-        setBookCover(url);
-        console.log("Fetched book cover:", coverImageFile);
-      } else {
-        console.error("Error fetching book cover:", coverImageFile);
-      }
-    }
-    book.cover_image_url && fetchBookCover();
-
-    return () => {
-      if (bookCover) {
-        URL.revokeObjectURL(bookCover);
-      }
-    };
-  }, [book.id]);
-
-
   return (
-    <Card>
-      <CardHeader>
-        <Image
-          src={bookCover ? bookCover[0] : "/placeholder.png"}
-          alt={book.title}
-          width={400}
-          height={300}
-          className="h-48 w-full object-cover"
-        />
-        <h2 className="text-xl font-semibold">{book.title}</h2>
-        <p>Author: {book.author}</p>
-      </CardHeader>
-      <CardContent>
-        <p>ISBN: {book.isbn}</p>
-        <p>Price: ${book.price.toFixed(2)}</p>
-        <p>Genre: {book.genre}</p>
-        <Button onClick={handleAddToCart} disabled={isPending}>
+    <Card className="flex flex-col justify-between">
+
+      <div>
+        <div className="relative w-full h-64 md:h-[500px]">
+          <Image
+            src={book.cover_img_url || "/placeholder.png"}
+            alt={book.title}
+            layout="fill"
+            objectFit="cover"
+            className="rounded-t-md p-4"
+            onError={(e) => {
+              e.currentTarget.src = "/placeholder.png";
+            }}
+          />
+        </div>
+        <CardHeader className="text-muted-foreground">
+          <h2 className="text-xl font-semibold text-primary ">{book.title}</h2>
+          <p >Author: {book.author}</p>
+          <p >ISBN: {book.isbn}</p>
+          <p >Price: ${book.price.toFixed(2)}</p>
+          <p>Genre: {book.genre || "Not specified"}</p>
+        </CardHeader>
+        <CardContent className="py-2 line-clamp-4 overflow-scroll">
+          <p>{book.description || "No description available."}</p>
+        </CardContent>
+      </div>
+
+      <CardFooter className="p-4 flex  justify-end my-4">
+        <Button onClick={handleAddToCart} disabled={isPending} size="sm">
           {isPending ? "Adding..." : "Add to Cart"}
         </Button>
-      </CardContent>
+      </CardFooter>
     </Card>
   );
 };

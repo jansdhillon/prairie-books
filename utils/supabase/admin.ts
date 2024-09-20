@@ -187,25 +187,25 @@ const createOrRetrieveCustomer = async ({
 /**
  * Copies the billing details from the payment method to the customer object.
  */
-const copyBillingDetailsToCustomer = async (
-  uuid: string,
-  payment_method: Stripe.PaymentMethod
-) => {
-  //Todo: check this assertion
-  const customer = payment_method.customer as string;
-  const { name, phone, address } = payment_method.billing_details;
-  if (!name || !phone || !address) return;
-  //@ts-ignore
-  await stripe.customers.update(customer, { name, phone, address });
-  const { error: updateError } = await supabaseAdmin
-    .from('users')
-    .update({
-      billing_address: { ...address },
-      payment_method: { ...payment_method[payment_method.type] }
-    })
-    .eq('id', uuid);
-  if (updateError) throw new Error(`Customer update failed: ${updateError.message}`);
-};
+// const copyBillingDetailsToCustomer = async (
+//   uuid: string,
+//   payment_method: Stripe.PaymentMethod
+// ) => {
+//   //Todo: check this assertion
+//   const customer = payment_method.customer as string;
+//   const { name, phone, address } = payment_method.billing_details;
+//   if (!name || !phone || !address) return;
+//   //@ts-ignore
+//   await stripe.customers.update(customer, { name, phone, address });
+//   const { error: updateError } = await supabaseAdmin
+//     .from('users')
+//     .update({
+//       billing_address: { ...address },
+//       payment_method: { ...payment_method[payment_method.type] }
+//     })
+//     .eq('id', uuid);
+//   if (updateError) throw new Error(`Customer update failed: ${updateError.message}`);
+// };
 
 export const upsertPaymentRecord = async (paymentIntent: Stripe.PaymentIntent) => {
 

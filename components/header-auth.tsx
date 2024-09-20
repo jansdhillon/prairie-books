@@ -3,7 +3,13 @@ import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { createClient } from "@/utils/supabase/server";
-import { Book, ShoppingCart, User, User2Icon, UserCircleIcon } from "lucide-react";
+import {
+  Book,
+  ShoppingCart,
+  User,
+  User2Icon,
+  UserCircleIcon,
+} from "lucide-react";
 import { Input } from "./ui/input";
 
 export default async function AuthButton() {
@@ -12,13 +18,13 @@ export default async function AuthButton() {
   } = await createClient().auth.getUser();
 
   return user ? (
-
     <div className="flex items-center gap-4">
-
       <Input placeholder="Search books..." />
-      <Button variant="outline">
-        <ShoppingCart className="h-4" />
-      </Button>
+      <Link href="/cart">
+        <Button variant={"outline"}>
+          <ShoppingCart className="h-4" />
+        </Button>
+      </Link>
       <form action={signOutAction}>
         <Button type="submit" variant={"outline"}>
           Sign out

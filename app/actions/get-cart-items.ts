@@ -2,7 +2,9 @@
 import { createClient } from "@/utils/supabase/server";
 import { encodedRedirect } from "@/utils/utils";
 import { fixOneToOne } from "../fixOneToOne";
-import { CartItemType } from "../cart/page";
+import { Database } from "@/utils/database.types";
+
+export type CartItemType = Database["public"]["Tables"]["cart_items"]["Row"];
 
 export const getCartItemsAction = async () => {
     const supabase = createClient();
@@ -34,7 +36,6 @@ export const getCartItemsAction = async () => {
       return { cartItems: [] };
     }
 
-    // Get cart items with book details
     const { data: cartItemsData, error: cartItemsError } = await supabase
       .from("cart_items")
       .select("id, quantity, book:books(*)")
