@@ -7,15 +7,19 @@ import Image from "next/image";
 import { getOrderById } from "@/app/actions/get-order-by-id";
 import Link from "next/link";
 import { getOrderItemsByOrderId } from "@/app/actions/get-order-items-by-order-id";
+import { convertStatus } from "../page";
+import { Badge } from "@/components/ui/badge";
 
 export default async function OrderDetailsPage({
   params,
 }: {
   params: { id: string };
 }) {
+
   const order = await getOrderById(params.id);
 
-  const orderItems = await getOrderItemsByOrderId(params.id);
+
+  console.log(order);
 
   return (
     <div className="container mx-auto w-full space-y-8">
@@ -30,7 +34,7 @@ export default async function OrderDetailsPage({
       <Card>
         <CardHeader>
           <CardTitle className="text-3xl font-semibold text-primary">
-            Order #{params.id}
+            Order #{order.id}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -39,13 +43,13 @@ export default async function OrderDetailsPage({
               Order Date: {order?.ordered_at}
             </p>
             <p className="text-lg font-semibold">
-              Total: ${order?.total?.toFixed(2)}
+              Total: ${order.payment?.amount?.toFixed(2)} CAD
             </p>
           </div>
 
-          <div>
-            <h3 className="text-xl font-semibold mb-2 text-primary">Status</h3>
-            <p className="text-lg">{order?.status}</p>
+          <div className="inline-flex items-stretch space-x-3  ">
+            <h3 className="text-xl font-semibold text-primary">Status:</h3>
+            <Badge >{convertStatus(order?.payment?.status)}</Badge>
           </div>
 
           <Separator />
@@ -55,20 +59,20 @@ export default async function OrderDetailsPage({
               Order Items
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {orderItems?.map((item: any) => (
-                <div key={item.id} className="flex space-x-4">
-                  <div className="w-24 h-24 relative">
-                    <Image
-                      src={item.image}
-                      alt={item.title}
-                      layout="fill"
-                      objectFit="cover"
-                    />
-                  </div>
+              {order.items?.map((item: any) => (
+                <div key={item.id} className="flex items-center space-x-4">
+                  <Image
+                    src={item.book?.cover_img_url || "/placeholder.png"}
+                    alt={item.book?.title}
+                    height={100}
+                    width={75}
+                    className="rounded-lg"
+                  />
                   <div>
-                    <h4 className="text-lg font-semibold">{item.title}</h4>
-                    <p>Quantity: {item.quantity}</p>
-                    <p>Price: ${item.price.toFixed(2)}</p>
+                    <p className="text-lg font-semibold">{item.book?.title}</p>
+                    <p className="text-muted-foreground">
+                      {item.quantity} x ${item.book?.price.toFixed(2)}
+                    </p>
                   </div>
                 </div>
               ))}

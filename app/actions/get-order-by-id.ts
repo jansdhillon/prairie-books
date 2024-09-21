@@ -1,5 +1,7 @@
 "use server";
 import { createClient } from "@/utils/supabase/server";
+import { getOrderItemsByOrderId } from "./get-order-items-by-order-id";
+import { getPaymentById } from "./get-payment";
 
 const getOrderById = async (orderId: string) => {
   const supabase = createClient();
@@ -13,11 +15,19 @@ const getOrderById = async (orderId: string) => {
     console.error("Error fetching order:", error.message);
   }
 
-  if (!order) {
-    return null;
-  }
 
-  return order;
+  const orderItems = await getOrderItemsByOrderId(orderId);
+
+  const payment = await getPaymentById(orderId);
+
+  const orderWithItemsAndPayment = {
+    ...order,
+    items: orderItems,
+    payment,
+  };
+
+  return orderWithItemsAndPayment;
+
 };
 
 export { getOrderById };

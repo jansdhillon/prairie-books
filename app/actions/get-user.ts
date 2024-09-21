@@ -7,7 +7,6 @@ const getUser = async (id: string) => {
   const supabase = createClient();
   const { data: user, error } = await supabase.from("users").select("*").eq("id", id).single();
 
-  console.log(user);
 
   if (error) {
     console.error("Error fetching books:", error.message);

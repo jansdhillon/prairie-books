@@ -26,7 +26,7 @@ export default function ContactPage() {
         <div className="space-y-4">
           <div className="flex items-center space-x-2">
             <Mail className="h-5 w-5 text-muted-foreground" />
-            <span>contact@orders.kathrinsbooks.com</span>
+            <span>kathrindhillon@gmail.com</span>
           </div>
           <div className="flex items-center space-x-2">
             <Phone className="h-5 w-5 text-muted-foreground" />
@@ -62,12 +62,16 @@ export default function ContactPage() {
               name="message"
               placeholder="Your message"
               required
+              maxLength={10}
+
             />
           </div>
 
-          <Button type="submit" className="w-full">
-            Send Message
-          </Button>
+          <div className="flex justify-end">
+            <Button type="submit" className="w-fit">
+              Send Message
+            </Button>
+          </div>
         </form>
       </div>
     </div>

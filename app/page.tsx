@@ -20,7 +20,7 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-1  flex-col space-y-6 ">
-      <h1 className="text-5xl font-bold  text-left">Find your next read.</h1>
+      <h1 className="text-5xl font-bold  text-left">Find your next page-turner.</h1>
       <p className="text-lg text-left"></p>
 
       {/*Featured*/}

@@ -13,10 +13,17 @@ import { Button } from "@/components/ui/button";
 import { getOrdersByUserId } from "../actions/get-orders";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
+import { getOrderItemsByOrderId } from "../actions/get-order-items-by-order-id";
+import { format, set, sub } from "date-fns";
 
+export const convertStatus = (status: string) => {
+  return status
+    .split("_")
+    .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+    .join(" ");
+};
 
 export default async function OrdersPage() {
-
   const supabase = createClient();
 
   const {
@@ -27,9 +34,10 @@ export default async function OrdersPage() {
     return redirect("/sign-in");
   }
 
-  const orders = await getOrdersByUserId(user.id);
+  const ordersWithItemsAndPayment = await getOrdersByUserId(user.id);
 
-  console.log(orders);
+  console.log(ordersWithItemsAndPayment);
+
   return (
     <div className="flex flex-1 flex-col space-y-6">
       <h1 className="text-3xl font-bold text-left">Your Orders</h1>
@@ -39,47 +47,48 @@ export default async function OrdersPage() {
         View and track your book orders.
       </p>
 
-      <Table>
+      <Table className="border-2 rounded-md">
         <TableHeader>
           <TableRow>
             <TableHead>Order ID</TableHead>
             <TableHead>Date</TableHead>
-            <TableHead>Book Title</TableHead>
-            <TableHead>Quantity</TableHead>
+            <TableHead>Items</TableHead>
             <TableHead>Status</TableHead>
+            <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {orders.map((order: any) => (
+          {ordersWithItemsAndPayment.map((order: any) => (
             <TableRow key={order.id}>
               <TableCell>{order.id}</TableCell>
-              <TableCell>{order.ordered_at}</TableCell>
-              <TableCell>{order.title}</TableCell>
-              <TableCell>{order.quantity}</TableCell>
               <TableCell>
-                <Badge
-                  variant={
-                    order.status === "Delivered"
-                      ? "default"
-                      : order.status === "Shipped"
-                        ? "secondary"
-                        : "outline"
-                  }
-                >
-                  {order.status}
+                {format(new Date(order.ordered_at), "yyyy-MM-dd")}
+              </TableCell>
+              <TableCell>
+                {order.items.map((item: any) => (
+                  <div key={item.id}>
+                    {item.quantity} x {item.book?.title}
+                  </div>
+                ))}
+              </TableCell>
+              <TableCell>
+                <Badge className="text-xs text-center mx-auto line-clamp-1 " variant={"default"}>
+                  {convertStatus(order.payment.status)}
                 </Badge>
               </TableCell>
-              <Link
-                href={`/orders/${order.id}`}
-              >
-                <Button variant={"default"} size={"sm"}>View Order</Button>
-              </Link>
+              <TableCell>
+                <Link href={`/orders/${order.id}`}>
+                  <Button variant={"outline"} size={"sm"}>
+                    <div className="text-xs">View Order</div>
+                  </Button>
+                </Link>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
 
-      {orders.length === 0 && (
+      {ordersWithItemsAndPayment.length === 0 && (
         <p className="text-center text-muted-foreground">
           You haven't placed any orders yet.
         </p>

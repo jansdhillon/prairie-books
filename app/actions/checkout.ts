@@ -35,7 +35,7 @@ export const checkoutAction = async () => {
       return encodedRedirect("error", "/cart", "Your cart is empty.");
     }
 
-    // Get cart items with book details
+
     const { data: cartItems, error: cartItemsError } = await supabase
       .from("cart_items")
       .select("id, quantity, book:books(id, price, title)")
@@ -90,7 +90,7 @@ export const checkoutAction = async () => {
       return encodedRedirect("error", "/cart", "Failed to process order items.");
     }
 
-    // Clear the cart
+
     const { error: clearCartError } = await supabase
       .from("cart_items")
       .delete()
@@ -101,7 +101,7 @@ export const checkoutAction = async () => {
       return encodedRedirect("error", "/cart", "Failed to clear cart.");
     }
 
-    // Store payment information in the payments table
+
     const paymentData: Database["public"]["Tables"]["payments"]["Insert"] = {
       order_id: order.id,
       payment_intent_id: paymentIntent.id,

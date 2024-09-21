@@ -49,7 +49,7 @@ export function BookDetails({ book }: BookDetailsProps) {
       <Carousel>
         <CarouselContent>
           <Image
-            src={book.cover_img_url || "/placeholder.svg?height=400&width=300"}
+            src={book.cover_img_url || "/placeholder.png"}
             alt={book.title}
             height={400}
             width={300}

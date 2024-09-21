@@ -23,7 +23,7 @@ export const addBookAction = async (formData: FormData) => {
 
   let hasImage = false;
 
-  if (file && typeof file === 'object') {
+  if (file && typeof file === 'object' && file.size > 0) {
     const buffer = Buffer.from(await file.arrayBuffer());
     const filename = `${isbn}.png`;
     hasImage = true;
@@ -67,7 +67,7 @@ export const addBookAction = async (formData: FormData) => {
     description,
     publisher,
     language,
-    cover_img_url: hasImage ? `https://storage.googleapis.com/kathrins-books-images/${isbn}.png` : "https://storage.googleapis.com/kathrins-books-images/placeholder.png",
+    cover_img_url: hasImage ? `https://storage.googleapis.com/kathrins-books-images/${isbn}.png` : null,
     is_featured,
   };
 

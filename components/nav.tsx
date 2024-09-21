@@ -48,7 +48,7 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
 
   return (
     <header className="container mx-auto bg-accent/30 backdrop-blur-sm fixed top-0 left-0 right-0 z-50 border-b">
-      <div className="flex items-center justify-around py-4">
+      <div className="flex items-center justify-evenly py-4">
         {/* Logo */}
 
         <nav className="hidden md:flex space-x-4 items-center">
