@@ -24,7 +24,7 @@ export default async function HomePage() {
       <p className="text-lg text-left"></p>
 
       {/*Featured*/}
-      <h2 className="text-2xl font-bold text-left">Featured</h2>
+      <h2 className="text-2xl font-bold text-left" id="featured">Featured</h2>
       <Separator />
       <p className="text-lg text-left text-muted-foreground">
         Handpicked weekly by Kathrin.
@@ -43,8 +43,8 @@ export default async function HomePage() {
         </Button>
       </Link>
 
-      {/* <BookDisplay books={books || []} /> */}
-      <h2 className="text-2xl font-bold text-left pt-12">About</h2>
+
+      <h2 className="text-2xl font-bold text-left pt-12" id="about">About</h2>
       <Separator />
       <div className="flex gap-10 items-center ">
         <Avatar>

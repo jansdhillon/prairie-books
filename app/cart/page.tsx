@@ -8,6 +8,7 @@ import { getCartItemsAction } from "../actions/get-cart-items";
 import { removeFromCartAction } from "../actions/remove-from-cart";
 import { checkoutAction } from "../actions/checkout";
 import Link from "next/link";
+import { Table, TableBody, TableCell, TableHead, TableRow } from "@/components/ui/table";
 
 
 export default async function CartPage() {
@@ -25,7 +26,7 @@ export default async function CartPage() {
 
   if (cartItems.length === 0) {
     return (
-      <div className="container mx-auto p-6">
+      <div className="container mx-auto p-6 flex  w-full justify-center">
         <h2 className="text-xl font-semibold">Your cart is empty.</h2>
       </div>
     );
@@ -38,41 +39,41 @@ export default async function CartPage() {
   );
 
   return (
-    <div className="container mx-auto p-6">
-      <h2 className="text-xl font-semibold mb-4">Your Cart</h2>
-      <table className="table-auto w-full mb-6">
-        <thead>
-          <tr>
-            <th className="px-4 py-2 text-left">Book</th>
-            <th className="px-4 py-2 text-left">Quantity</th>
-            <th className="px-4 py-2 text-left">Price</th>
-            <th className="px-4 py-2 text-left">Total</th>
-            <th className="px-4 py-2 text-left">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
+    <div className="container mx-auto p-6 flex w-full ">
+      <h2 className=" font-semibold mb-4">Your Cart</h2>
+      <Table className="table-auto w-full mb-6">
+        <TableHead>
+          <TableRow>
+            <TableHead className="px-4 py-2 text-left">Book</TableHead>
+            <TableHead className="px-4 py-2 text-left">Quantity</TableHead>
+            <TableHead className="px-4 py-2 text-left">Price</TableHead>
+            <TableHead className="px-4 py-2 text-left">Total</TableHead>
+            <TableHead className="px-4 py-2 text-left">Actions</TableHead>
+          </TableRow>
+        </TableHead>
+        <TableBody>
           {cartItems.map((item:any) => (
-            <tr key={item.id}>
-              <td className="border px-4 py-2">{item.book.title}</td>
-              <td className="border px-4 py-2">{item.quantity}</td>
-              <td className="border px-4 py-2">
+            <TableRow key={item.id}>
+              <TableCell className="border px-4 py-2">{item.book.title}</TableCell>
+              <TableCell className="border px-4 py-2">{item.quantity}</TableCell>
+              <TableCell className="border px-4 py-2">
                 ${item.book.price.toFixed(2)}
-              </td>
-              <td className="border px-4 py-2">
+              </TableCell>
+              <TableCell className="border px-4 py-2">
                 ${(item.book.price * item.quantity).toFixed(2)}
-              </td>
-              <td className="border px-4 py-2">
+              </TableCell>
+              <TableCell className="border px-4 py-2">
                 <form action={removeFromCartAction}>
                   <input type="hidden" name="cartItemId" value={item.id} />
                   <Button type="submit" variant="destructive">
                     Remove
                   </Button>
                 </form>
-              </td>
-            </tr>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">
           Total: ${totalAmount.toFixed(2)}

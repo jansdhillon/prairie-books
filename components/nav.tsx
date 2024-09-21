@@ -19,12 +19,11 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 
 const navItems = [
-  { href: "#featured", label: "Featured" },
-  { href: "#new", label: "New" },
-  { href: "#all", label: "All" },
-  { href: "#about", label: "About" },
-  { href: "#orders", label: "Orders" },
-  { href: "#contact", label: "Contact" },
+  { href: "/#featured", label: "Featured" },
+  { href: "/books", label: "All Books" },
+  // { href: "/#about", label: "About" },
+  { href: "/orders", label: "Orders" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
@@ -49,21 +48,16 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
 
   return (
     <header className="container mx-auto bg-accent/30 backdrop-blur-sm fixed top-0 left-0 right-0 z-50 border-b">
-      <div className="flex items-center justify-evenly py-4">
+      <div className="flex items-center justify-around py-4">
         {/* Logo */}
-        <Link
-          href="/"
-          className="text-primary text-base line-clamp-1  font-bold tracking-wide hover:text-muted-foreground"
-        >
-          Kathrin's Books 📚
-        </Link>
 
-        <nav className="hidden md:flex space-x-5 items-center">
-          {navItems.map((item) => (
-            <NavLink key={item.href} href={item.href}>
-              {item.label}
-            </NavLink>
-          ))}
+        <nav className="hidden md:flex space-x-4 items-center">
+          <Link
+            href="/"
+            className="text-primary text-base line-clamp-1  font-bold tracking-wide hover:text-muted-foreground"
+          >
+            Kathrin's Books 📚
+          </Link>
           <div className="relative">
             <Input
               placeholder="Search books..."
@@ -77,10 +71,16 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
               size={10}
             />
           </div>
+          {navItems.map((item) => (
+            <NavLink key={item.href} href={item.href}>
+              {item.label}
+            </NavLink>
+          ))}
+
           {/* Search Button */}
-          <Button onClick={handleSearch} variant="outline" size={"sm"}>
+          {/* <Button onClick={handleSearch} variant="outline" size={"sm"}>
             Search
-          </Button>
+          </Button> */}
         </nav>
 
         <div className="flex items-center md:hidden">
@@ -100,7 +100,6 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
                     <Separator className="my-2" />
                   </div>
                 ))}
-                {/* Search Input in Mobile Menu */}
                 <div className="relative">
                   <Input
                     placeholder="Search books..."
@@ -111,15 +110,15 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
                   />
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
                 </div>
-                <Button onClick={handleSearch} variant="ghost" size={"sm"}>
+                {/* <Button onClick={handleSearch} variant="ghost" size={"sm"}>
                   Search
-                </Button>
+                </Button> */}
               </div>
             </SheetContent>
           </Sheet>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           {headerAuth}
           <ThemeSwitcher />
         </div>

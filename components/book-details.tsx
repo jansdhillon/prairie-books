@@ -61,11 +61,11 @@ export function BookDetails({ book }: BookDetailsProps) {
       </Carousel>
 
       <div className="flex items-center gap-4 justify-between">
-        <div className="flex flex-col">
+        <div className="flex flex-col w-full">
           <CardHeader className="text-muted-foreground">
             <div className="flex flex-col md:flex-row gap-8">
               <div className="flex-1">
-                <div className="flex items-center justify-between">
+                <div className="flex items-baseline justify-between">
                     <CardTitle className="text-3xl font-semibold text-primary mb-4">
                       {book.title}
                     </CardTitle>

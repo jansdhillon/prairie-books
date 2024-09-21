@@ -8,11 +8,6 @@ import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 
 export default function AddBookForm({addBookAction}: {addBookAction: (formData: FormData) => void;}) {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    addBookAction(formData);
-  }
 
   return (
     <form action={addBookAction} className="space-y-8 max-w-2xl mx-auto">
@@ -49,6 +44,10 @@ export default function AddBookForm({addBookAction}: {addBookAction: (formData: 
         <div className="space-y-2">
           <Label htmlFor="genre">Genre</Label>
           <Input type="text" name="genre" id="genre" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="Publication Date">Publication Date</Label>
+          <Input type="date" name="publication-date" id="publication-date" />
         </div>
         <div className="space-y-2">
           <Label htmlFor="publisher">Publisher</Label>

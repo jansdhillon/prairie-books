@@ -24,7 +24,9 @@ const BookDisplay = ({ books }: { books: BookType[] }) => {
       <Carousel>
         <CarouselContent>
           {books.map((book: BookType) => (
-            <Book key={book.id} book={book} />
+            <CarouselItem className="flex flex-col md:basis-1/2 lg:basis-1/3 rounded-xl">
+              <Book key={book.id} book={book} />
+            </CarouselItem>
           ))}
         </CarouselContent>
         <CarouselPrevious />

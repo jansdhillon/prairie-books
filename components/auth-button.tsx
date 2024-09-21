@@ -12,7 +12,6 @@ export default async function AuthButton() {
 
   return user ? (
     <div className="flex items-center gap-4">
-      <Input placeholder="Search books..." />
       <Link href="/cart">
         <Button variant={"outline"}>
           <ShoppingCart className="h-4" />

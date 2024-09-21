@@ -8,7 +8,7 @@ export const NavLink = ({ href, children, onClick = () => {} }: any) => {
 
     return (
       <Link
-        href={pathname === "/" ? href : `/${href}`}
+        href={href}
         className={`text-sm font-semibold hover:text-primary  transition-colors ${
           isActive ? "text-primary" : "text-muted-foreground"
         }`}
