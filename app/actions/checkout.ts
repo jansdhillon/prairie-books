@@ -23,7 +23,7 @@ export const checkoutAction = async () => {
 
     const userId = user.id;
 
-    // Get the user's cart
+
     const { data: cart, error: cartError } = await supabase
       .from("cart")
       .select("id")
@@ -46,21 +46,21 @@ export const checkoutAction = async () => {
       return encodedRedirect("error", "/cart", "Your cart is empty.");
     }
 
-    // Calculate total amount
+
     const amount = cartItems.reduce((total, item) => {
       return total + item.quantity * fixOneToOne(item?.book)?.price;
     }, 0);
 
-    // Create a PaymentIntent with Stripe
+
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(amount * 100), // Convert to cents
+      amount: Math.round(amount * 100),
       currency: "cad",
       metadata: {
         user_id: userId,
       },
     });
 
-    // Create an order
+
     const { data: order, error: orderError } = await supabase
       .from("orders")
       .insert({

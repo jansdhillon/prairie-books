@@ -27,7 +27,6 @@ export const addToCartAction = async (formData: FormData) => {
 
     const userId = user.id;
 
-    // Get or create the user's cart
     let { data: cart, error: cartError } = await supabase
       .from("cart")
       .select("*")
@@ -35,7 +34,6 @@ export const addToCartAction = async (formData: FormData) => {
       .single();
 
     if (cartError && cartError.code === "PGRST116") {
-      // Cart does not exist, create one
       const { data: newCart, error: newCartError } = await supabase
         .from("cart")
         .insert({ user_id: userId })
@@ -67,7 +65,6 @@ export const addToCartAction = async (formData: FormData) => {
     }
 
     if (existingCartItem) {
-      // Update quantity
       const { error: updateError } = await supabase
         .from("cart_items")
         .update({ quantity: existingCartItem.quantity + quantity })
@@ -78,7 +75,6 @@ export const addToCartAction = async (formData: FormData) => {
         return encodedRedirect("error", "/books", "Failed to update cart item.");
       }
     } else {
-      // Add new item to cart
       const { error: insertError } = await supabase.from("cart_items").insert({
         cart_id: cart.id,
         book_id: bookId,

@@ -10,33 +10,26 @@ import {
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { getOrdersByUserId } from "../actions/get-orders";
+import { redirect } from "next/navigation";
+import { createClient } from "@/utils/supabase/server";
 
-// Mock data for orders
-const orders = [
-  {
-    id: "1",
-    date: "2023-06-01",
-    title: "The Great Gatsby",
-    quantity: 1,
-    status: "Delivered",
-  },
-  {
-    id: "2",
-    date: "2023-06-15",
-    title: "To Kill a Mockingbird",
-    quantity: 2,
-    status: "Shipped",
-  },
-  {
-    id: "3",
-    date: "2023-06-30",
-    title: "1984",
-    quantity: 1,
-    status: "Processing",
-  },
-];
 
-export default function OrdersPage() {
+export default async function OrdersPage() {
+
+  const supabase = createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return redirect("/sign-in");
+  }
+
+  const orders = await getOrdersByUserId(user.id);
+
+  console.log(orders);
   return (
     <div className="flex flex-1 flex-col space-y-6">
       <h1 className="text-3xl font-bold text-left">Your Orders</h1>
@@ -57,10 +50,10 @@ export default function OrdersPage() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {orders.map((order) => (
+          {orders.map((order: any) => (
             <TableRow key={order.id}>
               <TableCell>{order.id}</TableCell>
-              <TableCell>{order.date}</TableCell>
+              <TableCell>{order.ordered_at}</TableCell>
               <TableCell>{order.title}</TableCell>
               <TableCell>{order.quantity}</TableCell>
               <TableCell>

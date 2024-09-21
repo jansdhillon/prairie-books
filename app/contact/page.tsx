@@ -1,14 +1,19 @@
-import { Separator } from "@/components/ui/separator"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { Mail, Phone, MapPin } from "lucide-react"
-import { sendEmail } from "../actions/send-email"
+"use client";
+import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Mail, Phone, MapPin } from "lucide-react";
+import { sendEmail } from "../actions/send-email";
 
 export default function ContactPage() {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    sendEmail(formData);
+  };
   return (
-
     <div className="flex flex-1 flex-col space-y-6">
       <h1 className="text-3xl font-bold text-left">Contact Us</h1>
       <Separator />
@@ -33,20 +38,31 @@ export default function ContactPage() {
           </div>
         </div>
 
-        <form className="space-y-4" action={sendEmail}>
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-2">
             <Label htmlFor="name">Name</Label>
-            <Input id="name" placeholder="Your name" required />
+            <Input id="name" name="name" placeholder="Your name" required />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="Your email address" required />
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="Your email address"
+              required
+            />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="message">Message</Label>
-            <Textarea id="message" placeholder="Your message" required />
+            <Textarea
+              id="message"
+              name="message"
+              placeholder="Your message"
+              required
+            />
           </div>
 
           <Button type="submit" className="w-full">
@@ -55,5 +71,5 @@ export default function ContactPage() {
         </form>
       </div>
     </div>
-  )
+  );
 }
