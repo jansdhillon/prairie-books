@@ -33,12 +33,16 @@ export function Book({ book }: BookProps) {
     });
   };
 
+  const coverImage = book.images_directory
+    ? `${book.images_directory}image-1.png`
+    : "/placeholder.png";
+
   return (
     <Card className="flex flex-col justify-between h-full bg-secondary/50 backdrop-blur-sm">
       <CardHeader className="text-muted-foreground">
         <div className="relative w-full h-[400px]  my-5">
           <Image
-            src={book.cover_img_url || "/placeholder.png"}
+            src={coverImage}
             alt={book.title}
             fill
             className="object-contain rounded-lg"

@@ -18,37 +18,38 @@ export const addBookAction = async (formData: FormData) => {
   const description = formData.get("description")?.toString().trim() || null;
   const publisher = formData.get("publisher")?.toString().trim() || null;
   const language = formData.get("language")?.toString().trim() || null;
-  const file = formData.get("book-cover");
+  const files = formData.getAll("book-covers") as File[];
   const is_featured = formData.get("is-featured") === "true";
+  const edition = formData.get("edition")?.toString().trim() || null;
 
-  let hasImage = false;
 
-  if (file && typeof file === 'object' && file.size > 0) {
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const filename = `${isbn}.png`;
-    hasImage = true;
+  const directoryPath = `${isbn}/`;
 
-    console.log("filename", filename);
-    try {
-      const bucketName = "kathrins-books-images";
 
-      const storage = new Storage();
 
-      const uploadFile = async () => {
-        await storage.bucket(bucketName).file(filename).save(buffer);
+  const bucketName = "kathrins-books-images";
 
-      };
+  const storage = new Storage();
 
-      const data = await uploadFile();
+  if (files.length > 0) {
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (file && typeof file === "object" && file.size > 0) {
+        const buffer = Buffer.from(await file.arrayBuffer());
+        const filename = `${directoryPath}image-${i + 1}.png`;
 
-    } catch (error) {
-      console.log("Error occured ", error);
+        try {
+          const uploadFile = async () => {
+            await storage.bucket(bucketName).file(filename).save(buffer);
+          };
+
+          await uploadFile();
+        } catch (error) {
+          console.log("Error occurred while uploading file:", error);
+        }
+      }
     }
-
-
   }
-
-
 
   if (!title || !author || !isbn || price === null || isNaN(price)) {
     return encodedRedirect(
@@ -67,7 +68,7 @@ export const addBookAction = async (formData: FormData) => {
     description,
     publisher,
     language,
-    cover_img_url: hasImage ? `https://storage.googleapis.com/kathrins-books-images/${isbn}.png` : null,
+    images_directory: `https://storage.googleapis.com/${bucketName}/${directoryPath}`,
     is_featured,
   };
 

@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import {
   Carousel,
   CarouselContent,
+  CarouselItem,
   CarouselNext,
   CarouselPrevious,
 } from "./ui/carousel";
@@ -29,6 +30,16 @@ type BookDetailsProps = {
 export function BookDetails({ book }: BookDetailsProps) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+
+  const coverImage = book.images_directory
+    ? `${book.images_directory}image-1.png`
+    : "/placeholder.png";
+
+  const additionalImages = book.images_directory
+    ? Array.from({ length: 3 }).map(
+        (_, i) => `${book.images_directory}image-${i + 2}.png`
+      )
+    : [];
 
   const handleAddToCart = () => {
     startTransition(() => {
@@ -48,13 +59,30 @@ export function BookDetails({ book }: BookDetailsProps) {
       </div>
       <Carousel>
         <CarouselContent>
-          <Image
-            src={book.cover_img_url || "/placeholder.png"}
-            alt={book.title}
-            height={400}
-            width={300}
-            className="rounded-lg"
-          />
+          {/* Main Book Cover Image */}
+          <CarouselItem>
+            <Image
+              src={coverImage}
+              alt={book.title}
+              height={400}
+              width={300}
+              className="rounded-lg"
+            />
+          </CarouselItem>
+
+          {/* Additional Images if Available */}
+          {additionalImages.length > 0 &&
+            additionalImages.map((imgSrc, index) => (
+              <CarouselItem key={index}>
+                <Image
+                  src={imgSrc}
+                  alt={`${book.title} additional image ${index + 1}`}
+                  height={400}
+                  width={300}
+                  className="rounded-lg"
+                />
+              </CarouselItem>
+            ))}
         </CarouselContent>
         <CarouselPrevious />
         <CarouselNext />
@@ -77,7 +105,9 @@ export function BookDetails({ book }: BookDetailsProps) {
                 <div className="flex items-center justify-between">
                   <div>
                     <p>
-                      <span className="text-primary font-semibold">Author:</span>{" "}
+                      <span className="text-primary font-semibold">
+                        Author:
+                      </span>{" "}
                       {book.author}
                     </p>
                     <p>
@@ -88,8 +118,13 @@ export function BookDetails({ book }: BookDetailsProps) {
                       <span className="text-primary font-semibold">Genre:</span>{" "}
                       {book.genre || "Not specified"}
                     </p>
-                    <p> <span className="text-primary font-semibold">Publication Date:</span>{" "}
-                    {book.publication_date || "Not specified"}</p>
+                    <p>
+                      {" "}
+                      <span className="text-primary font-semibold">
+                        Publication Date:
+                      </span>{" "}
+                      {book.publication_date || "Not specified"}
+                    </p>
                   </div>
                   <Button
                     onClick={handleAddToCart}

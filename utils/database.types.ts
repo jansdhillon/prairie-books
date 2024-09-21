@@ -12,7 +12,7 @@ export type Database = {
       books: {
         Row: {
           author: string
-          cover_img_url: string | null
+          images_directory?: string | null
           description: string | null
           genre: string | null
           id: string
@@ -24,10 +24,11 @@ export type Database = {
           publisher: string | null
           title: string
           publication_date: string | null
+          edition: string | null
         }
         Insert: {
           author: string
-          cover_img_url?: string | null
+          images_directory?: string | null
           description?: string | null
           genre?: string | null
           id?: string
@@ -38,10 +39,11 @@ export type Database = {
           product_id?: string | null
           publisher?: string | null
           title: string
+          edition?: string | null
         }
         Update: {
           author?: string
-          cover_img_url?: string | null
+          images_directory?: string | null
           description?: string | null
           genre?: string | null
           id?: string
@@ -52,6 +54,7 @@ export type Database = {
           product_id?: string | null
           publisher?: string | null
           title?: string
+          edition?: string | null
         }
         Relationships: [
           {

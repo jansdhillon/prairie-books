@@ -63,7 +63,7 @@ export default async function OrderDetailsPage({
               {order.items?.map((item: any) => (
                 <div key={item.id} className="flex items-center space-x-4">
                   <Image
-                    src={item.book?.cover_img_url || "/placeholder.png"}
+                    src={item.book?.images_directory[0] || "/placeholder.png"}
                     alt={item.book?.title}
                     height={100}
                     width={75}

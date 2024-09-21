@@ -54,12 +54,17 @@ export default function AddBookForm({addBookAction}: {addBookAction: (formData: 
           <Input type="text" name="publisher" id="publisher" />
         </div>
         <div className="space-y-2">
+          <Label htmlFor="edition">Edition</Label>
+          <Input type="text" name="edition" id="edition" />
+        </div>
+
+        <div className="space-y-2">
           <Label htmlFor="language">Language</Label>
           <Input type="text" name="language" id="language" />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="book-cover">Cover Image</Label>
-          <Input type="file" name="book-cover" id="book-cover" accept="image/*" />
+          <Label htmlFor="images">Images</Label>
+          <Input type="file" name="images" id="images" accept="image/*" multiple />
         </div>
       </div>
 
