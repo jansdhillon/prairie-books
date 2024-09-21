@@ -36,11 +36,11 @@ export const addBookAction = async (formData: FormData) => {
 
       const uploadFile = async () => {
         await storage.bucket(bucketName).file(filename).save(buffer);
-        console.log(`${filename} uploaded to ${bucketName}`);
+
       };
 
       const data = await uploadFile();
-      console.log("data", data);
+
     } catch (error) {
       console.log("Error occured ", error);
     }

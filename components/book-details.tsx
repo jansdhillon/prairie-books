@@ -75,13 +75,13 @@ export function BookDetails({ book }: BookDetailsProps) {
                 </div>
                 <Separator className="my-4" />
                 <div className="space-y-3">
-                  <p>Author: {book.author}</p>
-                  <p>ISBN: {book.isbn}</p>
-                  <p>Genre: {book.genre || "Not specified"}</p>
+                  <p><span className="text-primary font-semibold">Author:</span> {book.author}</p>
+                  <p><span className="text-primary font-semibold">ISBN:</span> {book.isbn}</p>
+                  <p><span className="text-primary font-semibold">Genre:</span> {book.genre || "Not specified"}</p>
                 </div>
                 <div className="mt-6">
-                  <h3 className="text-xl font-semibold mb-2">Description</h3>
-                  <p className="text-primary">
+                  <h3 className="text-xl font-semibold mb-2 text-primary">Description</h3>
+                  <p className="">
                     {book.description || "No description available."}
                   </p>
                 </div>

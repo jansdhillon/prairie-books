@@ -5,6 +5,9 @@ import { Separator } from "@/components/ui/separator";
 import { getFeaturedBooks } from "./actions/get-featured-books";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ArrowBigRight, ArrowRightIcon } from "lucide-react";
 
 export default async function HomePage() {
   const books = await fetchBooks();
@@ -14,7 +17,6 @@ export default async function HomePage() {
     return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
   });
 
-  console.log(sortedBooks);
 
   return (
     <div className="flex flex-1  flex-col space-y-6 ">
@@ -30,30 +32,27 @@ export default async function HomePage() {
 
       <BookDisplay books={featuredBooks || []} />
 
-      <h2 className="text-2xl font-bold text-left ">New</h2>
+      <h2 className="text-2xl font-bold text-left pt-12">All Books</h2>
       <Separator />
-      <p className="text-base text-left text-muted-foreground">
-        The latest books added to the collection.
-      </p>
 
-      <BookDisplay books={sortedBooks || []} />
+      <Link href="/books">
+        <Button variant={"outline"} className="space-x-2">
+          {" "}
+          <div>Explore Kathrin's entire store </div>
+          <ArrowRightIcon />
+        </Button>
+      </Link>
 
-      <h2 className="text-2xl font-bold text-left ">All Books</h2>
+      {/* <BookDisplay books={books || []} /> */}
+      <h2 className="text-2xl font-bold text-left pt-12">About</h2>
       <Separator />
-      <p className="text-base text-left text-muted-foreground">
-        Explore Kathrin's entire store.
-      </p>
-
-      <BookDisplay books={books || []} />
-      <h2 className="text-2xl font-bold text-left ">About</h2>
-      <Separator />
-      <div className="flex gap-10 items-center">
+      <div className="flex gap-10 items-center ">
         <Avatar>
           <AvatarImage
             src="/kathrin.png"
             alt="Kathrin Dhillon"
             width={50}
-        height={50}
+            height={50}
             className=" rounded-full"
           />
           <AvatarFallback>KD</AvatarFallback>

@@ -6,6 +6,7 @@ import Link from "next/link";
 import "./globals.css";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
+import Head from "next/head";
 
 const defaultUrl = process.env.NODE_ENV === "production" ? "https://kathrinsbooks.com" : "http://localhost:3000";
 
@@ -30,8 +31,8 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <div className="flex min-h-screen flex-col">
-            <Nav />
-            <main className="flex-1">
+            <Nav headerAuth={<HeaderAuth/>} />
+            <main className="flex-1 mt-20">
               <div className="container  mx-auto max-w-5xl px-4 py-8">
                 {children}
               </div>
