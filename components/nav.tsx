@@ -19,11 +19,11 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 
 const navItems = [
-  { href: "/#featured", label: "Featured" },
   { href: "/books", label: "All Books" },
   // { href: "/#about", label: "About" },
   { href: "/orders", label: "Orders" },
   { href: "/contact", label: "Contact" },
+  { href: "/admin", label: "Admin" },
 ];
 
 export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
@@ -47,17 +47,18 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
   };
 
   return (
-    <header className="container mx-auto bg-accent/30 backdrop-blur-sm fixed top-0 left-0 right-0 z-50 border-b">
-      <div className="flex items-center justify-evenly py-4">
+    <header className="container mx-auto bg-secondary/50 backdrop-blur-sm fixed top-0 left-0 right-0 z-50 border-b">
+      <div className="flex items-center justify-around py-4">
         {/* Logo */}
-
-        <nav className="hidden md:flex space-x-4 items-center">
-          <Link
+        <Link
             href="/"
-            className="text-primary text-base line-clamp-1  font-bold tracking-wide hover:text-muted-foreground"
+            className="text-primary text-base font-bold line-clamp-1  tracking-widest hover:text-muted-foreground"
           >
-            Kathrin's Books 📚
+            Kathrin's Books
           </Link>
+
+        <nav className="hidden md:flex space-x-4 items-center ">
+
           <div className="relative">
             <Input
               placeholder="Search books..."
@@ -84,6 +85,7 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
         </nav>
 
         <div className="flex items-center md:hidden">
+
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="ml-2">

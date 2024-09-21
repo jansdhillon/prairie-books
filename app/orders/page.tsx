@@ -43,46 +43,48 @@ export default async function OrdersPage() {
         View and track your book orders.
       </p>
 
-      <Table className="border-2 rounded-md">
-        <TableHeader>
-          <TableRow>
-            <TableHead>Order ID</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead>Items</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {ordersWithItemsAndPayment.map((order: any) => (
-            <TableRow key={order.id}>
-              <TableCell>{order.id}</TableCell>
-              <TableCell>
-                {format(new Date(order.ordered_at), "yyyy-MM-dd")}
-              </TableCell>
-              <TableCell>
-                {order.items.map((item: any) => (
-                  <div key={item.id}>
-                    {item.quantity} x {item.book?.title}
-                  </div>
-                ))}
-              </TableCell>
-              <TableCell>
-                <Badge className="text-xs text-center mx-auto line-clamp-1 " variant={"default"}>
-                  {convertStatus(order.payment.status)}
-                </Badge>
-              </TableCell>
-              <TableCell>
-                <Link href={`/orders/${order.id}`}>
-                  <Button variant={"outline"} size={"sm"}>
-                    <div className="text-xs">View Order</div>
-                  </Button>
-                </Link>
-              </TableCell>
+      <div className="rounded-xl">
+        <Table className="border-2 ">
+          <TableHeader>
+            <TableRow>
+              <TableHead>Order ID</TableHead>
+              <TableHead>Date</TableHead>
+              <TableHead>Items</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {ordersWithItemsAndPayment.map((order: any) => (
+              <TableRow key={order.id}>
+                <TableCell>{order.id}</TableCell>
+                <TableCell>
+                  {format(new Date(order.ordered_at), "yyyy-MM-dd")}
+                </TableCell>
+                <TableCell>
+                  {order.items.map((item: any) => (
+                    <div key={item.id}>
+                      {item.quantity} x {item.book?.title}
+                    </div>
+                  ))}
+                </TableCell>
+                <TableCell>
+                  <Badge className="text-xs text-center mx-auto line-clamp-1 " variant={"default"}>
+                    {convertStatus(order.payment.status)}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <Link href={`/orders/${order.id}`}>
+                    <Button variant={"outline"} size={"sm"}>
+                      <div className="text-xs">View Order</div>
+                    </Button>
+                  </Link>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
 
       {ordersWithItemsAndPayment.length === 0 && (
         <p className="text-center text-muted-foreground">

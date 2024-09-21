@@ -55,7 +55,7 @@ export default function AllBooksPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col space-y-6 p-4">
+    <div className="flex flex-1 flex-col space-y-6 ">
       <h1 className="text-3xl font-bold text-left">All Books</h1>
       <Separator />
 

@@ -66,21 +66,49 @@ export function BookDetails({ book }: BookDetailsProps) {
             <div className="flex flex-col md:flex-row gap-8">
               <div className="flex-1">
                 <div className="flex items-baseline justify-between">
-                    <CardTitle className="text-3xl font-semibold text-primary mb-4">
-                      {book.title}
-                    </CardTitle>
-                    <p className="text-xl font-semibold text-primary">
-                      ${book.price.toFixed(2)}
-                    </p>
+                  <CardTitle className="text-3xl font-semibold text-primary mb-4">
+                    {book.title}
+                  </CardTitle>
+                  <p className="text-xl font-semibold text-primary">
+                    ${book.price.toFixed(2)} CAD
+                  </p>
                 </div>
                 <Separator className="my-4" />
-                <div className="space-y-3">
-                  <p><span className="text-primary font-semibold">Author:</span> {book.author}</p>
-                  <p><span className="text-primary font-semibold">ISBN:</span> {book.isbn}</p>
-                  <p><span className="text-primary font-semibold">Genre:</span> {book.genre || "Not specified"}</p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p>
+                      <span className="text-primary font-semibold">Author:</span>{" "}
+                      {book.author}
+                    </p>
+                    <p>
+                      <span className="text-primary font-semibold">ISBN:</span>{" "}
+                      {book.isbn}
+                    </p>
+                    <p>
+                      <span className="text-primary font-semibold">Genre:</span>{" "}
+                      {book.genre || "Not specified"}
+                    </p>
+                    <p> <span className="text-primary font-semibold">Publication Date:</span>{" "}
+                    {book.publication_date || "Not specified"}</p>
+                  </div>
+                  <Button
+                    onClick={handleAddToCart}
+                    disabled={isPending}
+                    size="lg"
+                  >
+                    {isPending ? (
+                      "Adding to Cart..."
+                    ) : (
+                      <>
+                        <ShoppingCart className="mr-2 h-5 w-5" /> Add to Cart
+                      </>
+                    )}
+                  </Button>
                 </div>
                 <div className="mt-6">
-                  <h3 className="text-xl font-semibold mb-2 text-primary">Description</h3>
+                  <h3 className="text-xl font-semibold mb-2 text-primary">
+                    Description
+                  </h3>
                   <p className="">
                     {book.description || "No description available."}
                   </p>
@@ -88,17 +116,7 @@ export function BookDetails({ book }: BookDetailsProps) {
               </div>
             </div>
           </CardHeader>
-          <CardFooter className="w-full flex justify-end  items-center space-x-4">
-            <Button onClick={handleAddToCart} disabled={isPending} size="lg">
-              {isPending ? (
-                "Adding to Cart..."
-              ) : (
-                <>
-                  <ShoppingCart className="mr-2 h-5 w-5" /> Add to Cart
-                </>
-              )}
-            </Button>
-          </CardFooter>
+          <CardFooter className="w-full flex justify-end  items-center space-x-4"></CardFooter>
         </div>
       </div>
     </div>

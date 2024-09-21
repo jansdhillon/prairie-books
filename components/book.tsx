@@ -34,7 +34,7 @@ export function Book({ book }: BookProps) {
   };
 
   return (
-    <Card className="flex flex-col justify-between h-full">
+    <Card className="flex flex-col justify-between h-full bg-secondary/50 backdrop-blur-sm">
       <CardHeader className="text-muted-foreground">
         <div className="relative w-full h-[400px]  my-5">
           <Image
@@ -44,7 +44,7 @@ export function Book({ book }: BookProps) {
             className="object-contain rounded-lg"
           />
         </div>
-        <CardTitle className="text-xl font-semibold text-primary">
+        <CardTitle className="text-xl font-semibold text-primary line-clamp-2 min-w-[300px]">
           {book.title}
         </CardTitle>
         <Separator />

@@ -23,6 +23,7 @@ export type Database = {
           product_id: string | null
           publisher: string | null
           title: string
+          publication_date: string | null
         }
         Insert: {
           author: string
