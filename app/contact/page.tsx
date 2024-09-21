@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Mail, Phone, MapPin } from "lucide-react"
+import { sendEmail } from "../actions/send-email"
 
 export default function ContactPage() {
   return (
+
     <div className="flex flex-1 flex-col space-y-6">
       <h1 className="text-3xl font-bold text-left">Contact Us</h1>
       <Separator />
@@ -19,7 +21,7 @@ export default function ContactPage() {
         <div className="space-y-4">
           <div className="flex items-center space-x-2">
             <Mail className="h-5 w-5 text-muted-foreground" />
-            <span>contact@kathrinsbooks.com</span>
+            <span>contact@orders.kathrinsbooks.com</span>
           </div>
           <div className="flex items-center space-x-2">
             <Phone className="h-5 w-5 text-muted-foreground" />
@@ -31,7 +33,7 @@ export default function ContactPage() {
           </div>
         </div>
 
-        <form className="space-y-4">
+        <form className="space-y-4" action={sendEmail}>
           <div className="space-y-2">
             <Label htmlFor="name">Name</Label>
             <Input id="name" placeholder="Your name" required />

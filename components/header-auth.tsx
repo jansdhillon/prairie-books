@@ -1,16 +1,11 @@
 import { signOutAction } from "@/app/actions/sign-out";
 import Link from "next/link";
-import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { createClient } from "@/utils/supabase/server";
 import {
-  Book,
   ShoppingCart,
-  User,
-  User2Icon,
-  UserCircleIcon,
 } from "lucide-react";
-import { Input } from "./ui/input";
+
 
 export default async function AuthButton() {
   const {
