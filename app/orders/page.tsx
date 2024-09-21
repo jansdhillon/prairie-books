@@ -15,13 +15,9 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { getOrderItemsByOrderId } from "../actions/get-order-items-by-order-id";
 import { format, set, sub } from "date-fns";
+import { convertStatus } from "./convert-status";
 
-export const convertStatus = (status: string) => {
-  return status
-    .split("_")
-    .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
-    .join(" ");
-};
+
 
 export default async function OrdersPage() {
   const supabase = createClient();

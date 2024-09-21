@@ -7,8 +7,9 @@ import Image from "next/image";
 import { getOrderById } from "@/app/actions/get-order-by-id";
 import Link from "next/link";
 import { getOrderItemsByOrderId } from "@/app/actions/get-order-items-by-order-id";
-import { convertStatus } from "../page";
+
 import { Badge } from "@/components/ui/badge";
+import { convertStatus } from "../convert-status";
 
 export default async function OrderDetailsPage({
   params,
