@@ -39,12 +39,12 @@ export default async function HomePage() {
         </div>
         <div className="md:w-1/2">
           <Image
-            src="/reading.png"
+            src="/book-cat2.png"
             alt="Bookshelf"
             width={350}
             height={300}
             quality={100}
-            className="rounded-xl "
+            className="rounded-xl"
           />
         </div>
       </section>

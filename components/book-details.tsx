@@ -59,30 +59,31 @@ export function BookDetails({ book }: BookDetailsProps) {
       </div>
       <Carousel>
         <CarouselContent>
-          {/* Main Book Cover Image */}
-          <CarouselItem>
-            <Image
-              src={coverImage}
-              alt={book.title}
-              height={400}
-              width={300}
-              className="rounded-lg"
-            />
+          <CarouselItem className="flex flex-col md:basis-1/2 lg:basis-1/3 rounded-xl">
+            <div className="relative w-full h-[400px]  my-5">
+              <Image
+                src={coverImage}
+                alt={book.title}
+                fill
+                className="object-contain rounded-lg"
+              />
+            </div>
           </CarouselItem>
-
-          {/* Additional Images if Available */}
-          {additionalImages.length > 0 &&
-            additionalImages.map((imgSrc, index) => (
-              <CarouselItem key={index}>
+          {additionalImages.map((image, index) => (
+            <CarouselItem
+              key={index}
+              className="flex flex-col md:basis-1/2 lg:basis-1/3 rounded-xl"
+            >
+              <div className="relative w-full h-[400px]  my-5">
                 <Image
-                  src={imgSrc}
-                  alt={`${book.title} additional image ${index + 1}`}
-                  height={400}
-                  width={300}
-                  className="rounded-lg"
+                  src={image}
+                  alt={book.title}
+                  fill
+                  className="object-contain rounded-lg"
                 />
-              </CarouselItem>
-            ))}
+              </div>
+            </CarouselItem>
+          ))}
         </CarouselContent>
         <CarouselPrevious />
         <CarouselNext />

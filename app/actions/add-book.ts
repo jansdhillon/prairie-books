@@ -18,10 +18,12 @@ export const addBookAction = async (formData: FormData) => {
   const description = formData.get("description")?.toString().trim() || null;
   const publisher = formData.get("publisher")?.toString().trim() || null;
   const language = formData.get("language")?.toString().trim() || null;
-  const files = formData.getAll("book-covers") as File[];
-  const is_featured = formData.get("is-featured") === "true";
+  const files = formData.getAll("images") as File[];
+  const is_featured = formData.get("is-featured") === "true" ? true : false;
   const edition = formData.get("edition")?.toString().trim() || null;
 
+
+  console.log(files);
 
   const directoryPath = `${isbn}/`;
 
@@ -70,6 +72,7 @@ export const addBookAction = async (formData: FormData) => {
     language,
     image_directory: `https://storage.googleapis.com/${bucketName}/${directoryPath}`,
     is_featured,
+    edition,
   };
 
   const { error } = await supabase.from("books").insert([newBook]);
@@ -91,6 +94,7 @@ export const addBookAction = async (formData: FormData) => {
       genre,
       publisher,
       language,
+      edition,
     },
   });
 
