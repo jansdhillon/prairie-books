@@ -12,57 +12,63 @@ export type Database = {
       books: {
         Row: {
           author: string
-          image_directory?: string | null
+          condition: string | null
+          created_at: string | null
           description: string | null
+          edition: string | null
           genre: string | null
           id: string
+          image_directory: string | null
           is_featured: boolean | null
           isbn: string
           language: string | null
+          num_images: number | null
+          original_release_date: string | null
           price: number
           product_id: string | null
+          publication_date: string | null
           publisher: string | null
           title: string
-          publication_date: string | null
-          edition: string | null
-          num_images: number
-          original_release_date: string | null
         }
         Insert: {
           author: string
-          image_directory?: string | null
+          condition?: string | null
+          created_at?: string | null
           description?: string | null
+          edition?: string | null
           genre?: string | null
           id?: string
+          image_directory?: string | null
           is_featured?: boolean | null
           isbn: string
           language?: string | null
+          num_images?: number | null
+          original_release_date?: string | null
           price: number
           product_id?: string | null
+          publication_date?: string | null
           publisher?: string | null
           title: string
-          edition?: string | null
-          num_images?: number
-          publication_date?: string | null
-          original_release_date?: string | null
         }
         Update: {
           author?: string
-          image_directory?: string | null
+          condition?: string | null
+          created_at?: string | null
           description?: string | null
+          edition?: string | null
           genre?: string | null
           id?: string
+          image_directory?: string | null
           is_featured?: boolean | null
           isbn?: string
           language?: string | null
+          num_images?: number | null
+          original_release_date?: string | null
           price?: number
           product_id?: string | null
+          publication_date?: string | null
           publisher?: string | null
           title?: string
-          num_images?: number
-          edition?: string | null
-          publication_date?: string | null
-          original_release_date?: string | null
         }
         Relationships: [
           {
@@ -99,7 +105,6 @@ export type Database = {
       }
       cart_items: {
         Row: {
-          book(book: any): unknown
           book_id: string
           cart_id: string
           id: string
@@ -121,7 +126,7 @@ export type Database = {
           {
             foreignKeyName: "cart_items_book_id_fkey"
             columns: ["book_id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "books"
             referencedColumns: ["id"]
           },
@@ -240,6 +245,7 @@ export type Database = {
           id: string
           order_id: string
           payment_intent_id: string
+          price_id: string | null
           status: string
           updated_at: string | null
         }
@@ -250,6 +256,7 @@ export type Database = {
           id?: string
           order_id: string
           payment_intent_id: string
+          price_id?: string | null
           status: string
           updated_at?: string | null
         }
@@ -260,6 +267,7 @@ export type Database = {
           id?: string
           order_id?: string
           payment_intent_id?: string
+          price_id?: string | null
           status?: string
           updated_at?: string | null
         }
@@ -269,6 +277,13 @@ export type Database = {
             columns: ["order_id"]
             isOneToOne: false
             referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_price_id_fkey"
+            columns: ["price_id"]
+            isOneToOne: false
+            referencedRelation: "prices"
             referencedColumns: ["id"]
           },
         ]
@@ -387,6 +402,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      order_status: "Delivered" | "Shipped" | "Ordered" | "Failed"
       pricing_type: "one_time"
     }
     CompositeTypes: {

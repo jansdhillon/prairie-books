@@ -1,19 +1,24 @@
-'use client'
+"use client";
 
-import React from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 
-export default function AddBookForm({addBookAction}: {addBookAction: (formData: FormData) => void;}) {
-
+export default function AddBookForm({
+  addBookAction,
+}: {
+  addBookAction: (formData: FormData) => void;
+}) {
   return (
     <form action={addBookAction} className="space-y-8 max-w-2xl mx-auto">
       <div className="space-y-2">
         <h2 className="text-2xl font-bold">Add New Book</h2>
-        <p className="text-muted-foreground">Fill in the details to add a new book to the store.</p>
+        <p className="text-muted-foreground">
+          Fill in the details to add a new book to the store.
+        </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -43,32 +48,46 @@ export default function AddBookForm({addBookAction}: {addBookAction: (formData: 
         </div>
         <div className="space-y-2">
           <Label htmlFor="genre">Genre</Label>
-          <Input type="text" name="genre" id="genre" />
+          <Input type="text" name="genre" id="genre" placeholder="Horror" />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="publisher">Publisher</Label>
+          <Input type="text" name="publisher" id="publisher"placeholder="Penguin" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="edition">Edition</Label>
+          <Input type="text" name="edition" id="edition" placeholder="First" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="condition">Condition</Label>
+          <Input type="text" name="condition" id="condition" placeholder="Like New" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="original-release-date">Original Release Date</Label>
+          <Input
+            type="date"
+            name="original-release-date"
+            id="original-release-date"
+          />
         </div>
         <div className="space-y-2">
           <Label htmlFor="Publication Date">Publication Date</Label>
           <Input type="date" name="publication-date" id="publication-date" />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="publisher">Publisher</Label>
-          <Input type="text" name="publisher" id="publisher" />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="edition">Edition</Label>
-          <Input type="text" name="edition" id="edition" />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="original-release-date">Original Release Date</Label>
-          <Input type="date" name="original-release-date" id="original-release-date" />
-        </div>
-
-        <div className="space-y-2">
           <Label htmlFor="language">Language</Label>
           <Input type="text" name="language" id="language" />
         </div>
         <div className="space-y-2">
           <Label htmlFor="images">Images</Label>
-          <Input type="file" name="images" id="images" accept="image/*" multiple />
+          <Input
+            type="file"
+            name="images"
+            id="images"
+            accept="image/*"
+            multiple
+          />
         </div>
       </div>
 
@@ -82,11 +101,11 @@ export default function AddBookForm({addBookAction}: {addBookAction: (formData: 
         <Label htmlFor="is-featured">Feature this book</Label>
       </div>
 
-      <Button type="submit" className="w-full sm:w-auto">
-        Add Book
-      </Button>
-
-
+      <div className="flex justify-end">
+        <Button type="submit" className="w-full sm:w-auto">
+          Add Book
+        </Button>
+      </div>
     </form>
-  )
+  );
 }

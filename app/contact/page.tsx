@@ -15,11 +15,11 @@ export default function ContactPage() {
   };
   return (
     <div className="flex flex-1 flex-col space-y-6">
-      <h1 className="text-3xl font-bold text-left">Contact Us</h1>
+      <h1 className="text-3xl font-bold text-left">Contact</h1>
       <Separator />
 
       <p className="text-lg text-muted-foreground">
-        Get in touch with us for any inquiries or feedback.
+        Get in touch with Kathrin for any inquiries or feedback.
       </p>
 
       <div className="grid gap-6 md:grid-cols-2">

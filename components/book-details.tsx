@@ -35,7 +35,7 @@ export function BookDetails({ book }: BookDetailsProps) {
     ? `${book.image_directory}image-1.png`
     : "/placeholder.png";
 
-  const additionalImages = book.num_images > 1 ? Array.from({ length: book.num_images - 1 }, (_, i) => `${book.image_directory}image-${i + 2}.png`) : [];
+  const additionalImages = book.num_images && book.num_images > 1 ? Array.from({ length: book.num_images - 1 }, (_, i) => `${book.image_directory}image-${i + 2}.png`) : [];
 
   const handleAddToCart = () => {
     startTransition(() => {
@@ -55,7 +55,7 @@ export function BookDetails({ book }: BookDetailsProps) {
       </div>
       <Carousel>
         <CarouselContent>
-          <CarouselItem className="flex flex-col md:basis-1/2 lg:basis-1/3 rounded-xl">
+          <CarouselItem className={`flex flex-col  rounded-xl ${book.num_images && book.num_images > 1 ? 'md:basis-1/2 lg:basis-1/3' : ''}`}>
             <div className="relative w-full h-[400px]  my-5">
               <Image
                 src={coverImage}
@@ -75,7 +75,7 @@ export function BookDetails({ book }: BookDetailsProps) {
                   src={image}
                   alt={book.title}
                   fill
-                  className="object-contain rounded-lg"
+                  className="object-contain rounded-xl"
                 />
               </div>
             </CarouselItem>
@@ -99,8 +99,8 @@ export function BookDetails({ book }: BookDetailsProps) {
                   </p>
                 </div>
                 <Separator className="my-4" />
-                <div className="flex items-center justify-between">
-                  <div>
+                <div className="flex items-start justify-between">
+                  <div className="leading-loose">
                     <p>
                       <span className="text-primary font-semibold">
                         Author:
@@ -114,6 +114,10 @@ export function BookDetails({ book }: BookDetailsProps) {
                     <p>
                       <span className="text-primary font-semibold">Genre:</span>{" "}
                       {book.genre || "Not specified"}
+                    </p>
+                    <p>
+                      <span className="text-primary font-semibold">Original Release Date:</span>{" "}
+                      {book.original_release_date || "Not specified"}
                     </p>
                     <p>
                       {" "}
@@ -132,6 +136,10 @@ export function BookDetails({ book }: BookDetailsProps) {
                     <p>
                       <span className="text-primary font-semibold">Edition:</span>{" "}
                       {book.edition || "Not specified"}
+                    </p>
+                    <p>
+                      <span className="text-primary font-semibold">Condition:</span>{" "}
+                      {book.condition || "Not specified"}
                     </p>
                   </div>
                   <Button
