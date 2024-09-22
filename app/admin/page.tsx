@@ -218,7 +218,7 @@ export default async function AdminDashboard() {
                       <TableCell>{book.author}</TableCell>
                       <TableCell>{book.edition}</TableCell>
                       <TableCell>
-                       <form onSubmit={(e) => handleSubmit(book.id, e)}>
+                       <form>
                           <Button variant={"outline"} size={"sm"} type="submit">
                             Remove
                           </Button>
