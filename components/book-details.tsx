@@ -31,13 +31,13 @@ export function BookDetails({ book }: BookDetailsProps) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
-  const coverImage = book.images_directory
-    ? `${book.images_directory}image-1.png`
+  const coverImage = book.image_directory
+    ? `${book.image_directory}image-1.png`
     : "/placeholder.png";
 
-  const additionalImages = book.images_directory
+  const additionalImages = book.image_directory
     ? Array.from({ length: 3 }).map(
-        (_, i) => `${book.images_directory}image-${i + 2}.png`
+        (_, i) => `${book.image_directory}image-${i + 2}.png`
       )
     : [];
 

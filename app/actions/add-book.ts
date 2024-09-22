@@ -54,7 +54,7 @@ export const addBookAction = async (formData: FormData) => {
   if (!title || !author || !isbn || price === null || isNaN(price)) {
     return encodedRedirect(
       "error",
-      "/protected",
+      "/",
       "Title, Author, ISBN, and Price are required and Price must be a number."
     );
   }
@@ -68,7 +68,7 @@ export const addBookAction = async (formData: FormData) => {
     description,
     publisher,
     language,
-    images_directory: `https://storage.googleapis.com/${bucketName}/${directoryPath}`,
+    image_directory: `https://storage.googleapis.com/${bucketName}/${directoryPath}`,
     is_featured,
   };
 
@@ -78,7 +78,7 @@ export const addBookAction = async (formData: FormData) => {
     console.error("Error adding book:", error.message);
     return encodedRedirect(
       "error",
-      "/protected",
+      "/",
       "Failed to add the book. Please try again."
     );
   }

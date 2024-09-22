@@ -33,8 +33,8 @@ export function Book({ book }: BookProps) {
     });
   };
 
-  const coverImage = book.images_directory
-    ? `${book.images_directory}image-1.png`
+  const coverImage = book.image_directory
+    ? `${book.image_directory}image-1.png`
     : "/placeholder.png";
 
   return (

@@ -1,31 +1,66 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
-import { BookOpen, DollarSign, ShoppingCart, Users } from "lucide-react"
-import { Book } from '@/components/book'
-import { fetchBooks } from "../actions/fetch-books"
-
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { BookOpen, DollarSign, ShoppingCart, Users } from "lucide-react";
+import { Book } from "@/components/book";
+import { fetchBooks } from "../actions/fetch-books";
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
+import { getUser } from "@/app/actions/get-user";
+import { Database } from "@/utils/database.types";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { getOrdersByUserId } from "../actions/get-orders";
 
 const salesData = [
-  { name: 'Jan', sales: 4000 },
-  { name: 'Feb', sales: 3000 },
-  { name: 'Mar', sales: 5000 },
-  { name: 'Apr', sales: 4500 },
-  { name: 'May', sales: 6000 },
-  { name: 'Jun', sales: 5500 },
-]
+  { name: "Jan", sales: 4000 },
+  { name: "Feb", sales: 3000 },
+  { name: "Mar", sales: 5000 },
+  { name: "Apr", sales: 4500 },
+  { name: "May", sales: 6000 },
+  { name: "Jun", sales: 5500 },
+];
 
-const recentOrders = [
-  { id: '1', customer: 'John Doe', total: 59.99, status: 'Delivered' },
-  { id: '2', customer: 'Jane Smith', total: 39.99, status: 'Processing' },
-  { id: '3', customer: 'Bob Johnson', total: 79.99, status: 'Shipped' },
-]
+
 
 export default async function AdminDashboard() {
+  const {
+    data: { user },
+  } = await createClient().auth.getUser();
+
+  if (!user) {
+    return redirect("/sign-in");
+  }
+
+  console.log(user);
+
+  const { userData } = await getUser(user.id);
+
+  console.log(userData);
+
+  if (userData.is_admin !== true) {
+    return redirect("/");
+  }
 
   const books = await fetchBooks();
 
+  const orders = await getOrdersByUserId(user.id);
 
   return (
     <div className="container mx-auto p-6 space-y-8">
@@ -39,7 +74,9 @@ export default async function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">$45,231.89</div>
-            <p className="text-xs text-muted-foreground">+20.1% from last month</p>
+            <p className="text-xs text-muted-foreground">
+              +20.1% from last month
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -49,7 +86,9 @@ export default async function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">2,350</div>
-            <p className="text-xs text-muted-foreground">+15% from last month</p>
+            <p className="text-xs text-muted-foreground">
+              +15% from last month
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -59,12 +98,16 @@ export default async function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">+573</div>
-            <p className="text-xs text-muted-foreground">+201 from last month</p>
+            <p className="text-xs text-muted-foreground">
+              +201 from last month
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Orders</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Pending Orders
+            </CardTitle>
             <ShoppingCart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -75,11 +118,17 @@ export default async function AdminDashboard() {
       </div>
 
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="orders">Orders</TabsTrigger>
-          <TabsTrigger value="books">Books</TabsTrigger>
-        </TabsList>
+        <div className="flex justify-between">
+          <TabsList>
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="books">Books</TabsTrigger>
+
+            <TabsTrigger value="orders">Orders</TabsTrigger>
+          </TabsList>
+          <Link href="admin/add">
+            <Button>Add Book</Button>
+          </Link>
+        </div>
         <TabsContent value="overview" className="space-y-4">
           <Card>
             <CardHeader>
@@ -114,26 +163,74 @@ export default async function AdminDashboard() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {recentOrders.map((order) => (
+                  {orders.map((order) => (
                     <TableRow key={order.id}>
                       <TableCell>{order.id}</TableCell>
-                      <TableCell>{order.customer}</TableCell>
-                      <TableCell>${order.total.toFixed(2)}</TableCell>
-                      <TableCell>{order.status}</TableCell>
+                      <TableCell>{order.user?.name}</TableCell>
+                      <TableCell>
+                        ${order.payment?.amount?.toFixed(2)}
+                      </TableCell>
+                      <TableCell>{order.payment?.status}</TableCell>
                     </TableRow>
                   ))}
+                  {orders.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={4} align={"center"}>
+                        No Orders
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </CardContent>
           </Card>
         </TabsContent>
         <TabsContent value="books" className="space-y-4">
-         {books.map((book) => (
-          <Book key={book.id} book={book} />
-        ))}
-
+          <Card>
+            <CardHeader>
+              <CardTitle>Books</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Title</TableHead>
+                    <TableHead>Price</TableHead>
+                    <TableHead>Author</TableHead>
+                    <TableHead>Edition</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {books.map((book) => (
+                    <TableRow key={book.id}>
+                      <TableCell>{book.title}</TableCell>
+                      <TableCell>
+                        ${book.price?.toFixed(2)}
+                      </TableCell>
+                      <TableCell>{book.author}</TableCell>
+                      <TableCell>
+                        <Link href={`/admin/edit/${book.id}`}>
+                          <Button variant={"outline"} size={"sm"}>
+                            Edit
+                          </Button>
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {books.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={5} align={"center"}>
+                        No Books Listed Yet
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }
