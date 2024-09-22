@@ -6,25 +6,9 @@ import { Database } from "@/utils/database.types";
 
 export type CartItemType = Database["public"]["Tables"]["cart_items"]["Row"];
 
-export const getCartItemsAction = async () => {
+export const getCartItemsAction = async (userId: string) => {
+
     const supabase = createClient();
-
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
-
-    if (userError || !user) {
-      return encodedRedirect(
-        "error",
-        "/sign-in",
-        "You must be signed in to add items to the cart."
-      );
-    }
-
-    const userId = user.id;
-
-    // Get the user's cart
     const { data: cart, error: cartError } = await supabase
       .from("cart")
       .select("id")

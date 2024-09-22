@@ -26,9 +26,8 @@ export default async function HomePage() {
             Find Your Next Page-Turner
           </h1>
           <p className="text-lg  mb-6 ">
-            Discover a curated selection of rare books. From classics to
-            modern books, Kathrin has
-            something for every reader.
+            Discover a curated selection of rare books. From classics to modern
+            books, Kathrin has something for every reader.
           </p>
           <Link href="/books">
             <Button variant={"default"} className="flex items-center space-x-2">
@@ -67,20 +66,19 @@ export default async function HomePage() {
           <Separator />
           <p className="text-md mb-6">Just posted.</p>
           <BookDisplay books={sortedBooks.slice(0, 8)} />
-
-          <Link href="/books">
-            <Button
-              variant="outline"
-              className="flex items-center justify-center space-x-2 mt-6"
-            >
-              <span>View All Books</span>
-              <ArrowRightIcon />
-            </Button>
-          </Link>
         </div>
       </section>
 
-      <section>
+      <div className="flex justify-center w-full mx-auto container">
+        <Link href="/books">
+          <Button className="flex items-center justify-center space-x-2 mt-6">
+            <span>View All Books</span>
+            <ArrowRightIcon />
+          </Button>
+        </Link>
+      </div>
+
+      {/* <section>
         <h2 className="text-3xl font-semibold mb-2">Categories</h2>
         <Separator />
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-4">
@@ -101,7 +99,7 @@ export default async function HomePage() {
             </Link>
           ))}
         </div>
-      </section>
+      </section> */}
 
       <section>
         <h2 className="text-3xl font-semibold mb-2">What Readers Are Saying</h2>

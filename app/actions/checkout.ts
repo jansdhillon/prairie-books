@@ -91,15 +91,15 @@ export const checkoutAction = async () => {
     }
 
 
-    const { error: clearCartError } = await supabase
-      .from("cart_items")
-      .delete()
-      .eq("cart_id", cart.id);
+    // const { error: clearCartError } = await supabase
+    //   .from("cart_items")
+    //   .delete()
+    //   .eq("cart_id", cart.id);
 
-    if (clearCartError) {
-      console.error("Error clearing cart:", clearCartError.message);
-      return encodedRedirect("error", "/cart", "Failed to clear cart.");
-    }
+    // if (clearCartError) {
+    //   console.error("Error clearing cart:", clearCartError.message);
+    //   return encodedRedirect("error", "/cart", "Failed to clear cart.");
+    // }
 
 
     const paymentData: Database["public"]["Tables"]["payments"]["Insert"] = {
@@ -117,6 +117,6 @@ export const checkoutAction = async () => {
       return encodedRedirect("error", "/cart", "Failed to store payment information.");
     }
 
-    return { clientSecret: paymentIntent.client_secret, dpmCheckerLink: `https://dashboard.stripe.com/settings/payment_methods/review?transaction_id=${paymentIntent.id}`}
+    return { clientSecret: paymentIntent.client_secret, dpmCheckerLink: `https://dashboard.stripe.com/settings/payment_methods/review?transaction_id=${paymentIntent.id}`, orderId: order.id };
 
   };

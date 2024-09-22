@@ -19,7 +19,9 @@ export default async function CartPage() {
   }
 
 
-  const { cartItems } = await getCartItemsAction();
+  const { cartItems } = await getCartItemsAction(user.id);
+
+  console.log("cartItems", cartItems);
 
 
   if (!cartItems || cartItems.length === 0) {

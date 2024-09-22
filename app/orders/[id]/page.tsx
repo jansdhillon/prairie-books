@@ -18,6 +18,10 @@ export default async function OrderDetailsPage({
 }) {
 
   const order = await getOrderById(params.id);
+console.log(order.items);
+
+
+
 
 
   console.log(order);
@@ -63,7 +67,9 @@ export default async function OrderDetailsPage({
               {order.items?.map((item: any) => (
                 <div key={item.id} className="flex items-center space-x-4">
                   <Image
-                    src={item.book?.image_directory[0] || "/placeholder.png"}
+                    src={item.book?.image_directory
+                      ? `${item.book.image_directory}image-1.png`
+                      : "/placeholder.png"}
                     alt={item.book?.title}
                     height={100}
                     width={75}

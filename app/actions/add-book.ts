@@ -23,9 +23,14 @@ export const addBookAction = async (formData: FormData) => {
   const edition = formData.get("edition")?.toString().trim() || null;
 
 
-  console.log(files);
+  const fileterdFiles = files.filter((file) => file.size > 0);
 
   const directoryPath = `${isbn}/`;
+
+  let hasImages = false;
+
+
+  console.log("fileterdFiles", fileterdFiles);
 
 
 
@@ -33,9 +38,10 @@ export const addBookAction = async (formData: FormData) => {
 
   const storage = new Storage();
 
-  if (files.length > 0) {
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
+  if (fileterdFiles.length > 0) {
+    hasImages = true;
+    for (let i = 0; i < fileterdFiles.length; i++) {
+      const file = fileterdFiles[i];
       if (file && typeof file === "object" && file.size > 0) {
         const buffer = Buffer.from(await file.arrayBuffer());
         const filename = `${directoryPath}image-${i + 1}.png`;
@@ -70,7 +76,7 @@ export const addBookAction = async (formData: FormData) => {
     description,
     publisher,
     language,
-    image_directory: `https://storage.googleapis.com/${bucketName}/${directoryPath}`,
+    image_directory: hasImages ? `https://storage.googleapis.com/${bucketName}/${directoryPath}` : null,
     is_featured,
     edition,
   };

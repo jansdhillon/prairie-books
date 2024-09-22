@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -19,40 +19,66 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ShoppingCart, CreditCard, Truck } from "lucide-react";
+import { CreditCard, Truck } from "lucide-react";
 import {
   LinkAuthenticationElement,
   CardElement,
   AddressElement,
   Elements,
+  useStripe,
+  useElements,
+  PaymentElement,
 } from "@stripe/react-stripe-js";
 import CheckoutForm from "@/components/checkout-form";
 import { loadStripe } from "@stripe/stripe-js";
 
-const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY ?? ""
-);
-
 export default function CheckoutWrapper({
   clientSecret,
   dpmCheckerLink,
-  cartItems,
+  orderItems,
+  payment,
 }: {
   clientSecret: string;
   dpmCheckerLink: string;
-  cartItems: any;
+  orderItems: any;
+  payment: any;
 }) {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const [message, setMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  console.log("cartItems in wrapper", cartItems);
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-  // const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
-  // const tax = subtotal * 0.08 // Assuming 8% tax rate
-  // const total = subtotal + tax
+
+    orderItems.map((item: any) => {
+      console.log("item", item);
+    });
+
+    console.log(payment);
+
+    setIsLoading(false);
+  };
+
+
+  useEffect(() => {
+    const query = new URLSearchParams(window.location.search);
+    if (query.get('success')) {
+      console.log('Order placed! You will receive an email confirmation.');
+    }
+
+    if (query.get('canceled')) {
+      console.log('Order canceled -- continue to shop around and checkout when you are ready.');
+    }
+  }, []);
+
+  console.log("orderItems in wrapper", orderItems);
+  console.log("payment in wrapper", payment);
+
 
   return (
-    <div className="container mx-auto p-6 space-y-8">
+    <form className="container mx-auto p-6 space-y-8" onSubmit={handleSubmit}>
       <Tabs defaultValue="shipping" className="space-y-4">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold">Checkout</h1>
@@ -84,20 +110,18 @@ export default function CheckoutWrapper({
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {cartItems?.map((item: any) => (
+                    {orderItems.map((item: any) => (
                       <TableRow key={item.id}>
                         <TableCell>
                           <div>
-                            <div className="font-medium">{item.title}</div>
+                            <div className="font-medium">{item.book.title}</div>
                             <div className="text-sm text-muted-foreground">
-                              {item.author}
+                              {item.book.author}
                             </div>
                           </div>
                         </TableCell>
                         <TableCell>{item.quantity}</TableCell>
-                        <TableCell>
-                          ${(item.price * item.quantity).toFixed(2)}
-                        </TableCell>
+                        <TableCell>${item.price.toFixed(2)}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -105,97 +129,62 @@ export default function CheckoutWrapper({
               </CardContent>
               <CardFooter className="flex justify-between">
                 <div>
-                  {/* <p>Subtotal: ${subtotal.toFixed(2)}</p>
-                <p>Tax: ${tax.toFixed(2)}</p>
-                <p className="font-bold">Total: ${total.toFixed(2)}</p> */}
+                  {/* You can add subtotal, tax, and total calculations here */}
                 </div>
               </CardFooter>
             </Card>
           </div>
 
-          <TabsContent value="cart">
-            <Card>
-              <CardHeader>
-                <CardTitle>Shopping Cart</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Book</TableHead>
-                      <TableHead>Quantity</TableHead>
-                      <TableHead>Price</TableHead>
-                      <TableHead>Total</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {/* {cartItems.map((item) => (
-                    <TableRow key={item.id}>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{item.title}</div>
-                          <div className="text-sm text-muted-foreground">{item.author}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell>{item.quantity}</TableCell>
-                      <TableCell>${item.price.toFixed(2)}</TableCell>
-                      <TableCell>${(item.price * item.quantity).toFixed(2)}</TableCell>
-                    </TableRow>
-                  ))} */}
-                  </TableBody>
-                </Table>
-              </CardContent>
-              <CardFooter>
-                <div className="flex justify-between w-full">
-                  <span>Total:</span>
-                  {/* <span className="font-bold">${total.toFixed(2)}</span> */}
-                </div>
-              </CardFooter>
-            </Card>
-          </TabsContent>
           <TabsContent value="payment">
             <div>
-              <Elements
-                stripe={stripePromise}
-                options={{ clientSecret: clientSecret }}
-              >
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Payment Details</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-2">
-
-                      <LinkAuthenticationElement id="email" />
-                    </div>
-                    <div className="space-y-2">
-                      <label
-                        htmlFor="card-element"
-                        className="text-sm font-medium"
-                      >
-                        Card Details
-                      </label>
-
-                      <CardElement id="card-element" />
-                    </div>
-                    <div className="space-y-2">
-                      <label
-                        htmlFor="address-element"
-                        className="text-sm font-medium"
-                      >
-                        Billing Address
-                      </label>
-
-                      <AddressElement
-                        id="address-element"
-                        options={{ mode: "billing" }}
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-              </Elements>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Payment Details</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <LinkAuthenticationElement id="email" />
+                  </div>
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="card-element"
+                      className="text-sm font-medium"
+                    >
+                      Card Details
+                    </label>
+                    <CardElement id="card-element" />
+                  </div>
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="address-element"
+                      className="text-sm font-medium"
+                    >
+                      Billing Address
+                    </label>
+                    <AddressElement
+                      id="address-element"
+                      options={{ mode: "billing" }}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </TabsContent>
+          {/* <form id="payment-form" onSubmit={handleSubmit}>
+            <PaymentElement id="payment-element" options={{ layout: "tabs" }}  />
+            <button disabled={isLoading || !stripe || !elements} id="submit">
+              <span id="button-text">
+                {isLoading ? (
+                  <div className="spinner" id="spinner"></div>
+                ) : (
+                  "Pay now"
+                )}
+              </span>
+            </button>
+
+            {message && <div id="payment-message">{message}</div>}
+          </form> */}
+
           <TabsContent value="shipping">
             <Card>
               <CardHeader>
@@ -220,12 +209,12 @@ export default function CheckoutWrapper({
                   >
                     Shipping Address
                   </label>
-                  <Elements stripe={stripePromise}>
-                    <AddressElement
-                      id="shipping-address"
-                      options={{ mode: "shipping" }}
-                    />
-                  </Elements>
+
+                  <AddressElement
+                    id="shipping-address"
+                    options={{ mode: "shipping" }}
+                    className="text-white"
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -233,8 +222,8 @@ export default function CheckoutWrapper({
         </div>
       </Tabs>
       <div className="flex justify-end">
-        <Button>Place Order</Button>
+        <Button type="submit">Place Order</Button>
       </div>
-    </div>
+    </form>
   );
 }
