@@ -35,11 +35,7 @@ export function BookDetails({ book }: BookDetailsProps) {
     ? `${book.image_directory}image-1.png`
     : "/placeholder.png";
 
-  const additionalImages = book.image_directory
-    ? Array.from({ length: 3 }).map(
-        (_, i) => `${book.image_directory}image-${i + 2}.png`
-      )
-    : [];
+  const additionalImages = book.num_images > 1 ? Array.from({ length: book.num_images - 1 }, (_, i) => `${book.image_directory}image-${i + 2}.png`) : [];
 
   const handleAddToCart = () => {
     startTransition(() => {

@@ -21,6 +21,8 @@ export const addBookAction = async (formData: FormData) => {
   const files = formData.getAll("images") as File[];
   const is_featured = formData.has("is-featured") ? true : false;
   const edition = formData.get("edition")?.toString().trim() || null;
+  const publicationDate = formData.get("publication-date")?.toString().trim() || null;
+  const originalReleaseDate = formData.get("original-release-date")?.toString().trim() || null;
 
 
   const fileterdFiles = files.filter((file) => file.size > 0);
@@ -31,6 +33,8 @@ export const addBookAction = async (formData: FormData) => {
 
 
   console.log("fileterdFiles", fileterdFiles);
+
+  const numImages = fileterdFiles.length;
 
 
 
@@ -79,6 +83,9 @@ export const addBookAction = async (formData: FormData) => {
     image_directory: hasImages ? `https://storage.googleapis.com/${bucketName}/${directoryPath}` : null,
     is_featured,
     edition,
+    publication_date: publicationDate,
+    num_images: numImages,
+    original_release_date: originalReleaseDate,
   };
 
   const { error } = await supabase.from("books").insert([newBook]);

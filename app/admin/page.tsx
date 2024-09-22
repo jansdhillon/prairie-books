@@ -27,6 +27,7 @@ import { Database } from "@/utils/database.types";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { getOrdersByUserId } from "../actions/get-orders";
+import { deleteBook } from "../actions/delete-book";
 
 const salesData = [
   { name: "Jan", sales: 4000 },
@@ -62,6 +63,12 @@ export default async function AdminDashboard() {
 
   const orders = await getOrdersByUserId(user.id);
 
+  const handleSubmit = async (bookId: string, e: any) => {
+    e.preventDefault();
+    console.log("delete book");
+    await deleteBook(bookId);
+  }
+
   return (
     <div className="container mx-auto p-6 space-y-8">
       <h1 className="text-3xl font-bold">Welcome, Kathrin!</h1>
@@ -73,9 +80,9 @@ export default async function AdminDashboard() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">$45,231.89</div>
+            <div className="text-2xl font-bold">$0</div>
             <p className="text-xs text-muted-foreground">
-              +20.1% from last month
+              +0% from last month
             </p>
           </CardContent>
         </Card>
@@ -85,9 +92,9 @@ export default async function AdminDashboard() {
             <BookOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">2,350</div>
+            <div className="text-2xl font-bold">0</div>
             <p className="text-xs text-muted-foreground">
-              +15% from last month
+              +0% from last month
             </p>
           </CardContent>
         </Card>
@@ -97,9 +104,9 @@ export default async function AdminDashboard() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+573</div>
+            <div className="text-2xl font-bold">0</div>
             <p className="text-xs text-muted-foreground">
-              +201 from last month
+              +0 from last month
             </p>
           </CardContent>
         </Card>
@@ -111,16 +118,16 @@ export default async function AdminDashboard() {
             <ShoppingCart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">24</div>
-            <p className="text-xs text-muted-foreground">-8 from yesterday</p>
+            <div className="text-2xl font-bold">0</div>
+            <p className="text-xs text-muted-foreground">+0 from yesterday</p>
           </CardContent>
         </Card>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-4">
+      <Tabs defaultValue="books" className="space-y-4">
         <div className="flex justify-between">
           <TabsList>
-            <TabsTrigger value="overview">Overview</TabsTrigger>
+            {/* <TabsTrigger value="overview">Overview</TabsTrigger> */}
             <TabsTrigger value="books">Books</TabsTrigger>
 
             <TabsTrigger value="orders">Orders</TabsTrigger>
@@ -129,14 +136,14 @@ export default async function AdminDashboard() {
             <Button>Add Book</Button>
           </Link>
         </div>
-        <TabsContent value="overview" className="space-y-4">
+        {/* <TabsContent value="overview" className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle>Sales Overview</CardTitle>
             </CardHeader>
-            <CardContent className="h-[300px]">
+            <CardContent className="h-[300px]"> */}
               {/* <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={salesData}>
+                <BarChart data={[]}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
                   <YAxis />
@@ -144,9 +151,9 @@ export default async function AdminDashboard() {
                   <Bar dataKey="sales" fill="#8884d8" />
                 </BarChart>
               </ResponsiveContainer> */}
-            </CardContent>
+            {/* </CardContent>
           </Card>
-        </TabsContent>
+        </TabsContent> */}
         <TabsContent value="orders" className="space-y-4">
           <Card>
             <CardHeader>
@@ -209,12 +216,13 @@ export default async function AdminDashboard() {
                         ${book.price?.toFixed(2)}
                       </TableCell>
                       <TableCell>{book.author}</TableCell>
+                      <TableCell>{book.edition}</TableCell>
                       <TableCell>
-                        <Link href={`/admin/edit/${book.id}`}>
-                          <Button variant={"outline"} size={"sm"}>
-                            Edit
+                       <form onSubmit={(e) => handleSubmit(book.id, e)}>
+                          <Button variant={"outline"} size={"sm"} type="submit">
+                            Remove
                           </Button>
-                        </Link>
+                        </form>
                       </TableCell>
                     </TableRow>
                   ))}

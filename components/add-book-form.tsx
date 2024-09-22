@@ -57,6 +57,10 @@ export default function AddBookForm({addBookAction}: {addBookAction: (formData: 
           <Label htmlFor="edition">Edition</Label>
           <Input type="text" name="edition" id="edition" />
         </div>
+        <div className="space-y-2">
+          <Label htmlFor="original-release-date">Original Release Date</Label>
+          <Input type="date" name="original-release-date" id="original-release-date" />
+        </div>
 
         <div className="space-y-2">
           <Label htmlFor="language">Language</Label>
