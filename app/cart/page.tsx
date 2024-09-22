@@ -42,6 +42,7 @@ export default async function CartPage({ searchParams }: { searchParams: Message
 
   return (
     <div className="flex flex-1 flex-col space-y-6">
+      <FormMessage message={searchParams} />
       <h1 className="text-3xl font-bold text-left">Your Cart</h1>
 
       <p className="text-lg text-muted-foreground">
@@ -74,11 +75,12 @@ export default async function CartPage({ searchParams }: { searchParams: Message
               <TableCell>${(item.book.price * item.quantity).toFixed(2)}</TableCell>
               <TableCell>
                 <form >
+
                   <input type="hidden" name="cartItemId" value={item.id} />
                   <SubmitButton type="submit" variant="destructive" size="sm" formAction={removeFromCartAction} pendingText="Removing...">
                     Remove
                   </SubmitButton>
-                  <FormMessage message={searchParams} />
+
                 </form>
               </TableCell>
             </TableRow>
