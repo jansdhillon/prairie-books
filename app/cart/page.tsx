@@ -47,10 +47,13 @@ export default async function CartPage() {
 
       <Table className="border-2 rounded-md">
         <TableHeader>
-          <TableRow>
+          <TableRow >
             <TableHead>Book</TableHead>
+            <TableHead>Edition</TableHead>
             <TableHead>Quantity</TableHead>
             <TableHead>Price</TableHead>
+
+            <TableHead>ISBN</TableHead>
             <TableHead>Total</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
@@ -59,8 +62,11 @@ export default async function CartPage() {
           {cartItems.map((item: any) => (
             <TableRow key={item.id}>
               <TableCell>{item.book.title}</TableCell>
+              <TableCell>{item.book.edition}</TableCell>
               <TableCell>{item.quantity}</TableCell>
               <TableCell>${item.book.price.toFixed(2)}</TableCell>
+
+              <TableCell>{item.book.isbn}</TableCell>
               <TableCell>${(item.book.price * item.quantity).toFixed(2)}</TableCell>
               <TableCell>
                 <form action={removeFromCartAction}>
