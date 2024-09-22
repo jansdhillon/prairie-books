@@ -26,8 +26,8 @@ export default async function HomePage() {
             Find Your Next Page-Turner
           </h1>
           <p className="text-lg  mb-6 ">
-            Discover a curated selection of books across all genres. Whether
-            you're into fiction, non-fiction, thrillers, or romance, we've got
+            Discover a curated selection of rare books. From classics to
+            modern books, Kathrin has
             something for every reader.
           </p>
           <Link href="/books">
@@ -107,14 +107,14 @@ export default async function HomePage() {
         <h2 className="text-3xl font-semibold mb-2">What Readers Are Saying</h2>
         <Separator />
         <div className="space-y-6 mt-6">
-          <div className="p-4 bg-secondary/50 backdrop-blur-smrounded border ">
+          <div className="p-4 bg-secondary/50 backdrop-blur-sm rounded-xl border ">
             <p className="italic">
               "An amazing selection of books! I always find something new and
               exciting."
             </p>
             <p className="mt-2 text-right font-semibold">- Griffin Sherwood</p>
           </div>
-          <div className="p-4 bg-secondary/50 backdrop-blur-sm rounded border ">
+          <div className="p-4 bg-secondary/50 backdrop-blur-sm rounded-xl border ">
             <p className="italic">
               "Kathrin's Books has become my go-to place for all my reading
               needs."
