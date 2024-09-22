@@ -159,7 +159,7 @@ export function BookDetails({ book }: BookDetailsProps) {
                   <h3 className="text-xl font-semibold mb-2 text-primary">
                     Description
                   </h3>
-                  <p className="font-base text-primary">
+                  <p className=" font-normal text-primary">
                     {book.description || "No description available."}
                   </p>
                 </div>
