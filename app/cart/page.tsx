@@ -5,8 +5,10 @@ import Link from "next/link";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { getCartItemsAction } from "../actions/get-cart-items";
 import { removeFromCartAction } from "../actions/remove-from-cart";
+import { SubmitButton } from "@/components/submit-button";
+import { FormMessage, Message } from "@/components/form-message";
 
-export default async function CartPage() {
+export default async function CartPage({ searchParams }: { searchParams: Message }) {
   const supabase = createClient();
 
   const {
@@ -71,11 +73,12 @@ export default async function CartPage() {
               <TableCell>{item.book.isbn}</TableCell>
               <TableCell>${(item.book.price * item.quantity).toFixed(2)}</TableCell>
               <TableCell>
-                <form action={removeFromCartAction}>
+                <form >
                   <input type="hidden" name="cartItemId" value={item.id} />
-                  <Button type="submit" variant="destructive" size="sm">
+                  <SubmitButton type="submit" variant="destructive" size="sm" formAction={removeFromCartAction} pendingText="Removing...">
                     Remove
-                  </Button>
+                  </SubmitButton>
+                  <FormMessage message={searchParams} />
                 </form>
               </TableCell>
             </TableRow>

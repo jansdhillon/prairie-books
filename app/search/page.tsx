@@ -4,11 +4,13 @@ import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { SearchIcon } from "lucide-react"
+import { SubmitButton } from "@/components/submit-button"
+import { FormMessage } from "@/components/form-message"
 
 export default async function SearchPage({
   searchParams,
 }: {
-  searchParams: { query: string }
+  searchParams: { query?: string, message?: string }
 }) {
   const query = searchParams.query || ""
   const books = await fetchBooks()
@@ -29,10 +31,11 @@ export default async function SearchPage({
           name="query"
           defaultValue={query}
         />
-        <Button type="submit">
+        <SubmitButton type="submit" pendingText="Searching...">
           <SearchIcon className="h-4 w-4 mr-2" />
           Search
-        </Button>
+        </SubmitButton>
+
       </form>
 
       {query && (

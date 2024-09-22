@@ -7,6 +7,7 @@ import "./globals.css";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
 import Head from "next/head";
+import Feedback from "@/components/feedback";
 
 const defaultUrl = process.env.NODE_ENV === "production" ? "https://kathrinsbooks.com" : "http://localhost:3000";
 
@@ -36,6 +37,7 @@ export default function RootLayout({
               <div className="container  mx-auto max-w-5xl px-4 py-8">
                 {children}
               </div>
+              <Feedback />
             </main>
             <Footer />
           </div>

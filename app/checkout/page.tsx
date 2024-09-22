@@ -8,8 +8,9 @@ import { getOrderById } from "../actions/get-order-by-id";
 import { Elements } from "@stripe/react-stripe-js";
 import Stripe from "stripe";
 import StripeWrapper from "./stripe-wrapper";
+import { Message } from "@/components/form-message";
 
-export default async function Page() {
+export default async function Page({ searchParams }: { searchParams: Message }) {
   const { clientSecret, dpmCheckerLink, orderId } = await checkoutAction();
 
   const supabase = createClient();

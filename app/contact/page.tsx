@@ -6,8 +6,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Mail, Phone, MapPin } from "lucide-react";
 import { sendEmail } from "../actions/send-email";
+import { FormMessage, Message } from "@/components/form-message";
+import { SubmitButton } from "@/components/submit-button";
 
-export default function ContactPage() {
+export default function ContactPage({ searchParams }: { searchParams: Message }) {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -68,10 +70,11 @@ export default function ContactPage() {
           </div>
 
           <div className="flex justify-end">
-            <Button type="submit" className="w-fit">
+            <SubmitButton type="submit" className="w-fit" pendingText="Sending...">
               Send Message
-            </Button>
+            </SubmitButton>
           </div>
+          <FormMessage message={searchParams} />
         </form>
       </div>
     </div>

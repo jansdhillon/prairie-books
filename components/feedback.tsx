@@ -1,5 +1,3 @@
-// components/Feedback.tsx
-
 "use client";
 
 import { useSearchParams } from "next/navigation";
@@ -8,6 +6,8 @@ import { Alert } from "@/components/ui/alert";
 const Feedback = () => {
   const searchParams = useSearchParams();
   const message = searchParams.get("message");
+
+  console.log("message", message);
 
   if (!message) return null;
 

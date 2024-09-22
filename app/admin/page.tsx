@@ -28,6 +28,8 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { getOrdersByUserId } from "../actions/get-orders";
 import { deleteBook } from "../actions/delete-book";
+import { FormMessage, Message } from "@/components/form-message";
+import { SubmitButton } from "@/components/submit-button";
 
 const salesData = [
   { name: "Jan", sales: 4000 },
@@ -40,7 +42,7 @@ const salesData = [
 
 
 
-export default async function AdminDashboard() {
+export default async function AdminDashboard({ searchParams }: { searchParams: Message }) {
   const {
     data: { user },
   } = await createClient().auth.getUser();
@@ -219,9 +221,10 @@ export default async function AdminDashboard() {
                       <TableCell>{book.edition}</TableCell>
                       <TableCell>
                        <form>
-                          <Button variant={"outline"} size={"sm"} type="submit">
+                          <SubmitButton variant={"outline"} size={"sm"} type="submit" disabled>
                             Remove
-                          </Button>
+                          </SubmitButton>
+                          <FormMessage message={searchParams} />
                         </form>
                       </TableCell>
                     </TableRow>

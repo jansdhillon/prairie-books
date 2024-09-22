@@ -123,5 +123,5 @@ export const addBookAction = async (formData: FormData) => {
 
   console.log(`Book ${title} added successfully.`);
 
-  return encodedRedirect("success", "/", "Book added successfully!");
+  return encodedRedirect("success", "/admin/add", "Book added successfully!");
 };

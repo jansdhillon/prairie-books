@@ -6,20 +6,27 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { SubmitButton } from "./submit-button";
+import { FormMessage, Message } from "./form-message";
 
 export default function AddBookForm({
   addBookAction,
+  searchParams,
 }: {
   addBookAction: (formData: FormData) => void;
+  searchParams: Message;
 }) {
+
+
   return (
-    <form action={addBookAction} className="space-y-8 max-w-2xl mx-auto">
+    <form className="space-y-2 max-w-2xl mx-auto" >
       <div className="space-y-2">
         <h2 className="text-2xl font-bold">Add New Book</h2>
         <p className="text-muted-foreground">
           Fill in the details to add a new book to the store.
         </p>
       </div>
+      {searchParams && <FormMessage message={searchParams} />}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
@@ -53,7 +60,12 @@ export default function AddBookForm({
 
         <div className="space-y-2">
           <Label htmlFor="publisher">Publisher</Label>
-          <Input type="text" name="publisher" id="publisher"placeholder="Penguin" />
+          <Input
+            type="text"
+            name="publisher"
+            id="publisher"
+            placeholder="Penguin"
+          />
         </div>
         <div className="space-y-2">
           <Label htmlFor="edition">Edition</Label>
@@ -61,7 +73,12 @@ export default function AddBookForm({
         </div>
         <div className="space-y-2">
           <Label htmlFor="condition">Condition</Label>
-          <Input type="text" name="condition" id="condition" placeholder="Like New" />
+          <Input
+            type="text"
+            name="condition"
+            id="condition"
+            placeholder="Like New"
+          />
         </div>
         <div className="space-y-2">
           <Label htmlFor="original-release-date">Original Release Date</Label>
@@ -102,9 +119,14 @@ export default function AddBookForm({
       </div>
 
       <div className="flex justify-end">
-        <Button type="submit" className="w-full sm:w-auto">
+        <SubmitButton
+          type="submit"
+          className="w-full sm:w-auto"
+          formAction={addBookAction}
+
+        >
           Add Book
-        </Button>
+        </SubmitButton>
       </div>
     </form>
   );
