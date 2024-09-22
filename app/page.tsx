@@ -127,7 +127,7 @@ export default async function HomePage() {
       <section>
         <h2 className="text-3xl font-semibold mb-2">About</h2>
         <Separator />
-        <div className="flex leading-loose items-center  gap-4 p-4  mt-4 ">
+        <div className="flex leading-loose items-center  gap-5 mt-4 ">
           <Avatar>
             <AvatarImage
               src="/kathrin.png"

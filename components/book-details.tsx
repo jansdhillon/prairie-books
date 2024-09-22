@@ -126,6 +126,17 @@ export function BookDetails({ book }: BookDetailsProps) {
                       </span>{" "}
                       {book.publication_date || "Not specified"}
                     </p>
+                    <p>
+                      {" "}
+                      <span className="text-primary font-semibold">
+                        Publisher:
+                      </span>{" "}
+                      {book.publisher || "Not specified"}
+                    </p>
+                    <p>
+                      <span className="text-primary font-semibold">Edition:</span>{" "}
+                      {book.edition || "Not specified"}
+                    </p>
                   </div>
                   <Button
                     onClick={handleAddToCart}

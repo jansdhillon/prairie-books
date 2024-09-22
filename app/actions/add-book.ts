@@ -19,7 +19,7 @@ export const addBookAction = async (formData: FormData) => {
   const publisher = formData.get("publisher")?.toString().trim() || null;
   const language = formData.get("language")?.toString().trim() || null;
   const files = formData.getAll("images") as File[];
-  const is_featured = formData.get("is-featured") === "true" ? true : false;
+  const is_featured = formData.has("is-featured") ? true : false;
   const edition = formData.get("edition")?.toString().trim() || null;
 
 
@@ -99,7 +99,7 @@ export const addBookAction = async (formData: FormData) => {
   });
 
   const stripePrice = await stripe.prices.create({
-    unit_amount: price,
+    unit_amount: Math.round(price * 100),
     currency: "cad",
     product: product.id,
   });
