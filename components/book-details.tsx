@@ -81,8 +81,7 @@ export function BookDetails({ book }: BookDetailsProps) {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
+        {book && (book.num_images ?? 0) > 1 && ( <><CarouselPrevious /><CarouselNext /></>)}
       </Carousel>
 
       <div className="flex items-center gap-4 justify-between">

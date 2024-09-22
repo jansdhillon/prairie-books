@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,17 +16,32 @@ export default function AddBookForm({
   addBookAction: (formData: FormData) => void;
   searchParams: Message;
 }) {
+  const formRef = useRef<HTMLFormElement>(null);
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const formData = new FormData(formRef.current!);
+    await addBookAction(formData);
+
+    if (formRef.current) {
+      formRef.current.reset();
+    }
+  };
 
   return (
-    <form className="space-y-2 max-w-2xl mx-auto" >
+    <form
+      className="space-y-2 max-w-2xl mx-auto"
+      ref={formRef}
+      onSubmit={handleSubmit}
+    >
+      {searchParams && <FormMessage message={searchParams} />}
       <div className="space-y-2">
         <h2 className="text-2xl font-bold">Add New Book</h2>
         <p className="text-muted-foreground">
           Fill in the details to add a new book to the store.
         </p>
       </div>
-      {searchParams && <FormMessage message={searchParams} />}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
@@ -89,7 +104,7 @@ export default function AddBookForm({
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="Publication Date">Publication Date</Label>
+          <Label htmlFor="publication-date">Publication Date</Label>
           <Input type="date" name="publication-date" id="publication-date" />
         </div>
         <div className="space-y-2">
@@ -123,7 +138,6 @@ export default function AddBookForm({
           type="submit"
           className="w-full sm:w-auto"
           formAction={addBookAction}
-
         >
           Add Book
         </SubmitButton>
