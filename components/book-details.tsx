@@ -10,10 +10,10 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { addToCartAction } from "@/app/actions/add-to-cart";
-import { Suspense, useTransition } from "react";
+import { Suspense, useEffect, useState, useTransition } from "react";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
-import { ShoppingCart, ArrowLeft } from "lucide-react";
+import { ShoppingCart, ArrowLeft, Pen } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   Carousel,
@@ -25,6 +25,10 @@ import {
 import Loading from "@/app/loading";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
+import { createClient } from "@/utils/supabase/client";
+import { User } from "@supabase/auth-js";
+import { getUser } from "@/app/actions/get-user";
+import { Database } from "@/utils/database.types";
 
 type BookDetailsProps = {
   book: BookType;
@@ -54,6 +58,26 @@ export function BookDetails({ book }: BookDetailsProps) {
       addToCartAction(formData);
     });
   };
+
+  const [user, setUser] = useState<User | null>(null);
+  const [userData, setUserData] = useState<
+    Database["public"]["Tables"]["users"]["Row"] | null
+  >(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const {
+        data: { user },
+      } = await createClient().auth.getUser();
+      setUser(user);
+      if (user) {
+        const { userData } = await getUser(user.id);
+        setUserData(userData);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   return (
     <div className="container mx-auto w-full space-y-8">
@@ -111,10 +135,18 @@ export function BookDetails({ book }: BookDetailsProps) {
           <CardHeader className="text-muted-foreground">
             <div className="flex flex-col md:flex-row gap-8">
               <div className="flex-1">
-                <div className="flex items-baseline justify-between">
-                  <CardTitle className="text-3xl font-semibold text-primary mb-4">
-                    {book.title}
-                  </CardTitle>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-baseline  min-w-sm">
+                    <CardTitle className="text-3xl font-semibold text-primary mb-4">
+                      {book.title}
+
+                    </CardTitle>
+                    {user && userData && userData?.is_admin && (
+                        <Link className="mx-5" href={`/admin/edit/${book.id}`}>
+                          <Pen size={20} width={20} height={20} />
+                        </Link>
+                      )}
+                  </div>
                   <p className="text-xl font-semibold text-primary">
                     ${book.price.toFixed(2)} CAD
                   </p>
@@ -136,21 +168,24 @@ export function BookDetails({ book }: BookDetailsProps) {
                         {book.isbn}
                       </p>
                     )}
-                    {book.genre && book.genre.map((g)=> g.split(",").filter((g) => g.length > 0)).length > 0 && (
-                      <div className="flex justify-center gap-1">
-                        <span className="text-primary font-semibold">
-                          Genre(s):
-                        </span>{" "}
-                        <div className="space-x-1">
-                          {book.genre.map((g) =>
-                            g
-                              .split(",")
-                              .filter((g) => g.length > 0)
-                              .map((g) => <Badge key={g}>{g}</Badge>)
-                          )}
+                    {book.genre &&
+                      book.genre.map((g) =>
+                        g.split(",").filter((g) => g.length > 0)
+                      ).length > 0 && (
+                        <div className="flex gap-1">
+                          <span className="text-primary font-semibold">
+                            Genre(s):
+                          </span>{" "}
+                          <div className="space-x-1">
+                            {book.genre.map((g) =>
+                              g
+                                .split(",")
+                                .filter((g) => g.length > 0)
+                                .map((g) => <Badge key={g}>{g}</Badge>)
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
                     {book.original_release_date && (
                       <p>
                         <span className="text-primary font-semibold">
@@ -197,7 +232,6 @@ export function BookDetails({ book }: BookDetailsProps) {
                   <Button
                     onClick={handleAddToCart}
                     disabled={isPending}
-                    size="lg"
                   >
                     {isPending ? (
                       "Adding to Cart..."
