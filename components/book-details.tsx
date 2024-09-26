@@ -135,7 +135,7 @@ export function BookDetails({ book }: BookDetailsProps) {
         <div className="flex-1 w-full">
           <CardHeader className="text-muted-foreground">
             <div className="flex md:flex-col justify-between items-start flex-row ">
-              <div className="flex flex-col">
+              <div className="flex items-baseline">
                 <CardTitle className="text-3xl font-semibold text-primary mb-4">
                   {book.title}
                 </CardTitle>
