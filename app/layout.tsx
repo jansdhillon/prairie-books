@@ -12,11 +12,19 @@ import { Suspense } from "react";
 import Loading from "./loading";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Toaster } from "@/components/ui/toaster";
+import { Viewport } from "next";
 
 const defaultUrl =
   process.env.NODE_ENV === "production"
     ? "https://kathrinsbooks.com"
     : "http://localhost:3000";
+
+
+    export const viewport: Viewport = {
+      initialScale: 1,
+      width: "device-width",
+      maximumScale: 1,
+  };
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
@@ -49,7 +57,7 @@ export default function RootLayout({
               <Suspense
                 fallback={<Skeleton className="w-full h-full bg-accent" />}
               >
-                <div className="container  mx-auto max-w-5xl p-4  flex flex-col space-y-12   md:px-10 py-6">
+                <div className="container  mx-auto max-w-5xl flex flex-col space-y-12   px-8 md:px-12 py-8">
                   <Feedback>{children}</Feedback>
                 </div>
               </Suspense>

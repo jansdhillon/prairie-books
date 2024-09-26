@@ -89,7 +89,7 @@ export default async function AdminDashboard({
   const orders = await getOrdersByUserId(user.id);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 px-0">
       <h1 className="text-3xl font-bold">Welcome, Kathrin!</h1>
 
       {/* <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

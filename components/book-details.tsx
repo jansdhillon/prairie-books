@@ -87,7 +87,7 @@ export function BookDetails({ book }: BookDetailsProps) {
         </Button>
       </div>
       <Suspense fallback={<Loading />}>
-        <Carousel>
+        <Carousel className="mx-6 md:px-0">
           <CarouselContent>
             <CarouselItem
               className={`flex flex-col  rounded-xl ${book.num_images && book.num_images > 1 ? "md:basis-1/2 lg:basis-1/3" : ""}`}

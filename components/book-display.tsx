@@ -22,8 +22,8 @@ const BookDisplay = ({ books }: { books: BookType[] }) => {
   return (
     <>
       <Suspense fallback={<Loading/>}>
-        <Carousel>
-          <CarouselContent>
+        <Carousel className="mx-6 md:px-0" >
+          <CarouselContent >
             {books.map((book: BookType) => (
               <CarouselItem className="flex flex-col md:basis-1/2 lg:basis-1/3 rounded-xl" key={book.id}>
                 <Book key={book.id} book={book} />
