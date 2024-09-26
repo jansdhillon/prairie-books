@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/pagination"
 import { BookType } from "@/components/book-display"
 import { Book } from "@/components/book"
+import Loading from "../loading"
 
 export default function AllBooksPage() {
   const [currentPage, setCurrentPage] = useState(1)
@@ -47,7 +48,7 @@ export default function AllBooksPage() {
   }
 
   if (loading) {
-    return <p className="text-lg">Loading books...</p>
+    return <Loading/>
   }
 
   if (error) {

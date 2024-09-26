@@ -10,6 +10,7 @@ import Head from "next/head";
 import Feedback from "@/components/feedback";
 import { Suspense } from "react";
 import Loading from "./loading";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const defaultUrl =
   process.env.NODE_ENV === "production"
@@ -37,16 +38,21 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <div className="flex min-h-screen flex-col">
-            <Nav
-              headerAuth={
-                <Suspense fallback={<Loading />}>
-                  <HeaderAuth />{" "}
-                </Suspense>
-              }
-            />
+            <Suspense
+              fallback={<Skeleton className="w-full h-full bg-accent" />}
+            >
+              <Nav headerAuth={<HeaderAuth />} />
+            </Suspense>
 
             <main className="flex-1 mt-20">
+
+            <Suspense  fallback={<Skeleton className="w-full h-full bg-accent" />}>
+                  <div className="max-auto max-w-5xl container">
+                    <Feedback />
+                  </div>
+                </Suspense>
               <div className="container  mx-auto max-w-5xl px-4 py-8">
+
                 {children}
               </div>
               {/* <Feedback /> */}

@@ -6,9 +6,10 @@ import { createClient } from "@/utils/supabase/server";
 import { encodedRedirect } from "@/utils/utils";
 import { Storage } from "@google-cloud/storage";
 
-export const addBookAction = async (formData: FormData) => {
+export const editBookAction = async (formData: FormData) => {
   const supabase = createClient();
 
+  const bookId = formData.get("book-id")?.toString().trim();
   const title = formData.get("title")?.toString().trim();
   const author = formData.get("author")?.toString().trim();
   const isbn = formData.get("isbn")?.toString().trim();
@@ -25,35 +26,45 @@ export const addBookAction = async (formData: FormData) => {
   const originalReleaseDate = formData.get("original-release-date")?.toString().trim() || null;
   const condition = formData.get("condition")?.toString().trim() || null;
 
-  const fileterdFiles = files.filter((file) => file.size > 0);
+  const filteredFiles = files.filter((file) => file.size > 0);
 
   const directoryPath = `${isbn}/`;
 
   let hasImages = false;
-
-
-  const numImages = fileterdFiles.length;
-
-
-
+  const numImages = filteredFiles.length;
   const bucketName = "kathrins-books-images";
-
   const storage = new Storage();
 
-  if (fileterdFiles.length > 0) {
+  // Validate mandatory fields
+  if (!title || !author || !isbn || price === null || isNaN(price)) {
+    return encodedRedirect(
+      "error",
+      "/",
+      "Title, Author, ISBN, and Price are required, and Price must be a number."
+    );
+  }
+
+  const { data: existingBook, error: getError } = await supabase
+    .from("books")
+    .select("*")
+    .eq("id", bookId)
+    .single();
+
+  if (getError || !existingBook) {
+    console.error("Error retrieving book:", getError?.message || "Book not found");
+    return encodedRedirect("error", "/admin/edit", "Book not found.");
+  }
+
+  if (filteredFiles.length > 0) {
     hasImages = true;
-    for (let i = 0; i < fileterdFiles.length; i++) {
-      const file = fileterdFiles[i];
+    for (let i = 0; i < filteredFiles.length; i++) {
+      const file = filteredFiles[i];
       if (file && typeof file === "object" && file.size > 0) {
         const buffer = Buffer.from(await file.arrayBuffer());
         const filename = `${directoryPath}image-${i + 1}.png`;
 
         try {
-          const uploadFile = async () => {
-            await storage.bucket(bucketName).file(filename).save(buffer);
-          };
-
-          await uploadFile();
+          await storage.bucket(bucketName).file(filename).save(buffer);
         } catch (error) {
           console.error("Error occurred while uploading file:", error);
         }
@@ -61,15 +72,7 @@ export const addBookAction = async (formData: FormData) => {
     }
   }
 
-  if (!title || !author || !isbn || price === null || isNaN(price)) {
-    return encodedRedirect(
-      "error",
-      "/",
-      "Title, Author, ISBN, and Price are required and Price must be a number."
-    );
-  }
-
-  const newBook: Database["public"]["Tables"]["books"]["Insert"] = {
+  const updatedBook: Partial<Database["public"]["Tables"]["books"]["Update"]> = {
     title,
     author,
     isbn,
@@ -78,7 +81,9 @@ export const addBookAction = async (formData: FormData) => {
     description,
     publisher,
     language,
-    image_directory: hasImages ? `https://storage.googleapis.com/${bucketName}/${directoryPath}` : null,
+    image_directory: hasImages
+      ? `https://storage.googleapis.com/${bucketName}/${directoryPath}`
+      : existingBook.image_directory,
     is_featured,
     edition,
     publication_date: publicationDate,
@@ -87,39 +92,18 @@ export const addBookAction = async (formData: FormData) => {
     condition,
   };
 
-  const { data: book, error } = await supabase.from("books").insert([newBook]);
+  const { data: updated, error: updateError } = await supabase
+    .from("books")
+    .update(updatedBook)
+    .eq("id", bookId);
 
-  if (error) {
-    console.error("Error adding book:", error.message);
-    return encodedRedirect(
-      "error",
-      "/",
-      "Failed to add the book. Please try again."
-    );
+  if (updateError) {
+    console.error("Error updating book:", updateError.message);
+    return encodedRedirect("error", "/admin/edit", "Failed to update the book.");
   }
 
-  const product = await stripe.products.create({
-    name: title,
-    id: newBook.id,
-    metadata: {
-      author,
-      isbn,
-      genre,
-      publisher,
-      language,
-      edition,
-    },
-  });
-
-  const stripePrice = await stripe.prices.create({
-    unit_amount: Math.round(price * 100),
-    currency: "cad",
-    product: product.id,
-  });
-
-  await upsertProductRecord(product);
-  await upsertPriceRecord(stripePrice);
+  console.log("Updated book:", updated);
 
 
-  return encodedRedirect("success", "/admin", "Book added successfully!");
+  return encodedRedirect("success", "/admin", "Book updated successfully!");
 };

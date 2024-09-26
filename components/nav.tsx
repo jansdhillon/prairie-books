@@ -23,7 +23,6 @@ const navItems = [
   // { href: "/#about", label: "About" },
   { href: "/orders", label: "Orders" },
   { href: "/contact", label: "Contact" },
-  { href: "/admin", label: "Admin" },
 ];
 
 export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {

@@ -41,7 +41,7 @@ export default async function CartPage({ searchParams }: { searchParams: Message
 
   return (
     <div className="flex flex-1 flex-col space-y-6">
-      <FormMessage message={searchParams} />
+      {/* <FormMessage message={searchParams} /> */}
       <h1 className="text-3xl font-bold text-left">Your Cart</h1>
 
       <p className="text-lg text-muted-foreground">

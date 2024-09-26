@@ -74,7 +74,7 @@ export default function ContactPage({ searchParams }: { searchParams: Message })
               Send Message
             </SubmitButton>
           </div>
-          <FormMessage message={searchParams} />
+          {/* <FormMessage message={searchParams} /> */}
         </form>
       </div>
     </div>

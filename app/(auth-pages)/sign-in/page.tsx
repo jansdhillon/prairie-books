@@ -36,7 +36,7 @@ export default function Login({ searchParams }: { searchParams: Message }) {
         <SubmitButton pendingText="Signing In..." formAction={signInAction}>
           Sign in
         </SubmitButton>
-        <FormMessage message={searchParams} />
+        {/* <FormMessage message={searchParams} /> */}
       </div>
     </form>
   );

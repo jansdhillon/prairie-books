@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { addToCartAction } from "@/app/actions/add-to-cart";
-import { useTransition } from "react";
+import { Suspense, useTransition } from "react";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import { ShoppingCart, ArrowLeft } from "lucide-react";
@@ -22,6 +22,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "./ui/carousel";
+import Loading from "@/app/loading";
 
 type BookDetailsProps = {
   book: BookType;
@@ -35,7 +36,13 @@ export function BookDetails({ book }: BookDetailsProps) {
     ? `${book.image_directory}image-1.png`
     : "/placeholder.png";
 
-  const additionalImages = book.num_images && book.num_images > 1 ? Array.from({ length: book.num_images - 1 }, (_, i) => `${book.image_directory}image-${i + 2}.png`) : [];
+  const additionalImages =
+    book.num_images && book.num_images > 1
+      ? Array.from(
+          { length: book.num_images - 1 },
+          (_, i) => `${book.image_directory}image-${i + 2}.png`
+        )
+      : [];
 
   const handleAddToCart = () => {
     startTransition(() => {
@@ -53,37 +60,46 @@ export function BookDetails({ book }: BookDetailsProps) {
           <ArrowLeft className="mr-2 h-4 w-4" /> Back
         </Button>
       </div>
-      <Carousel>
-        <CarouselContent>
-          <CarouselItem className={`flex flex-col  rounded-xl ${book.num_images && book.num_images > 1 ? 'md:basis-1/2 lg:basis-1/3' : ''}`}>
-            <div className="relative w-full h-[400px]  my-5">
-              <Image
-                src={coverImage}
-                alt={book.title}
-                fill
-                className="object-contain rounded-lg"
-              />
-            </div>
-          </CarouselItem>
-          {additionalImages.map((image, index) => (
+      <Suspense fallback={<Loading />}>
+        <Carousel>
+          <CarouselContent>
             <CarouselItem
-              key={index}
-              className="flex flex-col md:basis-1/2 lg:basis-1/3 rounded-xl"
+              className={`flex flex-col  rounded-xl ${book.num_images && book.num_images > 1 ? "md:basis-1/2 lg:basis-1/3" : ""}`}
             >
               <div className="relative w-full h-[400px]  my-5">
                 <Image
-                  priority
-                  src={image}
+                  src={coverImage}
                   alt={book.title}
                   fill
-                  className="object-contain rounded-xl"
+                  className="object-contain rounded-lg"
                 />
               </div>
             </CarouselItem>
-          ))}
-        </CarouselContent>
-        {book && (book.num_images ?? 0) > 1 && ( <><CarouselPrevious /><CarouselNext /></>)}
-      </Carousel>
+            {additionalImages.map((image, index) => (
+              <CarouselItem
+                key={index}
+                className="flex flex-col md:basis-1/2 lg:basis-1/3 rounded-xl"
+              >
+                <div className="relative w-full h-[400px]  my-5">
+                  <Image
+                    priority
+                    src={image}
+                    alt={book.title}
+                    fill
+                    className="object-contain rounded-xl"
+                  />
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          {book && (book.num_images ?? 0) > 1 && (
+            <>
+              <CarouselPrevious />
+              <CarouselNext />
+            </>
+          )}
+        </Carousel>
+      </Suspense>
 
       <div className="flex items-center gap-4 justify-between">
         <div className="flex flex-col w-full">
@@ -107,40 +123,46 @@ export function BookDetails({ book }: BookDetailsProps) {
                       </span>{" "}
                       {book.author}
                     </p>
-                    <p>
+                  { book.isbn && <p>
                       <span className="text-primary font-semibold">ISBN:</span>{" "}
                       {book.isbn}
-                    </p>
-                    <p>
+                    </p>}
+                    {book.genre && <p>
                       <span className="text-primary font-semibold">Genre:</span>{" "}
                       {book.genre || "Not specified"}
-                    </p>
-                    <p>
-                      <span className="text-primary font-semibold">Original Release Date:</span>{" "}
+                    </p>}
+                    {book.original_release_date && <p>
+                      <span className="text-primary font-semibold">
+                        Original Release Date:
+                      </span>{" "}
                       {book.original_release_date || "Not specified"}
-                    </p>
-                    <p>
+                    </p>}
+                    {book.publication_date && <p>
                       {" "}
                       <span className="text-primary font-semibold">
                         Publication Date:
                       </span>{" "}
                       {book.publication_date || "Not specified"}
-                    </p>
-                    <p>
+                    </p>}
+                    {book.publisher && <p>
                       {" "}
                       <span className="text-primary font-semibold">
                         Publisher:
                       </span>{" "}
                       {book.publisher || "Not specified"}
-                    </p>
-                    <p>
-                      <span className="text-primary font-semibold">Edition:</span>{" "}
+                    </p>}
+                    {book.edition && <p>
+                      <span className="text-primary font-semibold">
+                        Edition:
+                      </span>{" "}
                       {book.edition || "Not specified"}
-                    </p>
-                    <p>
-                      <span className="text-primary font-semibold">Condition:</span>{" "}
+                    </p>}
+                    {book.condition && <p>
+                      <span className="text-primary font-semibold">
+                        Condition:
+                      </span>{" "}
                       {book.condition || "Not specified"}
-                    </p>
+                    </p>}
                   </div>
                   <Button
                     onClick={handleAddToCart}

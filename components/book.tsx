@@ -42,6 +42,7 @@ export function Book({ book }: BookProps) {
       <CardHeader className="text-muted-foreground">
         <div className="relative w-full h-[400px]  my-5">
           <Image
+            priority
             src={coverImage}
             alt={book.title}
             fill
