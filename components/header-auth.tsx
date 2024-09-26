@@ -25,19 +25,19 @@ export default async function AuthButton() {
     const { userData } = await getUser(user.id);
 
     return (
-      <div className="flex items-center gap-4">
+      <div className="flex items-center">
         {userData && userData.is_admin ? (
           <Link href="/admin">
-            <Button variant={"outline"}>Admin</Button>
+            <Button variant={"outline"}  size={"sm"}>Admin</Button>
           </Link>
         ) : null}
         <Link href="/cart">
-          <Button variant={"outline"}>
+          <Button variant={"outline"} size={"sm"}>
             <ShoppingCart className="h-4" />
           </Button>
         </Link>
         <form action={signOutAction}>
-          <Button type="submit" variant={"outline"}>
+          <Button type="submit" variant={"outline"}  size={"sm"}>
             Sign out
           </Button>
         </form>

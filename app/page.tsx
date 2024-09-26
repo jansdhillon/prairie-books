@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRightIcon } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default async function HomePage() {
   const books = await fetchBooks();
