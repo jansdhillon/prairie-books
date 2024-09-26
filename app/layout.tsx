@@ -11,6 +11,7 @@ import Feedback from "@/components/feedback";
 import { Suspense } from "react";
 import Loading from "./loading";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Toaster } from "@/components/ui/toaster";
 
 const defaultUrl =
   process.env.NODE_ENV === "production"
@@ -45,18 +46,15 @@ export default function RootLayout({
             </Suspense>
 
             <main className="flex-1 mt-20">
-
-            <Suspense  fallback={<Skeleton className="w-full h-full bg-accent" />}>
-                  <div className="max-auto max-w-5xl container">
-                    <Feedback />
-                  </div>
-                </Suspense>
-              <div className="container  mx-auto max-w-5xl px-4 py-8">
-
-                {children}
-              </div>
-              {/* <Feedback /> */}
+              <Suspense
+                fallback={<Skeleton className="w-full h-full bg-accent" />}
+              >
+                <div className="container  mx-auto max-w-5xl p-4">
+                  <Feedback>{children}</Feedback>
+                </div>
+              </Suspense>
             </main>
+            <Toaster />
             <Footer />
           </div>
         </ThemeProvider>

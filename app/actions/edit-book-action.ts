@@ -15,7 +15,7 @@ export const editBookAction = async (formData: FormData) => {
   const isbn = formData.get("isbn")?.toString().trim();
   const priceStr = formData.get("price")?.toString().trim();
   const price = priceStr ? parseFloat(priceStr) : null;
-  const genre = formData.get("genre")?.toString().trim() || null;
+  const genres = formData.getAll("genre") as string[];
   const description = formData.get("description")?.toString().trim() || null;
   const publisher = formData.get("publisher")?.toString().trim() || null;
   const language = formData.get("language")?.toString().trim() || null;
@@ -35,7 +35,6 @@ export const editBookAction = async (formData: FormData) => {
   const bucketName = "kathrins-books-images";
   const storage = new Storage();
 
-  // Validate mandatory fields
   if (!title || !author || !isbn || price === null || isNaN(price)) {
     return encodedRedirect(
       "error",
@@ -77,7 +76,7 @@ export const editBookAction = async (formData: FormData) => {
     author,
     isbn,
     price,
-    genre,
+    genre: genres,
     description,
     publisher,
     language,

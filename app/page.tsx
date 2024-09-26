@@ -19,7 +19,7 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-col space-y-12 px-12   md:px-10 py-12 max-w-7xl mx-auto">
-      <section className="flex flex-col-reverse md:flex-row gap-24 items-center justify-between space-y-6 md:space-y-0 md:mb-20 ">
+      <section className="flex flex-col-reverse md:flex-row gap-12 items-center justify-between space-y-6 md:space-y-0 md:mb-20 ">
         <div className="md:w-1/2 md:pl-3">
           <h1 className="text-5xl font-bold mb-4">
             Find Your Next Page-Turner

@@ -17,7 +17,17 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { BookOpen, DollarSign, ShoppingCart, Users } from "lucide-react";
+import {
+  BookOpen,
+  DollarSign,
+  EllipsisIcon,
+  LucideMenu,
+  Menu,
+  Option,
+  Settings,
+  ShoppingCart,
+  Users,
+} from "lucide-react";
 import { Book } from "@/components/book";
 import { fetchBooks } from "../actions/fetch-books";
 import { createClient } from "@/utils/supabase/server";
@@ -45,6 +55,15 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { format } from "date-fns";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Separator } from "@/components/ui/separator";
 
 export default async function AdminDashboard({
   searchParams,
@@ -70,10 +89,10 @@ export default async function AdminDashboard({
   const orders = await getOrdersByUserId(user.id);
 
   return (
-    <div className="container mx-auto p-6 space-y-8">
+    <div className="container mx-auto p-4 space-y-8">
       <h1 className="text-3xl font-bold">Welcome, Kathrin!</h1>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {/* <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
@@ -116,10 +135,10 @@ export default async function AdminDashboard({
             <p className="text-xs text-muted-foreground">+0 from yesterday</p>
           </CardContent>
         </Card>
-      </div>
+      </div> */}
 
       <Tabs defaultValue="books" className="space-y-4">
-        <div className="flex justify-between">
+        <div className="flex justify-between items-center">
           <TabsList>
             {/* <TabsTrigger value="overview">Overview</TabsTrigger> */}
             <TabsTrigger value="books">Books</TabsTrigger>
@@ -127,7 +146,7 @@ export default async function AdminDashboard({
             <TabsTrigger value="orders">Orders</TabsTrigger>
           </TabsList>
           <Link href="admin/add">
-            <Button>Add Book</Button>
+            <Button size={"sm"}>Add Book</Button>
           </Link>
         </div>
         {/* <TabsContent value="overview" className="space-y-4">
@@ -197,29 +216,39 @@ export default async function AdminDashboard({
                   <TableRow>
                     <TableHead>Title</TableHead>
                     <TableHead>Price</TableHead>
-                    <TableHead>Author</TableHead>
-                    <TableHead>Date Posted</TableHead>
+                    <TableHead className="hidden md:table-cell">Author</TableHead>
+                    <TableHead className="hidden md:table-cell">
+                      Date Posted
+                    </TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
+
                 <TableBody>
                   {books.map((book) => (
                     <TableRow key={book.id}>
-                      <TableCell>{book.title}</TableCell>
-                      <TableCell>${book.price?.toFixed(2)}</TableCell>
-                      <TableCell>{book.author}</TableCell>
                       <TableCell>
+                        {" "}
+                        <Link href={`/books/${book.id}`}>{book.title}</Link>
+                      </TableCell>
+
+                      <TableCell>${book.price?.toFixed(2)}</TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        {book.author}
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell">
                         {" "}
                         {format(new Date(book.created_at), "MM-dd-yyyy")}
                       </TableCell>
-
-                      <TableCell className="flex justify-start items-center gap-4">
+                      <TableCell className="hidden md:table-cell space-x-4  ">
                         <Link href={`/admin/edit/${book.id}`}>
                           <Button>Edit</Button>
                         </Link>
 
                         <AlertDialog>
-                          <AlertDialogTrigger className="h-10 px-4 py-2 bg-destructive text-destructive-foreground hover:bg-destructive/90 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">Delete</AlertDialogTrigger>
+                          <AlertDialogTrigger className="h-10 px-4 py-2 bg-destructive text-destructive-foreground hover:bg-destructive/90 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
+                            Delete
+                          </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
                               <AlertDialogTitle>
@@ -232,23 +261,74 @@ export default async function AdminDashboard({
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                               <AlertDialogCancel>Cancel</AlertDialogCancel>
-
                               <DeleteBookForm
                                 deleteBook={deleteBook}
                                 searchParams={searchParams}
                                 bookId={book.id}
-                                alertDialogAction={<AlertDialogAction type="submit" className="h-10 px-4 py-2 bg-destructive text-destructive-foreground hover:bg-destructive/90 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">Delete</AlertDialogAction>}
+                                alertDialogAction={
+                                  <AlertDialogAction
+                                    type="submit"
+                                    className="h-10 px-4 py-2 bg-destructive text-destructive-foreground hover:bg-destructive/90 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+                                  >
+                                    Delete
+                                  </AlertDialogAction>
+                                }
                               />
                             </AlertDialogFooter>
                           </AlertDialogContent>
                         </AlertDialog>
                       </TableCell>
-                      <TableCell>
-                        {/* <DeleteBookForm
-                          deleteBook={deleteBook}
-                          searchParams={searchParams}
-                          book={book}
-                        /> */}
+                      <TableCell className="table-cell md:hidden">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger>
+                            {" "}
+                            <EllipsisIcon />
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent className="flex flex-col gap-3 items-start p-4 text-sm">
+                            <Link href={`/admin/edit/${book.id}`}>
+                              <button>Edit</button>
+                            </Link>
+
+                            <Separator />
+                            <Link href={`/books/${book.id}`}>
+                              <button>View</button>
+                            </Link>
+
+                            <Separator />
+                            <AlertDialog>
+                              <AlertDialogTrigger className="text-destructive hover:text-destructive/90 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
+                                Delete
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>
+                                    Are you absolutely sure?
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    This action cannot be undone. This will
+                                    permanently delete this book.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <DeleteBookForm
+                                    deleteBook={deleteBook}
+                                    searchParams={searchParams}
+                                    bookId={book.id}
+                                    alertDialogAction={
+                                      <AlertDialogAction
+                                        type="submit"
+                                        className="h-10 px-4 py-2 bg-destructive text-destructive-foreground hover:bg-destructive/90 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+                                      >
+                                        Delete
+                                      </AlertDialogAction>
+                                    }
+                                  />
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </TableCell>
                     </TableRow>
                   ))}

@@ -14,7 +14,7 @@ export const addBookAction = async (formData: FormData) => {
   const isbn = formData.get("isbn")?.toString().trim();
   const priceStr = formData.get("price")?.toString().trim();
   const price = priceStr ? parseFloat(priceStr) : null;
-  const genre = formData.get("genre")?.toString().trim() || null;
+  const genres = formData.getAll("genres") as string[];
   const description = formData.get("description")?.toString().trim() || null;
   const publisher = formData.get("publisher")?.toString().trim() || null;
   const language = formData.get("language")?.toString().trim() || null;
@@ -61,6 +61,8 @@ export const addBookAction = async (formData: FormData) => {
     }
   }
 
+  console.log(genres)
+
   if (!title || !author || !isbn || price === null || isNaN(price)) {
     return encodedRedirect(
       "error",
@@ -74,7 +76,7 @@ export const addBookAction = async (formData: FormData) => {
     author,
     isbn,
     price,
-    genre,
+    genre: genres,
     description,
     publisher,
     language,
@@ -104,7 +106,7 @@ export const addBookAction = async (formData: FormData) => {
     metadata: {
       author,
       isbn,
-      genre,
+      genres: JSON.stringify(genres),
       publisher,
       language,
       edition,

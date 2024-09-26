@@ -16,7 +16,7 @@ export type Database = {
           created_at: string | null
           description: string | null
           edition: string | null
-          genre: string | null
+          genre: string[] | null
           id: string
           image_directory: string | null
           is_featured: boolean | null
@@ -36,7 +36,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           edition?: string | null
-          genre?: string | null
+          genre?: string[] | null
           id?: string
           image_directory?: string | null
           is_featured?: boolean | null
@@ -56,7 +56,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           edition?: string | null
-          genre?: string | null
+          genre?: string[] | null
           id?: string
           image_directory?: string | null
           is_featured?: boolean | null

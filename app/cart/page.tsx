@@ -53,12 +53,8 @@ export default async function CartPage({ searchParams }: { searchParams: Message
         <TableHeader>
           <TableRow >
             <TableHead>Book</TableHead>
-            <TableHead>Edition</TableHead>
             <TableHead>Quantity</TableHead>
             <TableHead>Price</TableHead>
-
-            <TableHead>ISBN</TableHead>
-            <TableHead>Total</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -66,12 +62,8 @@ export default async function CartPage({ searchParams }: { searchParams: Message
           {cartItems.map((item: any) => (
             <TableRow key={item.id}>
               <TableCell>{item.book.title}</TableCell>
-              <TableCell>{item.book.edition}</TableCell>
               <TableCell>{item.quantity}</TableCell>
               <TableCell>${item.book.price.toFixed(2)}</TableCell>
-
-              <TableCell>{item.book.isbn}</TableCell>
-              <TableCell>${(item.book.price * item.quantity).toFixed(2)}</TableCell>
               <TableCell>
                 <form >
 
@@ -88,9 +80,11 @@ export default async function CartPage({ searchParams }: { searchParams: Message
       </Table>
 
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">
-          Total: ${totalAmount.toFixed(2)}
-        </h3>
+        <div>
+          <h3 className="text-lg font-semibold">
+            Total: ${totalAmount.toFixed(2)} CAD
+          </h3>
+        </div>
 
         <Link href="/checkout">
           <Button variant={"default"}>Proceed to Checkout</Button>

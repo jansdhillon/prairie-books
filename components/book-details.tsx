@@ -23,6 +23,8 @@ import {
   CarouselPrevious,
 } from "./ui/carousel";
 import Loading from "@/app/loading";
+import Link from "next/link";
+import { Badge } from "./ui/badge";
 
 type BookDetailsProps = {
   book: BookType;
@@ -66,14 +68,17 @@ export function BookDetails({ book }: BookDetailsProps) {
             <CarouselItem
               className={`flex flex-col  rounded-xl ${book.num_images && book.num_images > 1 ? "md:basis-1/2 lg:basis-1/3" : ""}`}
             >
-              <div className="relative w-full h-[400px]  my-5">
-                <Image
-                  src={coverImage}
-                  alt={book.title}
-                  fill
-                  className="object-contain rounded-lg"
-                />
-              </div>
+              <Link href={`${coverImage}`}>
+                <div className="relative w-full h-[400px]  my-5">
+                  <Image
+                    src={coverImage}
+                    alt={book.title}
+                    fill
+                    className="object-contain rounded-lg"
+                    priority
+                  />
+                </div>
+              </Link>
             </CarouselItem>
             {additionalImages.map((image, index) => (
               <CarouselItem
@@ -123,46 +128,66 @@ export function BookDetails({ book }: BookDetailsProps) {
                       </span>{" "}
                       {book.author}
                     </p>
-                  { book.isbn && <p>
-                      <span className="text-primary font-semibold">ISBN:</span>{" "}
-                      {book.isbn}
-                    </p>}
-                    {book.genre && <p>
-                      <span className="text-primary font-semibold">Genre:</span>{" "}
-                      {book.genre || "Not specified"}
-                    </p>}
-                    {book.original_release_date && <p>
-                      <span className="text-primary font-semibold">
-                        Original Release Date:
-                      </span>{" "}
-                      {book.original_release_date || "Not specified"}
-                    </p>}
-                    {book.publication_date && <p>
-                      {" "}
-                      <span className="text-primary font-semibold">
-                        Publication Date:
-                      </span>{" "}
-                      {book.publication_date || "Not specified"}
-                    </p>}
-                    {book.publisher && <p>
-                      {" "}
-                      <span className="text-primary font-semibold">
-                        Publisher:
-                      </span>{" "}
-                      {book.publisher || "Not specified"}
-                    </p>}
-                    {book.edition && <p>
-                      <span className="text-primary font-semibold">
-                        Edition:
-                      </span>{" "}
-                      {book.edition || "Not specified"}
-                    </p>}
-                    {book.condition && <p>
-                      <span className="text-primary font-semibold">
-                        Condition:
-                      </span>{" "}
-                      {book.condition || "Not specified"}
-                    </p>}
+                    {book.isbn && (
+                      <p>
+                        <span className="text-primary font-semibold">
+                          ISBN:
+                        </span>{" "}
+                        {book.isbn}
+                      </p>
+                    )}
+                    {book.genre && (
+                      <div className="space-x-1">
+                        <span className="text-primary font-semibold">
+                          Genre(s):
+                        </span>{" "}
+                        {book.genre.map((g) =>
+                          g.split(",").map((g) => <Badge key={g}>{g}</Badge>)
+                        )}
+                      </div>
+                    )}
+                    {book.original_release_date && (
+                      <p>
+                        <span className="text-primary font-semibold">
+                          Original Release Date:
+                        </span>{" "}
+                        {book.original_release_date || "Not specified"}
+                      </p>
+                    )}
+                    {book.publication_date && (
+                      <p>
+                        {" "}
+                        <span className="text-primary font-semibold">
+                          Publication Date:
+                        </span>{" "}
+                        {book.publication_date || "Not specified"}
+                      </p>
+                    )}
+                    {book.publisher && (
+                      <p>
+                        {" "}
+                        <span className="text-primary font-semibold">
+                          Publisher:
+                        </span>{" "}
+                        {book.publisher || "Not specified"}
+                      </p>
+                    )}
+                    {book.edition && (
+                      <p>
+                        <span className="text-primary font-semibold">
+                          Edition:
+                        </span>{" "}
+                        {book.edition || "Not specified"}
+                      </p>
+                    )}
+                    {book.condition && (
+                      <p>
+                        <span className="text-primary font-semibold">
+                          Condition:
+                        </span>{" "}
+                        {book.condition || "Not specified"}
+                      </p>
+                    )}
                   </div>
                   <Button
                     onClick={handleAddToCart}
