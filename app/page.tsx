@@ -19,7 +19,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <>
+      <div className="space-y-12">
         <section className="flex flex-col-reverse md:flex-row gap-12 items-center justify-between space-y-6 md:space-y-0 md:mb-20 ">
           <div className="md:w-1/2">
             <h1 className="text-5xl font-bold mb-4">
@@ -55,7 +55,7 @@ export default async function HomePage() {
           </div>
         </section>
         <section>
-          <h2 className="text-3xl font-semibold mb-2" id="featured">
+          <h2 className="text-3xl font-semibold" id="featured">
             Featured
           </h2>
           <div className="space-y-6 mt-6">
@@ -66,23 +66,22 @@ export default async function HomePage() {
           </div>
         </section>
         <section>
-          <h2 className="text-3xl font-semibold mb-2">Latest Releases</h2>
+          <h2 className="text-3xl font-semibold">Latest Releases</h2>
           <div className="space-y-6 mt-6">
             <Separator />
             <p className="text-md mb-6">Just posted.</p>
             <BookDisplay books={sortedBooks.slice(0, 8)} />
           </div>
-        </section>
-        <div className="flex justify-center w-full mx-auto container">
-          <Link href="/books">
-            <Button className="flex items-center justify-center space-x-2 mt-6">
+          <Link href="/books" className="flex items-center justify-center py-6">
+            <Button className="flex items-center justify-center space-x-2">
               <span>View All Books</span>
               <ArrowRightIcon />
             </Button>
           </Link>
-        </div>
-      </>
-      <section>
+        </section>
+
+      </div>
+      <section className="pt-6">
         <h2 className="text-3xl font-semibold mb-2">What Readers Are Saying</h2>
         <Separator />
         <div className="space-y-6 mt-6">
@@ -102,7 +101,7 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-      <section>
+      <section className="pt-6">
         <h2 className="text-3xl font-semibold mb-2">About</h2>
         <Separator />
         <div className="flex leading-loose items-center  gap-5 mt-4 ">
