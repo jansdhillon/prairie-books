@@ -116,6 +116,7 @@ export function BookDetails({ book }: BookDetailsProps) {
                     alt={book.title}
                     fill
                     className="object-contain rounded-xl"
+                    loading="eager"
                   />
                 </div>
               </CarouselItem>

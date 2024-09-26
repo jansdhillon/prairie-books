@@ -52,6 +52,7 @@ export function Book({ book }: BookProps) {
             fill
             sizes="400px"
             className="object-contain rounded-lg"
+            loading="eager"
           />
         </Link>
         <CardTitle className="text-xl font-semibold text-primary line-clamp-2 min-w-[300px]">

@@ -83,7 +83,7 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
           </Button> */}
       </nav>
 
-      <div className="flex items-center w-full justify-evenly md:hidden px-10 gap-5 py-4">
+      <div className="flex items-center w-full justify-evenly md:hidden px-10 gap-5 py-6">
         <Link
           href="/"
           className="text-primary text-base font-bold line-clamp-1  tracking-tight hover:text-muted-foreground"
