@@ -28,9 +28,7 @@ export async function POST(req: Request) {
     if (!sig || !webhookSecret)
       return new Response('Webhook secret not found.', { status: 400 });
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
-    console.log(`🔔  Webhook received: ${event.type}`);
   } catch (err: any) {
-    console.log(`❌ Error message: ${err.message}`);
     return new Response(`Webhook Error: ${err.message}`, { status: 400 });
   }
 
@@ -54,20 +52,18 @@ export async function POST(req: Request) {
         case 'checkout.session.completed':
           const checkoutSession = event.data.object as Stripe.Checkout.Session;
           if (checkoutSession.mode === 'payment') {
-            console.log(`🔔  Payment received: ${checkoutSession.payment_status}`);
           }
           break;
         case 'payment_intent.created':
           const paymentIntent = event.data.object as Stripe.PaymentIntent;
           await upsertPaymentRecord(paymentIntent);
-          console.log(`🔔  Payment intent created: ${paymentIntent.status}`);
 
           break;
         default:
           throw new Error('Unhandled relevant event!');
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return new Response(
         'Webhook handler failed. View your Next.js function logs.',
         {

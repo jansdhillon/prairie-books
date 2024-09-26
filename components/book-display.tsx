@@ -14,7 +14,6 @@ import {
 export type BookType = Database["public"]["Tables"]["books"]["Row"];
 
 const BookDisplay = ({ books }: { books: BookType[] }) => {
-  console.log("Books:", books);
   if (!books || books.length === 0) {
     return <p className="text-center">No books available at the moment.</p>;
   }
@@ -24,7 +23,7 @@ const BookDisplay = ({ books }: { books: BookType[] }) => {
       <Carousel>
         <CarouselContent>
           {books.map((book: BookType) => (
-            <CarouselItem className="flex flex-col md:basis-1/2 lg:basis-1/3 rounded-xl">
+            <CarouselItem className="flex flex-col md:basis-1/2 lg:basis-1/3 rounded-xl" key={book.id}>
               <Book key={book.id} book={book} />
             </CarouselItem>
           ))}

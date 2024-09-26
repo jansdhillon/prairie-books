@@ -7,8 +7,6 @@ const Feedback = () => {
   const searchParams = useSearchParams();
   const message = searchParams.get("message");
 
-  console.log("message", message);
-
   if (!message) return null;
 
   return <Alert >{message}</Alert>;

@@ -16,15 +16,7 @@ export default async function OrderDetailsPage({
 }: {
   params: { id: string };
 }) {
-
   const order = await getOrderById(params.id);
-console.log(order.items);
-
-
-
-
-
-  console.log(order);
 
   return (
     <div className="container mx-auto w-full space-y-8">
@@ -54,7 +46,7 @@ console.log(order.items);
 
           <div className="inline-flex items-stretch space-x-3  ">
             <h3 className="text-xl font-semibold text-primary">Status:</h3>
-            <Badge >{convertStatus(order?.payment?.status)}</Badge>
+            <Badge>{convertStatus(order?.payment?.status)}</Badge>
           </div>
 
           <Separator />
@@ -67,9 +59,12 @@ console.log(order.items);
               {order.items?.map((item: any) => (
                 <div key={item.id} className="flex items-center space-x-4">
                   <Image
-                    src={item.book?.image_directory
-                      ? `${item.book.image_directory}image-1.png`
-                      : "/placeholder.png"}
+                    priority
+                    src={
+                      item.book?.image_directory
+                        ? `${item.book.image_directory}image-1.png`
+                        : "/placeholder.png"
+                    }
                     alt={item.book?.title}
                     height={100}
                     width={75}

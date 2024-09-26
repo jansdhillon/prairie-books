@@ -72,6 +72,7 @@ export function BookDetails({ book }: BookDetailsProps) {
             >
               <div className="relative w-full h-[400px]  my-5">
                 <Image
+                  priority
                   src={image}
                   alt={book.title}
                   fill

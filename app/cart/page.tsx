@@ -23,7 +23,6 @@ export default async function CartPage({ searchParams }: { searchParams: Message
 
   const { cartItems } = await getCartItemsAction(user.id);
 
-  console.log("cartItems", cartItems);
 
 
   if (!cartItems || cartItems.length === 0) {

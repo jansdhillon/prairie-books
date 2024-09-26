@@ -32,7 +32,6 @@ export default async function OrdersPage() {
 
   const ordersWithItemsAndPayment = await getOrdersByUserId(user.id);
 
-  console.log(ordersWithItemsAndPayment);
 
   return (
     <div className="flex flex-1 flex-col space-y-6">

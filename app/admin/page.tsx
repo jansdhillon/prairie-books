@@ -51,11 +51,8 @@ export default async function AdminDashboard({ searchParams }: { searchParams: M
     return redirect("/sign-in");
   }
 
-  console.log(user);
-
   const { userData } = await getUser(user.id);
 
-  console.log(userData);
 
   if (userData.is_admin !== true) {
     return redirect("/");
@@ -67,7 +64,6 @@ export default async function AdminDashboard({ searchParams }: { searchParams: M
 
   const handleSubmit = async (bookId: string, e: any) => {
     e.preventDefault();
-    console.log("delete book");
     await deleteBook(bookId);
   }
 

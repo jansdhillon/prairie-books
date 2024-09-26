@@ -1,4 +1,3 @@
-// pages/index.tsx
 import { fetchBooks } from "./actions/fetch-books";
 import { getFeaturedBooks } from "./actions/get-featured-books";
 import BookDisplay from "@/components/book-display";
@@ -38,10 +37,11 @@ export default async function HomePage() {
         </div>
         <div className="md:w-1/2 ">
           <Image
+            priority
             src="/book-cat2.png"
             alt="Bookshelf"
             width={350}
-            height={300}
+            height={350}
             quality={100}
             className="rounded-xl"
           />

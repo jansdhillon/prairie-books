@@ -52,12 +52,6 @@ export default function CheckoutWrapper({
     e.preventDefault();
 
 
-    orderItems.map((item: any) => {
-      console.log("item", item);
-    });
-
-    console.log(payment);
-
     setIsLoading(false);
   };
 
@@ -65,16 +59,12 @@ export default function CheckoutWrapper({
   useEffect(() => {
     const query = new URLSearchParams(window.location.search);
     if (query.get('success')) {
-      console.log('Order placed! You will receive an email confirmation.');
     }
 
     if (query.get('canceled')) {
-      console.log('Order canceled -- continue to shop around and checkout when you are ready.');
     }
   }, []);
 
-  console.log("orderItems in wrapper", orderItems);
-  console.log("payment in wrapper", payment);
 
 
   return (

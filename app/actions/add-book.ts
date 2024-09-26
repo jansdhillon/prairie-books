@@ -32,8 +32,6 @@ export const addBookAction = async (formData: FormData) => {
   let hasImages = false;
 
 
-  console.log("fileterdFiles", fileterdFiles);
-
   const numImages = fileterdFiles.length;
 
 
@@ -57,7 +55,7 @@ export const addBookAction = async (formData: FormData) => {
 
           await uploadFile();
         } catch (error) {
-          console.log("Error occurred while uploading file:", error);
+          console.error("Error occurred while uploading file:", error);
         }
       }
     }
@@ -121,7 +119,6 @@ export const addBookAction = async (formData: FormData) => {
   await upsertProductRecord(product);
   await upsertPriceRecord(stripePrice);
 
-  console.log(`Book ${title} added successfully.`);
 
   return encodedRedirect("success", "/admin/add", "Book added successfully!");
 };

@@ -21,6 +21,8 @@ export const signUpAction = async (formData: FormData) => {
       },
     });
 
+    console.log("error", error);
+
     if (error) {
       console.error(error.code + " " + error.message);
       return encodedRedirect("error", "/sign-up", error.message);
