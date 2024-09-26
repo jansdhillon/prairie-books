@@ -44,6 +44,7 @@ export default async function HomePage() {
             height={350}
             quality={100}
             className="rounded-xl"
+            loading="eager"
           />
         </div>
       </section>
