@@ -208,17 +208,18 @@ export default async function AdminDashboard({
                       <TableCell>{book.title}</TableCell>
                       <TableCell>${book.price?.toFixed(2)}</TableCell>
                       <TableCell>{book.author}</TableCell>
-                      <TableCell> {format(new Date(book.created_at), "MM-dd-yyyy")}</TableCell>
+                      <TableCell>
+                        {" "}
+                        {format(new Date(book.created_at), "MM-dd-yyyy")}
+                      </TableCell>
 
-                      <TableCell className="flex justify-start items-center gap-2">
+                      <TableCell className="flex justify-start items-center gap-4">
                         <Link href={`/admin/edit/${book.id}`}>
                           <Button>Edit</Button>
                         </Link>
 
                         <AlertDialog>
-                          <AlertDialogTrigger>
-                            <Button variant="destructive">Delete</Button>
-                          </AlertDialogTrigger>
+                          <AlertDialogTrigger className="h-10 px-4 py-2 bg-destructive text-destructive-foreground hover:bg-destructive/90 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">Delete</AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
                               <AlertDialogTitle>
@@ -236,7 +237,7 @@ export default async function AdminDashboard({
                                 deleteBook={deleteBook}
                                 searchParams={searchParams}
                                 bookId={book.id}
-                                alertDialogAction={<AlertDialogAction className="bg-destructive">Delete</AlertDialogAction>}
+                                alertDialogAction={<AlertDialogAction type="submit" className="h-10 px-4 py-2 bg-destructive text-destructive-foreground hover:bg-destructive/90 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">Delete</AlertDialogAction>}
                               />
                             </AlertDialogFooter>
                           </AlertDialogContent>

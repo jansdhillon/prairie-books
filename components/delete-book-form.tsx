@@ -14,24 +14,16 @@ export const DeleteBookForm = ({
   deleteBook: (formData: FormData) => void;
   bookId: string;
   searchParams: Message;
-  alertDialogAction: ReactNode
+  alertDialogAction: ReactNode;
 }) => {
 
 
   console.log("DeleteBookForm", { deleteBook, bookId, searchParams });
 
   return (
-    <form className="">
+    <form action={deleteBook}>
       <Input type="hidden" name="book-id" defaultValue={bookId} readOnly />
-      <SubmitButton
-        type="submit"
-        variant="ghost"
-        className="bg-inherit hover:bg-transparent"
-        pendingText="Removing..."
-        formAction={deleteBook}
-      >
-        {alertDialogAction}
-      </SubmitButton>
+      {alertDialogAction}
     </form>
   );
 };
