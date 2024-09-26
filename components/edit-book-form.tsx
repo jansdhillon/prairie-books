@@ -33,16 +33,13 @@ export default function EditBookForm({
       formRef.current.reset();
     }
     setIsSubmitting(false);
-    setGenres([]);
   };
 
   const [genres, setGenres] = useState<string[]>([]);
   const [currentGenre, setCurrentGenre] = useState("");
 
-
   useEffect(() => {
     if (book.genre) {
-      // If genres are stored as a stringified array, parse it
       if (typeof book.genre === "string") {
         try {
           const parsedGenres = JSON.parse(book.genre);
@@ -74,12 +71,8 @@ export default function EditBookForm({
     setGenres(genres.filter((genre) => genre !== genreToRemove));
   };
 
-
   return (
-    <form
-      className="space-y-2 max-w-2xl mx-auto"
-      ref={formRef}
-    >
+    <form className="space-y-2 max-w-2xl mx-auto" ref={formRef}>
       <div className="space-y-2">
         <h2 className="text-2xl font-bold">Edit Book Details</h2>
         <p className="text-muted-foreground">
@@ -151,18 +144,23 @@ export default function EditBookForm({
             />
           </div>
           <div className="flex flex-wrap gap-2 mt-2">
-            {genres
-            .map((g) =>
+            {genres.map((g) =>
               g
                 .split(",")
                 .filter((g) => g.length > 0)
-                .map((g) => <Badge key={g} variant="secondary" className="flex items-center">
-                {g}
-                <X
-                  className="ml-2 h-4 w-4 cursor-pointer"
-                  onClick={() => removeGenre(g)}
-                />
-              </Badge>)
+                .map((g) => (
+                  <Badge
+                    key={g}
+                    variant="secondary"
+                    className="flex items-center"
+                  >
+                    {g}
+                    <X
+                      className="ml-2 h-4 w-4 cursor-pointer"
+                      onClick={() => removeGenre(g)}
+                    />
+                  </Badge>
+                ))
             )}
           </div>
         </div>
@@ -254,7 +252,10 @@ export default function EditBookForm({
         />
         <Label htmlFor="is-featured">Feature this book</Label>
       </div>
-      <div className="absolute opacity-0"><Label htmlFor="book-id">Book Id</Label><Input name="book-id" defaultValue={book?.id} readOnly/></div>
+      <div className="absolute opacity-0">
+        <Label htmlFor="book-id">Book Id</Label>
+        <Input name="book-id" defaultValue={book?.id} readOnly />
+      </div>
 
       <div className="flex justify-end">
         <SubmitButton

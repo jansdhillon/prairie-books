@@ -15,7 +15,7 @@ export const editBookAction = async (formData: FormData) => {
   const isbn = formData.get("isbn")?.toString().trim();
   const priceStr = formData.get("price")?.toString().trim();
   const price = priceStr ? parseFloat(priceStr) : null;
-  const genres = formData.getAll("genre") as string[];
+  const genres = formData.getAll("genres") as string[];
   const description = formData.get("description")?.toString().trim() || null;
   const publisher = formData.get("publisher")?.toString().trim() || null;
   const language = formData.get("language")?.toString().trim() || null;
