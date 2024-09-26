@@ -62,14 +62,19 @@ export function Book({ book }: BookProps) {
         {book.genre && (
           <div className="space-x-1">
             {book.genre.map((g) =>
-              g.split(",").filter(g => g.length > 0).map((g) => <Badge key={g}>{g}</Badge>)
+              g
+                .split(",")
+                .filter((g) => g.length > 0)
+                .map((g) => <Badge key={g}>{g}</Badge>)
             )}
           </div>
         )}
       </CardHeader>
-      <CardContent className="line-clamp-2  text-ellipsis">
-        <p>{book.description || "No description available."}</p>
-      </CardContent>
+      {book.description && (
+        <CardContent className="line-clamp-2  text-ellipsis">
+          <p>{book.description || "No description available."}</p>
+        </CardContent>
+      )}
 
       <CardFooter className="p-4 flex my-4 justify-end gap-4">
         <Button

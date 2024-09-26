@@ -136,14 +136,19 @@ export function BookDetails({ book }: BookDetailsProps) {
                         {book.isbn}
                       </p>
                     )}
-                    {book.genre && (
+                    {book.genre && book.genre.map((g)=> g.split(",").filter((g) => g.length > 0)).length > 0 && (
                       <div className="space-x-1">
                         <span className="text-primary font-semibold">
                           Genre(s):
                         </span>{" "}
-                        {book.genre.map((g) =>
-                          g.split(",").map((g) => <Badge key={g}>{g}</Badge>)
-                        )}
+                        <div className="space-x-1">
+                          {book.genre.map((g) =>
+                            g
+                              .split(",")
+                              .filter((g) => g.length > 0)
+                              .map((g) => <Badge key={g}>{g}</Badge>)
+                          )}
+                        </div>
                       </div>
                     )}
                     {book.original_release_date && (
