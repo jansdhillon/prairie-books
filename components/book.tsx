@@ -34,8 +34,6 @@ export function Book({ book }: BookProps) {
     });
   };
 
-  console.log(book?.genre?.length);
-
   const coverImage = book.image_directory
     ? `${book.image_directory}image-1.png`
     : "/placeholder.png";

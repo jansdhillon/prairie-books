@@ -18,7 +18,6 @@ export const DeleteBookForm = ({
 }) => {
 
 
-  console.log("DeleteBookForm", { deleteBook, bookId, searchParams });
 
   return (
     <form action={deleteBook}>

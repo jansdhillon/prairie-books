@@ -19,7 +19,6 @@ export default function EditBookForm({
   book: BookType;
   searchParams: Message;
 }) {
-  console.log(book);
   const formRef = useRef<HTMLFormElement>(null);
 
 

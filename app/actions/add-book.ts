@@ -61,7 +61,6 @@ export const addBookAction = async (formData: FormData) => {
     }
   }
 
-  console.log(genres)
 
   if (!title || !author || !isbn || price === null || isNaN(price)) {
     return encodedRedirect(
