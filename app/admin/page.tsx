@@ -89,7 +89,7 @@ export default async function AdminDashboard({
   const orders = await getOrdersByUserId(user.id);
 
   return (
-    <div className="container mx-auto p-4 space-y-8">
+    <div className="space-y-8">
       <h1 className="text-3xl font-bold">Welcome, Kathrin!</h1>
 
       {/* <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -252,7 +252,7 @@ export default async function AdminDashboard({
                           <AlertDialogContent>
                             <AlertDialogHeader>
                               <AlertDialogTitle>
-                                Are you absolutely sure?
+                                Are you sure?
                               </AlertDialogTitle>
                               <AlertDialogDescription>
                                 This action cannot be undone. This will
@@ -295,14 +295,14 @@ export default async function AdminDashboard({
                             </Link>
 
                             <Separator />
-                            <AlertDialog>
+                            <AlertDialog >
                               <AlertDialogTrigger className="text-destructive hover:text-destructive/90 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
                                 Delete
                               </AlertDialogTrigger>
-                              <AlertDialogContent>
+                              <AlertDialogContent className="max-w-xs">
                                 <AlertDialogHeader>
                                   <AlertDialogTitle>
-                                    Are you absolutely sure?
+                                    Are you sure?
                                   </AlertDialogTitle>
                                   <AlertDialogDescription>
                                     This action cannot be undone. This will
@@ -318,7 +318,7 @@ export default async function AdminDashboard({
                                     alertDialogAction={
                                       <AlertDialogAction
                                         type="submit"
-                                        className="h-10 px-4 py-2 bg-destructive text-destructive-foreground hover:bg-destructive/90 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+                                        className="flex w-full flex-1 h-10 px-4 py-2 bg-destructive text-destructive-foreground hover:bg-destructive/90 items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
                                       >
                                         Delete
                                       </AlertDialogAction>

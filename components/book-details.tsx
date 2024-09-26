@@ -80,7 +80,7 @@ export function BookDetails({ book }: BookDetailsProps) {
   }, []);
 
   return (
-    <div className="container mx-auto w-full space-y-8">
+    <div className="w-full space-y-8 px-1">
       <div>
         <Button variant="ghost" onClick={() => router.back()}>
           <ArrowLeft className="mr-2 h-4 w-4" /> Back
@@ -109,7 +109,7 @@ export function BookDetails({ book }: BookDetailsProps) {
                 key={index}
                 className="flex flex-col md:basis-1/2 lg:basis-1/3 rounded-xl"
               >
-                <div className="relative w-full h-[400px]  my-5">
+                <Link href={`${image}`} className="relative w-full h-[400px]  my-5">
                   <Image
                     priority
                     src={image}
@@ -118,7 +118,7 @@ export function BookDetails({ book }: BookDetailsProps) {
                     className="object-contain rounded-xl"
                     loading="eager"
                   />
-                </div>
+                </Link>
               </CarouselItem>
             ))}
           </CarouselContent>
@@ -131,130 +131,112 @@ export function BookDetails({ book }: BookDetailsProps) {
         </Carousel>
       </Suspense>
 
-      <div className="flex items-center gap-4 justify-between">
-        <div className="flex flex-col w-full">
+      <div className="flex md:flex-col items-center gap-4 justify-between">
+        <div className="flex-1 w-full">
           <CardHeader className="text-muted-foreground">
-            <div className="flex flex-col md:flex-row gap-8">
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-baseline  min-w-sm">
-                    <CardTitle className="text-3xl font-semibold text-primary mb-4">
-                      {book.title}
-
-                    </CardTitle>
-                    {user && userData && userData?.is_admin && (
-                        <Link className="mx-5" href={`/admin/edit/${book.id}`}>
-                          <Pen size={20} width={20} height={20} />
-                        </Link>
-                      )}
-                  </div>
-                  <p className="text-xl font-semibold text-primary">
-                    ${book.price.toFixed(2)} CAD
-                  </p>
-                </div>
-                <Separator className="my-4" />
-                <div className="flex items-start justify-between">
-                  <div className="leading-loose">
-                    <p>
-                      <span className="text-primary font-semibold">
-                        Author:
-                      </span>{" "}
-                      {book.author}
-                    </p>
-                    {book.isbn && (
-                      <p>
-                        <span className="text-primary font-semibold">
-                          ISBN:
-                        </span>{" "}
-                        {book.isbn}
-                      </p>
-                    )}
-                    {book.genre &&
-                      book.genre.map((g) =>
-                        g.split(",").filter((g) => g.length > 0)
-                      ).length > 0 && (
-                        <div className="flex gap-1">
-                          <span className="text-primary font-semibold">
-                            Genre(s):
-                          </span>{" "}
-                          <div className="space-x-1">
-                            {book.genre.map((g) =>
-                              g
-                                .split(",")
-                                .filter((g) => g.length > 0)
-                                .map((g) => <Badge key={g}>{g}</Badge>)
-                            )}
-                          </div>
-                        </div>
-                      )}
-                    {book.original_release_date && (
-                      <p>
-                        <span className="text-primary font-semibold">
-                          Original Release Date:
-                        </span>{" "}
-                        {book.original_release_date || "Not specified"}
-                      </p>
-                    )}
-                    {book.publication_date && (
-                      <p>
-                        {" "}
-                        <span className="text-primary font-semibold">
-                          Publication Date:
-                        </span>{" "}
-                        {book.publication_date || "Not specified"}
-                      </p>
-                    )}
-                    {book.publisher && (
-                      <p>
-                        {" "}
-                        <span className="text-primary font-semibold">
-                          Publisher:
-                        </span>{" "}
-                        {book.publisher || "Not specified"}
-                      </p>
-                    )}
-                    {book.edition && (
-                      <p>
-                        <span className="text-primary font-semibold">
-                          Edition:
-                        </span>{" "}
-                        {book.edition || "Not specified"}
-                      </p>
-                    )}
-                    {book.condition && (
-                      <p>
-                        <span className="text-primary font-semibold">
-                          Condition:
-                        </span>{" "}
-                        {book.condition || "Not specified"}
-                      </p>
-                    )}
-                  </div>
-                  <Button
-                    onClick={handleAddToCart}
-                    disabled={isPending}
-                  >
-                    {isPending ? (
-                      "Adding to Cart..."
-                    ) : (
-                      <>
-                        <ShoppingCart className="mr-2 h-5 w-5" /> Add to Cart
-                      </>
-                    )}
-                  </Button>
-                </div>
-                <div className="mt-6">
-                  <h3 className="text-xl font-semibold mb-2 text-primary">
-                    Description
-                  </h3>
-                  <p className=" font-normal text-primary">
-                    {book.description || "No description available."}
-                  </p>
-                </div>
+            <div className="flex md:flex-col justify-between items-start flex-row ">
+              <div className="flex flex-col">
+                <CardTitle className="text-3xl font-semibold text-primary mb-4">
+                  {book.title}
+                </CardTitle>
+                {user && userData && userData?.is_admin && (
+                  <Link className="mx-5" href={`/admin/edit/${book.id}`}>
+                    <Pen size={20} width={20} height={20} />
+                  </Link>
+                )}
               </div>
             </div>
+            <Separator className="my-4" />
+
+            <div className="space-y-2 pb-4">
+              <p>
+                <span className="text-primary font-semibold">Author:</span>{" "}
+                {book.author}
+              </p>
+              {book.isbn && (
+                <p>
+                  <span className="text-primary font-semibold">ISBN:</span>{" "}
+                  {book.isbn}
+                </p>
+              )}
+              {book.genre &&
+                book.genre.map((g) => g.split(",").filter((g) => g.length > 0))
+                  .length > 0 && (
+                  <div className="flex gap-1">
+                    <span className="text-primary font-semibold">
+                      Genre(s):
+                    </span>{" "}
+                    <div className="space-x-1">
+                      {book.genre.map((g) =>
+                        g
+                          .split(",")
+                          .filter((g) => g.length > 0)
+                          .map((g) => <Badge key={g}>{g}</Badge>)
+                      )}
+                    </div>
+                  </div>
+                )}
+              {book.original_release_date && (
+                <p>
+                  <span className="text-primary font-semibold">
+                    Original Release Date:
+                  </span>{" "}
+                  {book.original_release_date || "Not specified"}
+                </p>
+              )}
+              {book.publication_date && (
+                <p>
+                  {" "}
+                  <span className="text-primary font-semibold">
+                    Publication Date:
+                  </span>{" "}
+                  {book.publication_date || "Not specified"}
+                </p>
+              )}
+              {book.publisher && (
+                <p>
+                  {" "}
+                  <span className="text-primary font-semibold">
+                    Publisher:
+                  </span>{" "}
+                  {book.publisher || "Not specified"}
+                </p>
+              )}
+              {book.edition && (
+                <p>
+                  <span className="text-primary font-semibold">Edition:</span>{" "}
+                  {book.edition || "Not specified"}
+                </p>
+              )}
+              {book.condition && (
+                <p>
+                  <span className="text-primary font-semibold">Condition:</span>{" "}
+                  {book.condition || "Not specified"}
+                </p>
+              )}
+            </div>
+            <div className="flex flex-col justify-between items-end">
+              <p className="text-xl font-semibold text-primary mb-4">
+                ${book.price.toFixed(2)} CAD
+              </p>
+
+              <Button onClick={handleAddToCart} disabled={isPending}>
+                {isPending ? (
+                  "Adding to Cart..."
+                ) : (
+                  <>
+                    <ShoppingCart className="mr-2 h-5 w-5" /> Add to Cart
+                  </>
+                )}
+              </Button>
+            </div>
           </CardHeader>
-          <CardFooter className="w-full flex justify-end  items-center space-x-4"></CardFooter>
+          <CardContent>
+            <h3 className="text-lg sm:text-xl font-semibold mb-2 text-primary">
+              Description
+            </h3>
+            <p>{book.description || "No description available."}</p>
+          </CardContent>
         </div>
       </div>
     </div>

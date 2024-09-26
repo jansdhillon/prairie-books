@@ -49,7 +49,7 @@ export default function RootLayout({
               <Suspense
                 fallback={<Skeleton className="w-full h-full bg-accent" />}
               >
-                <div className="container  mx-auto max-w-5xl p-4  flex flex-col space-y-12 px-12   md:px-10 py-6">
+                <div className="container  mx-auto max-w-5xl p-4  flex flex-col space-y-12   md:px-10 py-6">
                   <Feedback>{children}</Feedback>
                 </div>
               </Suspense>
