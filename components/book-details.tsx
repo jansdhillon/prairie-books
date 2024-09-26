@@ -137,7 +137,7 @@ export function BookDetails({ book }: BookDetailsProps) {
                       </p>
                     )}
                     {book.genre && book.genre.map((g)=> g.split(",").filter((g) => g.length > 0)).length > 0 && (
-                      <div className="space-x-1">
+                      <div className="flex justify-center gap-1">
                         <span className="text-primary font-semibold">
                           Genre(s):
                         </span>{" "}
