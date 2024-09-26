@@ -49,10 +49,10 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
     <header className="bg-secondary/50 backdrop-blur-sm fixed top-0 left-0 right-0 z-50 border-b">
       {/* Logo */}
 
-      <nav className="hidden md:flex space-x-4 items-center justify-center px-10 gap-2 py-4">
+      <nav className="hidden md:flex space-x-4 items-center justify-center px-10 gap-5 py-4">
         <Link
           href="/"
-          className="text-primary text-base font-bold min-w-[120px] tracking-tight hover:text-muted-foreground"
+          className="text-primary text-base font-bold min-w-[115px] tracking-tight hover:text-muted-foreground pr-2"
         >
           Kathrin's Books
         </Link>
@@ -122,7 +122,7 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
               {/* <Button onClick={handleSearch} variant="ghost" size={"sm"}>
                   Search
                 </Button> */}
-              <div className="flex justify-around pt-4 ">
+              <div className="flex justify-around  pt-4 ">
                 {" "}
                 <ThemeSwitcher />
                 {headerAuth}

@@ -12,7 +12,7 @@ export default async function AuthButton() {
 
   if (!user) {
     return (
-      <div className="flex gap-2">
+      <div className="flex gap-5">
         <Button asChild size="sm" variant={"outline"}>
           <Link href="/sign-in">Sign in</Link>
         </Button>
