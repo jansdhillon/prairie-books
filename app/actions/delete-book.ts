@@ -17,8 +17,6 @@ export const deleteBook = async (formData: FormData) => {
 
   const supabase = createClient();
 
-  console.log("Deleting book with ID:", bookId);
-  console.log("Deleting product with ID:", productId);
 
 
   const { data: book, error: bookError } = await supabase

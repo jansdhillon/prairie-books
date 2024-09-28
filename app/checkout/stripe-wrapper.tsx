@@ -16,7 +16,7 @@ export default function StripeWrapper({
   clientSecret: string;
 }) {
   if (!clientSecret) {
-    return null; // Or a loading indicator
+    return null;
   }
 
   const options: StripeElementsOptions = {

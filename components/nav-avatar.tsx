@@ -24,11 +24,10 @@ import Link from "next/link";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 
 export const NavAvatar = ({ user, userData }: { user: any; userData: any }) => {
-  console.log(user.email);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar className="hover:cursor-pointer w-10 h-10 text-xs">
+        <Avatar className="hover:cursor-pointer w-8 h-8 text-xs">
           <AvatarFallback>{userData.email[0].toUpperCase()}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>

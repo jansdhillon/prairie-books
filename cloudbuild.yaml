@@ -1,5 +1,4 @@
 steps:
-  # Step 1: Access STRIPE_SECRET_KEY and store it in a file
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
     args:
@@ -8,7 +7,6 @@ steps:
         gcloud secrets versions access latest --secret=STRIPE_SECRET_KEY --format='get(payload.data)' \
         | tr '_-' '/+' | base64 -d > stripe_secret_key.txt
 
-  # Step 2: Access NEXT_PUBLIC_STRIPE_PUBLIC_KEY and store it in a file
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
     args:
@@ -17,7 +15,6 @@ steps:
         gcloud secrets versions access latest --secret=NEXT_PUBLIC_STRIPE_PUBLIC_KEY --format='get(payload.data)' \
         | tr '_-' '/+' | base64 -d > next_public_stripe_public_key.txt
 
-  # Step 3: Access RESEND_API_KEY and store it in a file
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
     args:
@@ -26,7 +23,6 @@ steps:
         gcloud secrets versions access latest --secret=RESEND_API_KEY --format='get(payload.data)' \
         | tr '_-' '/+' | base64 -d > resend_api_key.txt
 
-  # Step 4: Access NEXT_PUBLIC_SUPABASE_URL and store it in a file
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
     args:
@@ -35,7 +31,6 @@ steps:
         gcloud secrets versions access latest --secret=NEXT_PUBLIC_SUPABASE_URL --format='get(payload.data)' \
         | tr '_-' '/+' | base64 -d > next_public_supabase_url.txt
 
-  # Step 5: Access NEXT_PUBLIC_SUPABASE_ANON_KEY and store it in a file
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
     args:
@@ -44,7 +39,6 @@ steps:
         gcloud secrets versions access latest --secret=NEXT_PUBLIC_SUPABASE_ANON_KEY --format='get(payload.data)' \
         | tr '_-' '/+' | base64 -d > next_public_supabase_anon_key.txt
 
-  # Step 6: Access SUPABASE_SERVICE_ROLE_KEY and store it in a file
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
     args:
@@ -53,7 +47,6 @@ steps:
         gcloud secrets versions access latest --secret=SUPABASE_SERVICE_ROLE_KEY --format='get(payload.data)' \
         | tr '_-' '/+' | base64 -d > supabase_service_role_key.txt
 
-  # Step 7: Access STRIPE_WEBHOOK_SECRET and store it in a file
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
     args:
@@ -62,7 +55,6 @@ steps:
         gcloud secrets versions access latest --secret=STRIPE_WEBHOOK_SECRET --format='get(payload.data)' \
         | tr '_-' '/+' | base64 -d > stripe_webhook_secret.txt
 
-  # Step 8: Access ADMIN_EMAIL and store it in a file
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
     args:
@@ -71,7 +63,6 @@ steps:
         gcloud secrets versions access latest --secret=ADMIN_EMAIL --format='get(payload.data)' \
         | tr '_-' '/+' | base64 -d > admin_email.txt
 
-  # Step 9: Build the Docker image using the secrets from files
   - name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
     args:
@@ -89,13 +80,11 @@ steps:
           -t gcr.io/prairie-books/prairie-books \
           .
 
-  # Step 10: Push the Docker image to Container Registry
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
       - 'gcr.io/prairie-books/prairie-books'
 
-  # Step 11: Deploy to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args:

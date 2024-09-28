@@ -48,9 +48,6 @@ export default async function HomePage() {
               width={350}
               height={350}
               sizes="350px"
-
-              quality={100}
-              className="rounded-xl"
               loading="eager"
             />
           </div>

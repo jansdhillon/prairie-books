@@ -28,6 +28,7 @@ export type Database = {
           product_id: string | null
           publication_date: string | null
           publisher: string | null
+          stock: number
           title: string
         }
         Insert: {
@@ -48,6 +49,7 @@ export type Database = {
           product_id?: string | null
           publication_date?: string | null
           publisher?: string | null
+          stock?: number
           title: string
         }
         Update: {
@@ -68,6 +70,7 @@ export type Database = {
           product_id?: string | null
           publication_date?: string | null
           publisher?: string | null
+          stock?: number
           title?: string
         }
         Relationships: [
@@ -223,23 +226,29 @@ export type Database = {
       }
       orders: {
         Row: {
+          billing_address: Json | null
           id: string
           ordered_at: string
           payment_intent_id: string | null
+          shipping_address: Json | null
           status: Database["public"]["Enums"]["order_status"] | null
           user_id: string
         }
         Insert: {
+          billing_address?: Json | null
           id?: string
           ordered_at?: string
           payment_intent_id?: string | null
+          shipping_address?: Json | null
           status?: Database["public"]["Enums"]["order_status"] | null
           user_id: string
         }
         Update: {
+          billing_address?: Json | null
           id?: string
           ordered_at?: string
           payment_intent_id?: string | null
+          shipping_address?: Json | null
           status?: Database["public"]["Enums"]["order_status"] | null
           user_id?: string
         }

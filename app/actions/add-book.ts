@@ -85,6 +85,7 @@ export const addBookAction = async (formData: FormData) => {
       ? `https://storage.googleapis.com/${bucketName}/${directoryPath}`
       : null,
     is_featured,
+
     edition,
     publication_date: publicationDate,
     num_images: numImages,
@@ -133,6 +134,20 @@ export const addBookAction = async (formData: FormData) => {
 
   await upsertProductRecord(product);
   await upsertPriceRecord(stripePrice);
+
+  const { error: updateError } = await supabase
+      .from("books")
+      .update({ product_id: product.id })
+      .eq("id", newBookId?.id!);
+
+    if (updateError) {
+      console.error("Error updating book with product_id:", updateError.message);
+      return encodedRedirect(
+        "error",
+        "/",
+        "Failed to update the book with the product ID. Please try again."
+      );
+    }
 
   return redirect(
     getStatusRedirect("/admin", "Success", "Book added successfully!")

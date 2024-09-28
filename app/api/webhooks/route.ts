@@ -1,3 +1,4 @@
+import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { stripe } from '@/utils/stripe/config';
 import {
@@ -5,10 +6,9 @@ import {
   upsertPriceRecord,
   deleteProductRecord,
   deletePriceRecord,
-  upsertPaymentRecord
 } from '@/utils/supabase/admin';
-import { buffer } from 'micro';
 import { createClient } from '@/utils/supabase/server';
+
 
 const relevantEvents = new Set([
   'product.created',
@@ -19,21 +19,31 @@ const relevantEvents = new Set([
   'price.deleted',
   'checkout.session.completed',
   'payment_intent.succeeded',
-  'payment_intent.payment_failed'
+  'payment_intent.payment_failed',
 ]);
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   const body = await req.text();
+  const supabase = createClient();
+
   const sig = req.headers.get('stripe-signature') as string;
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
   let event: Stripe.Event;
 
+
+
   try {
-    if (!sig || !webhookSecret)
-      return new Response('Webhook secret not found.', { status: 400 });
+    if (!sig || !webhookSecret) {
+      return new NextResponse('Webhook signature or secret not found.', {
+        status: 400,
+      });
+    }
+
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch (err: any) {
-    return new Response(`Webhook Error: ${err.message}`, { status: 400 });
+    console.error('Webhook signature verification failed.', err.message);
+    return new NextResponse(`Webhook Error: ${err.message}`, { status: 400 });
   }
 
   if (relevantEvents.has(event.type)) {
@@ -48,95 +58,104 @@ export async function POST(req: Request) {
           await upsertPriceRecord(event.data.object as Stripe.Price);
           break;
         case 'price.deleted':
-          await deletePriceRecord(event.data.object.id as string);
+          await deletePriceRecord((event.data.object as Stripe.Price).id);
           break;
         case 'product.deleted':
-          await deleteProductRecord(event.data.object.id as string);
-          break;
-        case 'checkout.session.completed':
-          const checkoutSession = event.data.object as Stripe.Checkout.Session;
-          if (checkoutSession.mode === 'payment') {
-          }
+          await deleteProductRecord((event.data.object as Stripe.Product).id);
           break;
         case 'payment_intent.succeeded':
-            const paymentIntent = event.data.object as Stripe.PaymentIntent;
-            await handlePaymentIntentSucceeded(paymentIntent);
-            break;
+          const paymentIntent = event.data.object as Stripe.PaymentIntent;
+          await handlePaymentIntentSucceeded(paymentIntent, supabase);
+          break;
         default:
-          throw new Error('Unhandled relevant event!');
+          console.warn(`Unhandled relevant event type: ${event.type}`);
+          break;
       }
     } catch (error) {
-      console.error(error);
-      return new Response(
-        'Webhook handler failed. View your Next.js function logs.',
-        {
-          status: 400
-        }
-      );
+      console.error('Error handling webhook event:', error);
+      return new NextResponse('Webhook handler failed.', { status: 400 });
     }
   } else {
-    return new Response(`Unsupported event type: ${event.type}`, {
-      status: 400
-    });
+    console.log(`Unhandled event type: ${event.type}`);
+    return new NextResponse(`Unhandled event type: ${event.type}`, { status: 400 });
   }
-  return new Response(JSON.stringify({ received: true }));
+
+  return NextResponse.json({ received: true });
 }
 
-async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent) {
+async function handlePaymentIntentSucceeded(
+  paymentIntent: Stripe.PaymentIntent,
+  supabase: any
+) {
   const orderId = paymentIntent.metadata?.order_id;
   if (!orderId) {
     console.error('Order ID not found in payment intent metadata');
     return;
   }
 
-  const supabase = createClient();
-
-  const { data, error } = await supabase
+  const { error: orderUpdateError } = await supabase
     .from('orders')
     .update({ status: 'Paid' })
-    .eq('id', orderId)
-    .single();
+    .eq('id', orderId);
 
-  if (error) {
-    console.error('Error updating order status:', error.message);
-  } else {
-    console.log('Order status updated to Paid for order ID:', orderId);
+  if (orderUpdateError) {
+    console.error('Error updating order status:', orderUpdateError.message);
+    return;
   }
 
-  const { data: orderData, error: orderError } = await supabase
+  const { data: orderData, error: orderFetchError } = await supabase
     .from('orders')
-    .select('user_id')
+    .select('user_id, order_items (book_id, quantity)')
     .eq('id', orderId)
     .single();
 
-  if (orderError || !orderData) {
-    console.error('Error fetching order data:', orderError?.message);
+  if (orderFetchError || !orderData) {
+    console.error('Error fetching order data:', orderFetchError?.message);
     return;
   }
 
   const userId = orderData.user_id;
+  const orderItems = orderData.order_items;
 
-  const { data: cartData, error: cartError } = await supabase
+  for (const item of orderItems) {
+    const { error: stockUpdateError } = await supabase
+      .from('books')
+      .update({
+        stock: supabase.raw('stock - ?', [item.quantity]),
+      })
+      .eq('id', item.book_id);
+
+    if (stockUpdateError) {
+      console.error(
+        `Error reducing stock for book ID ${item.book_id}:`,
+        stockUpdateError.message
+      );
+    }
+  }
+
+  const { data: cartData, error: cartFetchError } = await supabase
     .from('cart')
     .select('id')
     .eq('user_id', userId)
     .single();
 
-  if (cartError || !cartData) {
-    console.error('Error fetching cart data:', cartError?.message);
+  if (cartFetchError || !cartData) {
+    console.error('Error fetching cart data:', cartFetchError?.message);
     return;
   }
 
   const cartId = cartData.id;
 
-  const { error: cartItemsError } = await supabase
+
+  const { error: cartClearError } = await supabase
     .from('cart_items')
     .delete()
     .eq('cart_id', cartId);
 
-  if (cartItemsError) {
-    console.error('Error clearing cart items:', cartItemsError.message);
+  if (cartClearError) {
+    console.error('Error clearing cart items:', cartClearError.message);
   } else {
     console.log('Cart items cleared for cart ID:', cartId);
   }
+
 }

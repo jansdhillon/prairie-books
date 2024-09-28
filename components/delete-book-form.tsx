@@ -17,7 +17,6 @@ export const DeleteBookForm = ({
 }) => {
   const [productId, setProductId] = useState<string | null>(null);
 
-  console.log(getProductByBookId);
 
   useEffect(() => {
     const fetchProductId = async () => {

@@ -175,44 +175,43 @@ export const getCartDetailsByUserId = cache(async (supabase: SupabaseClient, use
   return { data: cart, error: cartError };
 });
 
-export const createOrder = async (supabase: SupabaseClient, userId: string, items: any) => {
 
-
-  const { data: order, error: orderError } = await supabase
+export const createOrder = async (
+  supabase: any,
+  userId: string,
+  cartItems: any[]
+) => {
+  const { data: order, error } = await supabase
     .from("orders")
     .insert({
       user_id: userId,
-      status: "pending"
+      status: "pending",
     })
     .select("*")
     .single();
 
-  if (orderError) {
-    return { data: null, error: orderError };
+  if (error) {
+    return { error };
   }
 
 
-
-  const orderItems = items.map((item: any) => ({
+  const orderItemsData = cartItems.map((item) => ({
     order_id: order.id,
     book_id: item.book_id,
-    product_id: item.product_id,
+    product_id: item.product.id,
     quantity: item.quantity,
-    price: item.product.price[0].unit_amount
+    price: item.product.price[0].unit_amount,
   }));
 
-
-
-  const { error: orderItemsError } = await supabase
-    .from("order_items")
-    .insert(orderItems);
+  const { error: orderItemsError } = await supabase.from("order_items").insert(orderItemsData);
 
   if (orderItemsError) {
-    return { data: null, error: orderItemsError };
+    return { error: orderItemsError };
   }
 
-  return { data: order, error: null };
+  return { data: order };
 };
+
 
 
 export const createPayment = async (supabase: SupabaseClient, orderId: string, paymentDetails: any) => {

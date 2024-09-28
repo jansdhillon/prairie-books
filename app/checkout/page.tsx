@@ -1,45 +1,49 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/utils/supabase/server";
-import { checkoutAction } from "../actions/checkout";
-import CheckoutWrapper from "./checkout-wrapper";
+import { redirect, useRouter } from "next/navigation";
 import StripeWrapper from "./stripe-wrapper";
-import { Message } from "@/components/form-message";
-import { getOrderById } from "@/utils/supabase/queries";
+import CheckoutWrapper from "./checkout-wrapper";
+import { getOrderById } from "@/app/actions/get-order-by-id";
+import { getErrorRedirect } from "@/utils/helpers";
+import { checkoutAction } from "../actions/checkout";
 
-export default async function Page({ searchParams }: { searchParams: Message }) {
-  const supabase = createClient();
+interface Book {
+  title: string;
+  author: string;
+}
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+interface OrderItem {
+  id: string;
+  quantity: number;
+  price: number;
+  book: Book;
+}
 
-  if (!user) {
-    return redirect("/sign-in");
-  }
+interface CheckoutWrapperProps {
+  clientSecret: string;
+  orderItems: OrderItem[];
+  orderId: string;
+}
 
-  const { clientSecret, orderId, errorRedirect } = await checkoutAction();
-
-  if (errorRedirect) {
-    return redirect(errorRedirect);
-  }
+export default async function CheckoutPage() {
+  const { clientSecret, orderId } = await checkoutAction();
 
   if (!clientSecret || !orderId) {
     return <div>Loading...</div>;
   }
 
-  const { data, error } = await getOrderById(supabase, orderId);
+  const { data: orderItems, error } = await getOrderById(orderId);
 
 
-  if (error || !data) {
-    return redirect("/cart");
+
+  if (!orderItems) {
+   redirect(getErrorRedirect("/cart", "Error fetching order items"));
   }
 
   return (
     <StripeWrapper clientSecret={clientSecret}>
       <CheckoutWrapper
         clientSecret={clientSecret}
+        orderItems={orderItems.items}
         orderId={orderId}
-        orderItems={data.items}
       />
     </StripeWrapper>
   );
