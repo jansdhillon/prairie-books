@@ -3,7 +3,7 @@ import { stripe } from '@/utils/stripe/config';
 import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
 import type { Database, Tables, TablesInsert } from '../database.types';
-import { getProductsAndPricesByBookId } from './queries';
+import { getProductAndPriceByBookId } from './queries';
 
 type Product = Tables<'products'>;
 type Price = Tables<'prices'>;
@@ -26,8 +26,11 @@ const supabaseAdmin = createClient<Database>(
 
 const upsertProductRecord = async (product: Stripe.Product) => {
 
+  const {data: book} = await supabaseAdmin.from("books").select("*").eq("id", product.metadata.bookId).single();
+
   const productData: Product = {
     id: product.id,
+    book_id: book?.id!,
     active: product.active,
     name: product.name,
     description: product.description ?? null,

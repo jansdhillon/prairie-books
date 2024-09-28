@@ -355,6 +355,7 @@ export type Database = {
       products: {
         Row: {
           active: boolean | null
+          book_id: string | null
           description: string | null
           id: string
           image: string | null
@@ -363,6 +364,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean | null
+          book_id?: string | null
           description?: string | null
           id: string
           image?: string | null
@@ -371,13 +373,22 @@ export type Database = {
         }
         Update: {
           active?: boolean | null
+          book_id?: string | null
           description?: string | null
           id?: string
           image?: string | null
           metadata?: Json | null
           name?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "products_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       users: {
         Row: {
@@ -431,7 +442,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      order_status: "Delivered" | "Shipped" | "Ordered" | "Failed"
+      order_status: "Delivered" | "Shipped" | "Ordered" | "Failed" | "pending"
       payment_status:
         | "initiated"
         | "succeeded"

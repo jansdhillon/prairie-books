@@ -99,12 +99,15 @@ export const addBookAction = async (formData: FormData) => {
     );
   }
 
+  const {data: newBookId, error: newBookError} = await supabase.from("books").select("id").eq("isbn", isbn).eq("title", title).single();
+
+
   const product = await stripe.products.create({
     name: title,
     description: description || undefined,
     images: hasImages ? [`${newBook.image_directory}image-1.png`] : undefined,
     metadata: {
-      bookId: newBook.id!,
+      bookId: newBookId?.id!,
       author,
       isbn,
       genres: JSON.stringify(genres),

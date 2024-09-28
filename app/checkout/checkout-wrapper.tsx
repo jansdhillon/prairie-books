@@ -1,15 +1,13 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-  CardFooter,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -18,202 +16,161 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CreditCard, Truck } from "lucide-react";
 import {
-  LinkAuthenticationElement,
-  CardElement,
-  AddressElement,
-  Elements,
   useStripe,
   useElements,
   PaymentElement,
 } from "@stripe/react-stripe-js";
-import CheckoutForm from "@/components/checkout-form";
-import { loadStripe } from "@stripe/stripe-js";
+
+interface Book {
+  title: string;
+  author: string;
+}
+
+interface OrderItem {
+  id: string;
+  quantity: number;
+  price: number;
+  book: Book;
+}
+
+interface CheckoutWrapperProps {
+  clientSecret: string;
+  orderItems: OrderItem[];
+}
 
 export default function CheckoutWrapper({
   clientSecret,
-  dpmCheckerLink,
   orderItems,
-  payment,
-}: {
-  clientSecret: string;
-  dpmCheckerLink: string;
-  orderItems: any;
-  payment: any;
-}) {
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
+}: CheckoutWrapperProps) {
+  const stripe = useStripe();
+  const elements = useElements();
   const [message, setMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    if (!stripe) {
+      return;
+    }
+
+    const clientSecretFromURL = new URLSearchParams(window.location.search).get(
+      "payment_intent_client_secret"
+    );
+
+    if (!clientSecretFromURL) {
+      return;
+    }
+
+    stripe.retrievePaymentIntent(clientSecretFromURL).then(({ paymentIntent }) => {
+      switch (paymentIntent?.status) {
+        case "succeeded":
+          setMessage("Payment succeeded!");
+          break;
+        case "processing":
+          setMessage("Your payment is processing.");
+          break;
+        case "requires_payment_method":
+          setMessage("Your payment was not successful, please try again.");
+          break;
+        default:
+          setMessage("Something went wrong.");
+          break;
+      }
+    });
+  }, [stripe]);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (!stripe || !elements) {
+      return;
+    }
+
+    setIsLoading(true);
+
+    const { error } = await stripe.confirmPayment({
+      elements,
+      confirmParams: {
+        return_url: `${window.location.origin}/checkout/success`,
+      },
+    });
+
+    if (error) {
+      setMessage(error.message || "An unexpected error occurred.");
+    }
 
     setIsLoading(false);
   };
 
-
-  useEffect(() => {
-    const query = new URLSearchParams(window.location.search);
-    if (query.get('success')) {
-    }
-
-    if (query.get('canceled')) {
-    }
-  }, []);
-
-
-
   return (
-    <form className="container mx-auto p-6 space-y-8" onSubmit={handleSubmit}>
-      <Tabs defaultValue="shipping" className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold">Checkout</h1>
-          <TabsList>
-            <TabsTrigger value="payment">
-              <CreditCard className="h-4 w-4 mr-2" />
-              Payment
-            </TabsTrigger>
-            <TabsTrigger value="shipping">
-              <Truck className="h-4 w-4 mr-2" />
-              Shipping
-            </TabsTrigger>
-          </TabsList>
-        </div>
+    <form
+      id="payment-form"
+      className="container mx-auto p-6 space-y-8"
+      onSubmit={handleSubmit}
+    >
+      <h1 className="text-3xl font-bold">Checkout</h1>
 
-        <div className="grid gap-6 md:grid-cols-2">
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Order Summary</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Book</TableHead>
-                      <TableHead>Quantity</TableHead>
-                      <TableHead>Price</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {orderItems.map((item: any) => (
-                      <TableRow key={item.id}>
-                        <TableCell>
-                          <div>
-                            <div className="font-medium">{item.book.title}</div>
-                            <div className="text-sm text-muted-foreground">
-                              {item.book.author}
-                            </div>
+      <div className="grid gap-6 md:grid-cols-2">
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Order Summary</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Book</TableHead>
+                    <TableHead>Quantity</TableHead>
+                    <TableHead>Price</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {orderItems.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">{item.book.title}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {item.book.author}
                           </div>
-                        </TableCell>
-                        <TableCell>{item.quantity}</TableCell>
-                        <TableCell>${item.price.toFixed(2)}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-              <CardFooter className="flex justify-between">
-                <div>
-                  {/* You can add subtotal, tax, and total calculations here */}
-                </div>
-              </CardFooter>
-            </Card>
-          </div>
-
-          <TabsContent value="payment">
-            <div>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Payment Details</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <LinkAuthenticationElement id="email" />
-                  </div>
-                  <div className="space-y-2">
-                    <label
-                      htmlFor="card-element"
-                      className="text-sm font-medium"
-                    >
-                      Card Details
-                    </label>
-                    <CardElement id="card-element" />
-                  </div>
-                  <div className="space-y-2">
-                    <label
-                      htmlFor="address-element"
-                      className="text-sm font-medium"
-                    >
-                      Billing Address
-                    </label>
-                    <AddressElement
-                      id="address-element"
-                      options={{ mode: "billing" }}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-          {/* <form id="payment-form" onSubmit={handleSubmit}>
-            <PaymentElement id="payment-element" options={{ layout: "tabs" }}  />
-            <button disabled={isLoading || !stripe || !elements} id="submit">
-              <span id="button-text">
-                {isLoading ? (
-                  <div className="spinner" id="spinner"></div>
-                ) : (
-                  "Pay now"
-                )}
-              </span>
-            </button>
-
-            {message && <div id="payment-message">{message}</div>}
-          </form> */}
-
-          <TabsContent value="shipping">
-            <Card>
-              <CardHeader>
-                <CardTitle>Shipping Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <label htmlFor="name" className="text-sm font-medium">
-                    Full Name
-                  </label>
-                  <Input
-                    id="name"
-                    placeholder="John Doe"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label
-                    htmlFor="shipping-address"
-                    className="text-sm font-medium"
-                  >
-                    Shipping Address
-                  </label>
-
-                  <AddressElement
-                    id="shipping-address"
-                    options={{ mode: "shipping" }}
-                    className="text-white"
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+                        </div>
+                      </TableCell>
+                      <TableCell>{item.quantity}</TableCell>
+                      <TableCell>
+                        ${((item.price ?? 0) / 100).toFixed(2)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
         </div>
-      </Tabs>
-      <div className="flex justify-end">
-        <Button type="submit">Place Order</Button>
+
+        <div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Payment Details</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <PaymentElement id="payment-element" />
+            </CardContent>
+          </Card>
+        </div>
       </div>
+
+      <div className="flex justify-end">
+        <Button
+          type="submit"
+          disabled={isLoading || !stripe || !elements}
+          id="submit"
+        >
+          {isLoading ? "Processing..." : "Pay now"}
+        </Button>
+      </div>
+
+      {message && <div id="payment-message">{message}</div>}
     </form>
   );
 }

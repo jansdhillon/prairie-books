@@ -1,12 +1,33 @@
 "use server";
+import { getCartByUserId, getProductAndPriceByBookId } from "@/utils/supabase/queries";
 import { createClient } from "@/utils/supabase/server";
 import { encodedRedirect } from "@/utils/utils";
+import { get } from "http";
 
 export const addToCartAction = async (formData: FormData) => {
     const supabase = createClient();
     const bookId = formData.get("bookId")?.toString();
     const quantityStr = formData.get("quantity")?.toString();
     const quantity = quantityStr ? parseInt(quantityStr) : 1;
+
+
+    if (!bookId) {
+        return encodedRedirect("error", "/books", "Book ID is required.");
+    }
+
+
+    const {data: product, error} = await getProductAndPriceByBookId(supabase, bookId)
+
+
+    if (error) {
+        console.error("Error fetching product:", error.message);
+        return encodedRedirect("error", "/books", "Failed to fetch product.");
+    }
+
+    if (!product) {
+        return encodedRedirect("error", "/books", "Product not found.");
+    }
+
 
     if (!bookId) {
       return encodedRedirect("error", "/books", "Book ID is required.");
@@ -27,11 +48,7 @@ export const addToCartAction = async (formData: FormData) => {
 
     const userId = user.id;
 
-    let { data: cart, error: cartError } = await supabase
-      .from("cart")
-      .select("*")
-      .eq("user_id", userId)
-      .single();
+    let { data: cart, error: cartError } = await getCartByUserId(supabase, userId);
 
     if (cartError && cartError.code === "PGRST116") {
       const { data: newCart, error: newCartError } = await supabase
@@ -78,6 +95,7 @@ export const addToCartAction = async (formData: FormData) => {
       const { error: insertError } = await supabase.from("cart_items").insert({
         cart_id: cart.id,
         book_id: bookId,
+        product_id: product.id,
         quantity,
       });
 
