@@ -36,11 +36,13 @@ interface OrderItem {
 
 interface CheckoutWrapperProps {
   clientSecret: string;
+  orderId: string;
   orderItems: OrderItem[];
 }
 
 export default function CheckoutWrapper({
   clientSecret,
+  orderId,
   orderItems,
 }: CheckoutWrapperProps) {
   const stripe = useStripe();
@@ -91,7 +93,7 @@ export default function CheckoutWrapper({
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `${window.location.origin}/checkout/success`,
+        return_url: `${window.location.origin}/checkout/success?order_id=${orderId}`,
       },
     });
 

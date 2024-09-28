@@ -2,22 +2,27 @@
 import { Database } from "@/utils/database.types";
 import { stripe } from "@/utils/stripe/config";
 import { deletePriceRecord, deleteProductRecord } from "@/utils/supabase/admin";
+import { getPriceByProductId } from "@/utils/supabase/queries";
 import { createClient } from "@/utils/supabase/server";
 import { encodedRedirect } from "@/utils/utils";
 import { Storage } from "@google-cloud/storage";
 
 export const deleteBook = async (formData: FormData) => {
 
-  const id = formData.get("book-id")?.toString().trim();
+  const productId = formData.get("product-id")?.toString().trim();
+  const bookId = formData.get("book-id")?.toString().trim();
 
 
   const supabase = createClient();
+
+  console.log("Deleting book with ID:", bookId);
+  console.log("Deleting product with ID:", productId);
 
 
   const { data: book, error: bookError } = await supabase
     .from("books")
     .select("id, isbn, image_directory")
-    .eq("id", id)
+    .eq("id", bookId)
     .single();
 
   const storage = new Storage();
@@ -32,10 +37,15 @@ export const deleteBook = async (formData: FormData) => {
 
   }
 
-  try{
-    await deleteProductRecord(book.id);
+  const {data: price, error: error} = await getPriceByProductId(supabase, productId!);
 
-    await deletePriceRecord(book.id);
+
+
+  try{
+    await deletePriceRecord(price.id);
+    await deleteProductRecord(productId!);
+
+
 
   } catch (error) {
     console.error("Error deleting product and price records:", error);
@@ -44,7 +54,7 @@ export const deleteBook = async (formData: FormData) => {
 
 
 
-  await supabase.from("books").delete().eq("id", id);
+  await supabase.from("books").delete().eq("id", bookId);
 
 
 

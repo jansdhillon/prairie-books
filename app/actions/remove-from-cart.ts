@@ -26,7 +26,6 @@ export const removeFromCartAction = async (formData: FormData) => {
 
     const userId = user.id;
 
-    // Ensure the cart item belongs to the user's cart
     const { data: cartItem, error: cartItemError } = await supabase
       .from("cart_items")
       .select("id, cart_id")

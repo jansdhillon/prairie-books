@@ -9,7 +9,6 @@ import { getOrderById } from "@/utils/supabase/queries";
 export default async function Page({ searchParams }: { searchParams: Message }) {
   const supabase = createClient();
 
-  // Get the authenticated user
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -39,6 +38,7 @@ export default async function Page({ searchParams }: { searchParams: Message }) 
     <StripeWrapper clientSecret={clientSecret}>
       <CheckoutWrapper
         clientSecret={clientSecret}
+        orderId={orderId}
         orderItems={data.items}
       />
     </StripeWrapper>

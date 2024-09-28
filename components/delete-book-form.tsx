@@ -1,27 +1,50 @@
 "use client";
 
-import { ReactNode } from "react";
-import { FormMessage, Message } from "./form-message";
-import { SubmitButton } from "./submit-button";
+import { ReactNode, useEffect, useState } from "react";
 import { Input } from "./ui/input";
+import { get } from "http";
 
 export const DeleteBookForm = ({
   deleteBook,
   bookId,
-  searchParams,
   alertDialogAction,
+  getProductByBookId,
 }: {
   deleteBook: (formData: FormData) => void;
   bookId: string;
-  searchParams: Message;
   alertDialogAction: ReactNode;
+  getProductByBookId: (bookId: string) => Promise<any>;
 }) => {
+  const [productId, setProductId] = useState<string | null>(null);
+
+  console.log(getProductByBookId);
+
+  useEffect(() => {
+    const fetchProductId = async () => {
+      try {
+        const product = await getProductByBookId(bookId);
 
 
+        if (!product) {
+          console.error("Product not found.");
+          return;
+        }
+
+        setProductId(product.id);
+      } catch (error) {
+        console.error("Unexpected error fetching product:", error);
+      }
+    };
+
+    fetchProductId();
+  }, [bookId, getProductByBookId]);
 
   return (
     <form action={deleteBook}>
       <Input type="hidden" name="book-id" defaultValue={bookId} readOnly />
+      {productId && (
+        <Input type="hidden" name="product-id" defaultValue={productId} readOnly />
+      )}
       {alertDialogAction}
     </form>
   );

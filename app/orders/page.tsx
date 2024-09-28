@@ -13,24 +13,20 @@ import { Button } from "@/components/ui/button";
 import { getOrdersByUserId } from "../actions/get-orders";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
-import { getOrderItemsByOrderId } from "../actions/get-order-items-by-order-id";
-import { format, set, sub } from "date-fns";
+import { format } from "date-fns";
 import { convertStatus } from "./convert-status";
-
-
+import { getUser } from "@/utils/supabase/queries";
 
 export default async function OrdersPage() {
   const supabase = createClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser(supabase);
 
   if (!user) {
     return redirect("/sign-in");
   }
 
-  const ordersWithItemsAndPayment = await getOrdersByUserId(user.id);
+  const orders = await getOrdersByUserId(user.id);
 
 
   return (
@@ -43,7 +39,7 @@ export default async function OrdersPage() {
       </p>
 
       <div className="rounded-xl">
-        <Table className="border-2 ">
+        <Table className="border-2">
           <TableHeader>
             <TableRow>
               <TableHead>Order ID</TableHead>
@@ -54,22 +50,33 @@ export default async function OrdersPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {ordersWithItemsAndPayment.map((order: any) => (
+            {orders.map((order: any) => (
               <TableRow key={order.id}>
                 <TableCell>{order.id}</TableCell>
                 <TableCell>
-                  {format(new Date(order.ordered_at), "yyyy-MM-dd")}
+                  {order.ordered_at
+                    ? format(new Date(order.ordered_at), "yyyy-MM-dd")
+                    : "N/A"}
                 </TableCell>
                 <TableCell>
-                  {order.items.map((item: any) => (
-                    <div key={item.id}>
-                      {item.quantity} x {item.book?.title}
-                    </div>
-                  ))}
+                  {order.items && order.items.length > 0 ? (
+                    order.items.map((item: any) => (
+                      <div key={item.id}>
+                        {item.quantity} x {item.book?.title}
+                      </div>
+                    ))
+                  ) : (
+                    <div>No items</div>
+                  )}
                 </TableCell>
                 <TableCell>
-                  <Badge className="text-xs text-center mx-auto line-clamp-1 " variant={"default"}>
-                    {convertStatus(order.payment.status)}
+                  <Badge
+                    className="text-xs text-center mx-auto line-clamp-1"
+                    variant={"default"}
+                  >
+                    {order.payment && order.payment.status
+                      ? convertStatus(order.payment.status)
+                      : "Pending"}
                   </Badge>
                 </TableCell>
                 <TableCell>
@@ -85,7 +92,7 @@ export default async function OrdersPage() {
         </Table>
       </div>
 
-      {ordersWithItemsAndPayment.length === 0 && (
+      {orders.length === 0 && (
         <p className="text-center text-muted-foreground">
           You haven't placed any orders yet.
         </p>

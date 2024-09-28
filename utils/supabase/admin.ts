@@ -79,20 +79,22 @@ const upsertPriceRecord = async (
   }
 };
 
-const deleteProductRecord = async (product: Stripe.Product) => {
+const deleteProductRecord = async (productId: string) => {
+  await stripe.products.update(productId, { active: false });
   const { error: deletionError } = await supabaseAdmin
     .from('products')
     .delete()
-    .eq('id', product.id);
+    .eq('id', productId);
   if (deletionError)
     throw new Error(`Product deletion failed: ${deletionError.message}`);
 };
 
-const deletePriceRecord = async (price: Stripe.Price) => {
+const deletePriceRecord = async (priceId: string) => {
+  await stripe.prices.update(priceId, { active: false });
   const { error: deletionError } = await supabaseAdmin
     .from('prices')
     .delete()
-    .eq('id', price.id);
+    .eq('id', priceId);
   if (deletionError) throw new Error(`Price deletion failed: ${deletionError.message}`);
 };
 

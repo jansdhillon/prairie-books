@@ -3,31 +3,24 @@ import { createClient } from "@/utils/supabase/server";
 import { getOrderItemsByOrderId } from "./get-order-items-by-order-id";
 import { getPaymentById } from "./get-payment";
 
-const getOrderById = async (orderId: string) => {
+export const getOrderById = async (orderId: string) => {
   const supabase = createClient();
-  const { data: order, error } = await supabase
-    .from("orders")
-    .select("*")
-    .eq("id", orderId)
-    .single();
+
+  const { data: orderItems, error } = await supabase
+    .from("order_items")
+    .select(`
+      *,
+      book:books(
+        title,
+        author
+      )
+    `)
+    .eq("order_id", orderId);
 
   if (error) {
-    console.error("Error fetching order:", error.message);
+    console.error("Error fetching order items:", error.message);
+    return { error };
   }
 
-
-  const orderItems = await getOrderItemsByOrderId(orderId);
-
-  const payment = await getPaymentById(orderId);
-
-  const orderWithItemsAndPayment = {
-    ...order,
-    items: orderItems,
-    payment,
-  };
-
-  return orderWithItemsAndPayment;
-
+  return { data: { items: orderItems } };
 };
-
-export { getOrderById };

@@ -1,8 +1,5 @@
-// /app/checkout/success/page.tsx
-
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
-import { stripe } from "@/utils/stripe/config";
 import { getOrderById } from "@/app/actions/get-order-by-id";
 import {
   Card,
@@ -19,33 +16,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export default async function SuccessPage({ searchParams }: { searchParams: { session_id?: string } }) {
-  const sessionId = searchParams.session_id;
-
-  if (!sessionId) {
-    // If no session_id is provided, redirect to home or show an error
-    return redirect("/");
-  }
-
-  // Retrieve the session from Stripe
-  let session;
-  try {
-    session = await stripe.checkout.sessions.retrieve(sessionId);
-  } catch (error) {
-    console.error("Error retrieving Stripe session:", error);
-    return redirect("/");
-  }
-
-  // Get the order_id from the session metadata
-  const orderId = session?.metadata?.order_id;
-
+export default async function SuccessPage({ searchParams }: { searchParams: { order_id?: string } }) {
+  const orderId = searchParams.order_id;
 
   if (!orderId) {
-    console.error("No order_id found in session metadata");
     return redirect("/");
   }
 
-  // Fetch the order details from Supabase
+
   const { data, error } = await getOrderById(orderId);
 
   if (error || !data) {
@@ -53,10 +31,7 @@ export default async function SuccessPage({ searchParams }: { searchParams: { se
     return redirect("/");
   }
 
-  // Optionally, you can update the order status in the database here,
-  // but it's better to handle this via Stripe webhooks for reliability.
 
-  // Render the success page with the order details
   return (
     <div className="container mx-auto p-6 space-y-8">
       <h1 className="text-3xl font-bold">Thank you for your purchase!</h1>
