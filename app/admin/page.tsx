@@ -240,7 +240,7 @@ export default async function AdminDashboard({
                         {" "}
                         {format(new Date(book.created_at), "MM-dd-yyyy")}
                       </TableCell>
-                      <TableCell className="hidden md:table-cell space-x-4  ">
+                      <TableCell className="hidden md:flex space-x-4  ">
                         <Link href={`/admin/edit/${book.id}`}>
                           <Button>Edit</Button>
                         </Link>

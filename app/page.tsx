@@ -28,7 +28,7 @@ export default async function HomePage() {
             </h1>
             <p className="text-lg  mb-6 ">
               Discover a curated selection of rare books. From classics to
-              modern books, Kathrin has something for every reader.
+              lifestyle books and modern novels, <span className="font-bold">Kathrin&apos;s Books</span> has something for every reader.
             </p>
             <Link href="/books">
               <Button

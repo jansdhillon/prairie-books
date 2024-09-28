@@ -3,9 +3,16 @@ import { stripe } from '@/utils/stripe/config';
 import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
 import type { Database, Tables, TablesInsert } from '../database.types';
+import { getProductsAndPricesByBookId } from './queries';
 
 type Product = Tables<'products'>;
 type Price = Tables<'prices'>;
+type Book = Tables<'books'>;
+type Order = Tables<'orders'>;
+type OrderItem = Tables<'order_items'>;
+type Customer = Tables<'customers'>;
+type Cart = Tables<'cart'>;
+type CartItem = Tables<'cart_items'>;
 
 // Change to control trial period length
 const TRIAL_PERIOD_DAYS = 0;
@@ -18,6 +25,7 @@ const supabaseAdmin = createClient<Database>(
 );
 
 const upsertProductRecord = async (product: Stripe.Product) => {
+
   const productData: Product = {
     id: product.id,
     active: product.active,
@@ -84,6 +92,31 @@ const deletePriceRecord = async (price: Stripe.Price) => {
     .eq('id', price.id);
   if (deletionError) throw new Error(`Price deletion failed: ${deletionError.message}`);
 };
+
+
+const deleteOrderRecord = async (orderId: string) => {
+  const { error: deletionError } = await supabaseAdmin
+    .from('orders')
+    .delete()
+    .eq('id', orderId);
+  if (deletionError) throw new Error(`Order deletion failed: ${deletionError.message}`);
+}
+
+const deleteOrderItemsRecord = async (orderId: string) => {
+  const { error: deletionError } = await supabaseAdmin
+    .from('order_items')
+    .delete()
+    .eq('order_id', orderId);
+  if (deletionError) throw new Error(`Order Items deletion failed: ${deletionError.message}`);
+}
+
+const deletePaymentRecord = async (paymentIntentId: string) => {
+  const { error: deletionError } = await supabaseAdmin
+    .from('payments')
+    .delete()
+    .eq('payment_intent_id', paymentIntentId);
+  if (deletionError) throw new Error(`Payment deletion failed: ${deletionError.message}`);
+}
 
 const upsertCustomerToSupabase = async (uuid: string, customerId: string) => {
   const { error: upsertError } = await supabaseAdmin
@@ -201,7 +234,7 @@ const createOrRetrieveCustomer = async ({
 //   if (updateError) throw new Error(`Customer update failed: ${updateError.message}`);
 // };
 
-export const upsertPaymentRecord = async (paymentIntent: Stripe.PaymentIntent) => {
+const upsertPaymentRecord = async (paymentIntent: Stripe.PaymentIntent) => {
 
   const paymentData: Database["public"]["Tables"]["payments"]["Insert"] = {
     order_id: "",
@@ -228,4 +261,8 @@ export {
   deleteProductRecord,
   deletePriceRecord,
   createOrRetrieveCustomer,
+  upsertPaymentRecord,
+  deleteOrderRecord,
+  deleteOrderItemsRecord,
+  deletePaymentRecord
 };

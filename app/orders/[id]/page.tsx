@@ -10,6 +10,7 @@ import { getOrderItemsByOrderId } from "@/app/actions/get-order-items-by-order-i
 
 import { Badge } from "@/components/ui/badge";
 import { convertStatus } from "../convert-status";
+import { format } from "date-fns";
 
 export default async function OrderDetailsPage({
   params,
@@ -37,7 +38,7 @@ export default async function OrderDetailsPage({
         <CardContent className="space-y-6">
           <div className="flex justify-between items-center">
             <p className="text-muted-foreground">
-              Order Date: {order?.ordered_at}
+              Order Date:  {format(new Date(order.ordered_at), "yyyy-MM-dd")}
             </p>
             <p className="text-lg font-semibold">
               Total: ${order.payment?.amount?.toFixed(2)} CAD

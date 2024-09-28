@@ -12,6 +12,8 @@ import {
 import { Tables } from '@/utils/database.types';
 
 type Price = Tables<'prices'>;
+type Product = Tables<'products'>;
+type Payment = Tables<'payments'>;
 
 type CheckoutResponse = {
   errorRedirect?: string;
@@ -20,7 +22,7 @@ type CheckoutResponse = {
 
 export async function checkoutWithStripe(
   price: Price,
-  redirectPath: string = '/account'
+  redirectPath: string = '/books'
 ): Promise<CheckoutResponse> {
   try {
     // Get the user from Supabase auth

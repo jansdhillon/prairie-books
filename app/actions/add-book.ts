@@ -101,8 +101,10 @@ export const addBookAction = async (formData: FormData) => {
 
   const product = await stripe.products.create({
     name: title,
-    id: newBook.id,
+    description: description || undefined,
+    images: hasImages ? [`${newBook.image_directory}image-1.png`] : undefined,
     metadata: {
+      bookId: newBook.id!,
       author,
       isbn,
       genres: JSON.stringify(genres),
@@ -117,6 +119,7 @@ export const addBookAction = async (formData: FormData) => {
     currency: "cad",
     product: product.id,
   });
+
 
   await upsertProductRecord(product);
   await upsertPriceRecord(stripePrice);

@@ -108,18 +108,21 @@ export type Database = {
           book_id: string
           cart_id: string
           id: string
+          product_id: string | null
           quantity: number
         }
         Insert: {
           book_id: string
           cart_id: string
           id?: string
+          product_id?: string | null
           quantity: number
         }
         Update: {
           book_id?: string
           cart_id?: string
           id?: string
+          product_id?: string | null
           quantity?: number
         }
         Relationships: [
@@ -135,6 +138,13 @@ export type Database = {
             columns: ["cart_id"]
             isOneToOne: false
             referencedRelation: "cart"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cart_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
             referencedColumns: ["id"]
           },
         ]
@@ -168,6 +178,7 @@ export type Database = {
           id: string
           order_id: string
           price: number
+          product_id: string | null
           quantity: number
         }
         Insert: {
@@ -175,6 +186,7 @@ export type Database = {
           id?: string
           order_id: string
           price: number
+          product_id?: string | null
           quantity: number
         }
         Update: {
@@ -182,6 +194,7 @@ export type Database = {
           id?: string
           order_id?: string
           price?: number
+          product_id?: string | null
           quantity?: number
         }
         Relationships: [
@@ -199,6 +212,13 @@ export type Database = {
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
         ]
       }
       orders: {
@@ -206,18 +226,21 @@ export type Database = {
           id: string
           ordered_at: string
           payment_intent_id: string | null
+          status: Database["public"]["Enums"]["order_status"] | null
           user_id: string
         }
         Insert: {
           id?: string
           ordered_at?: string
           payment_intent_id?: string | null
+          status?: Database["public"]["Enums"]["order_status"] | null
           user_id: string
         }
         Update: {
           id?: string
           ordered_at?: string
           payment_intent_id?: string | null
+          status?: Database["public"]["Enums"]["order_status"] | null
           user_id?: string
         }
         Relationships: [
@@ -246,7 +269,7 @@ export type Database = {
           order_id: string
           payment_intent_id: string
           price_id: string | null
-          status: string
+          status: Database["public"]["Enums"]["payment_status"]
           updated_at: string | null
         }
         Insert: {
@@ -257,7 +280,7 @@ export type Database = {
           order_id: string
           payment_intent_id: string
           price_id?: string | null
-          status: string
+          status: Database["public"]["Enums"]["payment_status"]
           updated_at?: string | null
         }
         Update: {
@@ -268,7 +291,7 @@ export type Database = {
           order_id?: string
           payment_intent_id?: string
           price_id?: string | null
-          status?: string
+          status?: Database["public"]["Enums"]["payment_status"]
           updated_at?: string | null
         }
         Relationships: [
@@ -359,29 +382,35 @@ export type Database = {
       users: {
         Row: {
           avatar_url: string | null
+          billing_address: string | null
           created_at: string | null
           email: string
           full_name: string | null
           id: string
           is_admin: boolean | null
+          shipping_address: string | null
           updated_at: string | null
         }
         Insert: {
           avatar_url?: string | null
+          billing_address?: string | null
           created_at?: string | null
           email: string
           full_name?: string | null
           id: string
           is_admin?: boolean | null
+          shipping_address?: string | null
           updated_at?: string | null
         }
         Update: {
           avatar_url?: string | null
+          billing_address?: string | null
           created_at?: string | null
           email?: string
           full_name?: string | null
           id?: string
           is_admin?: boolean | null
+          shipping_address?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -403,6 +432,17 @@ export type Database = {
     }
     Enums: {
       order_status: "Delivered" | "Shipped" | "Ordered" | "Failed"
+      payment_status:
+        | "initiated"
+        | "succeeded"
+        | "failed"
+        | "pending"
+        | "canceled"
+        | "requires_action"
+        | "requires_payment_method"
+        | "processing"
+        | "requires_capture"
+        | "requires_confirmation"
       pricing_type: "one_time"
     }
     CompositeTypes: {
