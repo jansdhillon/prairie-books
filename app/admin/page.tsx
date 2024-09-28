@@ -88,8 +88,6 @@ export default async function AdminDashboard({
 
   const books = await fetchBooks();
 
-
-
   const orders = await getOrdersByUserId(user.id);
 
   return (
@@ -224,7 +222,7 @@ export default async function AdminDashboard({
                       Author
                     </TableHead>
                     <TableHead className="hidden md:table-cell">
-                      Date Posted
+                      Date
                     </TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
@@ -250,7 +248,7 @@ export default async function AdminDashboard({
                         </Link>
 
                         <AlertDialog>
-                          <AlertDialogTrigger className="h-10 px-4 py-2 bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                          <AlertDialogTrigger className="h-10 rounded-md px-4 py-2 bg-destructive text-destructive-foreground hover:bg-destructive/90">
                             Delete
                           </AlertDialogTrigger>
                           <AlertDialogContent>
@@ -279,6 +277,58 @@ export default async function AdminDashboard({
                             </AlertDialogFooter>
                           </AlertDialogContent>
                         </AlertDialog>
+                      </TableCell>
+                      <TableCell className="table-cell md:hidden">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger>
+                            {" "}
+                            <EllipsisIcon />
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent className="flex flex-col gap-3 items-start p-4 text-sm">
+                            <Link href={`/admin/edit/${book.id}`}>
+                              <button>Edit</button>
+                            </Link>
+
+                            <Separator />
+                            <Link href={`/books/${book.id}`}>
+                              <button>View</button>
+                            </Link>
+
+                            <Separator />
+                            <AlertDialog>
+                              <AlertDialogTrigger className="text-destructive hover:text-destructive/90 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
+                                Delete
+                              </AlertDialogTrigger>
+                              <AlertDialogContent className="max-w-xs">
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>
+                                    Are you sure?
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    This action cannot be undone. This will
+                                    permanently delete this book.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <DeleteBookForm
+                                    deleteBook={deleteBook}
+                                    bookId={book.id}
+                                    getProductByBookId={getProductByBookId}
+                                    alertDialogAction={
+                                      <AlertDialogAction
+                                        type="submit"
+                                        className="h-10 px-4 py-2 bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                      >
+                                        Delete
+                                      </AlertDialogAction>
+                                    }
+                                  />
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </TableCell>
                     </TableRow>
                   ))}

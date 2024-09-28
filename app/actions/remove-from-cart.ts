@@ -2,6 +2,8 @@
 import { createClient } from "@/utils/supabase/server";
 import { encodedRedirect } from "@/utils/utils";
 import { fixOneToOne } from "../fixOneToOne";
+import { getStatusRedirect } from "@/utils/helpers";
+import { redirect } from "next/navigation";
 
 export const removeFromCartAction = async (formData: FormData) => {
     const supabase = createClient();
@@ -55,5 +57,7 @@ export const removeFromCartAction = async (formData: FormData) => {
       return encodedRedirect("error", "/cart", "Failed to remove item from cart.");
     }
 
-    return encodedRedirect("success", "/cart", "Item removed from cart.");
+    return redirect(
+      getStatusRedirect("/cart", "Success", "Item removed from cart")
+    );
   };

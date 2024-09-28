@@ -4,6 +4,7 @@ import { Button } from "./ui/button";
 import { createClient } from "@/utils/supabase/server";
 import { ShoppingCart } from "lucide-react";
 import { getUser } from "@/app/actions/get-user";
+import { NavAvatar } from "./nav-avatar";
 
 export default async function AuthButton() {
   const {
@@ -25,7 +26,7 @@ export default async function AuthButton() {
     const { userData } = await getUser(user.id);
 
     return (
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-6">
         {userData && userData.is_admin ? (
           <Link href="/admin">
             <Button variant={"outline"}  size={"sm"}>Admin</Button>
@@ -36,11 +37,7 @@ export default async function AuthButton() {
             <ShoppingCart className="h-4" />
           </Button>
         </Link>
-        <form action={signOutAction}>
-          <Button type="submit" variant={"outline"}  size={"sm"}>
-            Sign out
-          </Button>
-        </form>
+        <NavAvatar userData={userData} user={user} />
       </div>
     );
   }

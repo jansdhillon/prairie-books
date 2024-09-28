@@ -1,8 +1,10 @@
 "use server";
+import { getStatusRedirect } from "@/utils/helpers";
 import { getCartByUserId, getProductAndPriceByBookId } from "@/utils/supabase/queries";
 import { createClient } from "@/utils/supabase/server";
 import { encodedRedirect } from "@/utils/utils";
 import { get } from "http";
+import { redirect } from "next/navigation";
 
 export const addToCartAction = async (formData: FormData) => {
     const supabase = createClient();
@@ -105,5 +107,7 @@ export const addToCartAction = async (formData: FormData) => {
       }
     }
 
-    return encodedRedirect("success", "/cart", "Item added to cart.");
+    return redirect(
+      getStatusRedirect("/cart", "Success", "Item added to cart!")
+    );
   };

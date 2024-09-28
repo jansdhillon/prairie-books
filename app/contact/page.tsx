@@ -21,7 +21,7 @@ export default function ContactPage({ searchParams }: { searchParams: Message })
       <Separator />
 
       <p className="text-lg text-muted-foreground">
-        Get in touch with Kathrin for any inquiries or feedback.
+        Get in touch with Kathrin for any inquiries, requests, and feedback.
       </p>
 
       <div className="grid gap-6 md:grid-cols-2">

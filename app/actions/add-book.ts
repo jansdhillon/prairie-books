@@ -1,10 +1,12 @@
 "use server";
 import { Database } from "@/utils/database.types";
+import { getStatusRedirect } from "@/utils/helpers";
 import { stripe } from "@/utils/stripe/config";
 import { upsertPriceRecord, upsertProductRecord } from "@/utils/supabase/admin";
 import { createClient } from "@/utils/supabase/server";
 import { encodedRedirect } from "@/utils/utils";
 import { Storage } from "@google-cloud/storage";
+import { redirect } from "next/navigation";
 
 export const addBookAction = async (formData: FormData) => {
   const supabase = createClient();
@@ -21,8 +23,10 @@ export const addBookAction = async (formData: FormData) => {
   const files = formData.getAll("images") as File[];
   const is_featured = formData.has("is-featured") ? true : false;
   const edition = formData.get("edition")?.toString().trim() || null;
-  const publicationDate = formData.get("publication-date")?.toString().trim() || null;
-  const originalReleaseDate = formData.get("original-release-date")?.toString().trim() || null;
+  const publicationDate =
+    formData.get("publication-date")?.toString().trim() || null;
+  const originalReleaseDate =
+    formData.get("original-release-date")?.toString().trim() || null;
   const condition = formData.get("condition")?.toString().trim() || null;
 
   const fileterdFiles = files.filter((file) => file.size > 0);
@@ -31,10 +35,7 @@ export const addBookAction = async (formData: FormData) => {
 
   let hasImages = false;
 
-
   const numImages = fileterdFiles.length;
-
-
 
   const bucketName = "kathrins-books-images";
 
@@ -61,12 +62,13 @@ export const addBookAction = async (formData: FormData) => {
     }
   }
 
-
   if (!title || !author || !isbn || price === null || isNaN(price)) {
-    return encodedRedirect(
-      "error",
-      "/",
-      "Title, Author, ISBN, and Price are required and Price must be a number."
+    return redirect(
+      getStatusRedirect(
+        "/admin",
+        "Error",
+        "Title, Author, ISBN, and Price are required and Price must be a number."
+      )
     );
   }
 
@@ -79,7 +81,9 @@ export const addBookAction = async (formData: FormData) => {
     description,
     publisher,
     language,
-    image_directory: hasImages ? `https://storage.googleapis.com/${bucketName}/${directoryPath}` : null,
+    image_directory: hasImages
+      ? `https://storage.googleapis.com/${bucketName}/${directoryPath}`
+      : null,
     is_featured,
     edition,
     publication_date: publicationDate,
@@ -99,8 +103,12 @@ export const addBookAction = async (formData: FormData) => {
     );
   }
 
-  const {data: newBookId, error: newBookError} = await supabase.from("books").select("id").eq("isbn", isbn).eq("title", title).single();
-
+  const { data: newBookId, error: newBookError } = await supabase
+    .from("books")
+    .select("id")
+    .eq("isbn", isbn)
+    .eq("title", title)
+    .single();
 
   const product = await stripe.products.create({
     name: title,
@@ -123,10 +131,10 @@ export const addBookAction = async (formData: FormData) => {
     product: product.id,
   });
 
-
   await upsertProductRecord(product);
   await upsertPriceRecord(stripePrice);
 
-
-  return encodedRedirect("success", "/admin", "Book added successfully!");
+  return redirect(
+    getStatusRedirect("/admin", "Success", "Book added successfully!")
+  );
 };

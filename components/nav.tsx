@@ -19,9 +19,8 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 
 const navItems = [
-  { href: "/books", label: "All Books" },
-  // { href: "/#about", label: "About" },
-  { href: "/orders", label: "Orders" },
+  { href: "/books", label: "Books" },
+  { href: "/delivery", label: "Shipping & Delivery" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -122,10 +121,10 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
               {/* <Button onClick={handleSearch} variant="ghost" size={"sm"}>
                   Search
                 </Button> */}
-              <div className="flex justify-around  pt-4 ">
+              <div className="flex justify-around items-center gap-4  pt-4 ">
                 {" "}
                 <ThemeSwitcher />
-                {headerAuth}
+                <div onClick={() => setIsOpen(false)}>{headerAuth}</div>
               </div>
             </div>
           </SheetContent>

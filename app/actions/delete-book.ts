@@ -1,11 +1,13 @@
 "use server";
 import { Database } from "@/utils/database.types";
+import { getErrorRedirect, getStatusRedirect } from "@/utils/helpers";
 import { stripe } from "@/utils/stripe/config";
 import { deletePriceRecord, deleteProductRecord } from "@/utils/supabase/admin";
 import { getPriceByProductId } from "@/utils/supabase/queries";
 import { createClient } from "@/utils/supabase/server";
-import { encodedRedirect } from "@/utils/utils";
+import { encodedRedirect} from "@/utils/utils";
 import { Storage } from "@google-cloud/storage";
+import { redirect } from "next/navigation";
 
 export const deleteBook = async (formData: FormData) => {
 
@@ -33,7 +35,9 @@ export const deleteBook = async (formData: FormData) => {
 
   if (bookError || !book) {
     console.error("Error fetching book:", bookError?.message);
-    return encodedRedirect("error", "/", "Book not found.");
+    return redirect(
+      getErrorRedirect("/admin", "Error", "Failed to delete the book.")
+    );
 
   }
 
@@ -54,7 +58,15 @@ export const deleteBook = async (formData: FormData) => {
 
 
 
-  await supabase.from("books").delete().eq("id", bookId);
+ const {error: deleteError} =  await supabase.from("books").delete().eq("id", bookId);
+
+
+  if (deleteError) {
+    console.error("Error deleting book:", deleteError.message);
+    return redirect(
+      getErrorRedirect("/admin", "Error", "Failed to delete the book.")
+    );
+  }
 
 
 
@@ -66,5 +78,7 @@ export const deleteBook = async (formData: FormData) => {
     console.error("Error deleting images from Google Cloud Storage:", error);
   }
 
-  return encodedRedirect("success", "/admin", "Book deleted successfully!");
+  return redirect(
+    getStatusRedirect("/admin", "Success", "Book deleted successfully!")
+  );
 };

@@ -1,51 +1,51 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { Alert } from "@/components/ui/alert";
-import { ToastAction } from "./ui/toast";
 import { useToast } from "@/hooks/use-toast";
 import { ReactNode, useEffect } from "react";
 
-const Feedback = ({children}: {children: ReactNode | ReactNode[]}) => {
+const Feedback = ({ children }: { children: ReactNode | ReactNode[] }) => {
   const searchParams = useSearchParams();
-  const message = searchParams.get("message");
+  const status = searchParams.get("status");
+  const statusDescription = searchParams.get("status_description");
   const error = searchParams.get("error");
-  const success = searchParams.get("success");
+  const errorDescription = searchParams.get("error_description");
 
   const { toast } = useToast();
-
-
   const router = useRouter();
 
-  const queryString = searchParams.toString();
-
   useEffect(() => {
-    if (message) {
+    let shouldCleanUrl = false;
+
+    if (status) {
       toast({
         variant: "default",
-        title: "Message",
-        description: message,
+        title: status,
+        description: statusDescription || "",
       });
+      shouldCleanUrl = true;
     }
+
     if (error) {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: error,
+        title: error,
+        description: errorDescription || "",
       });
-    }
-    if (success) {
-      toast({
-        variant: "success",
-        title: "Success",
-        description: success,
-      });
+      shouldCleanUrl = true;
     }
 
-    return () => {
-      router.refresh();
+    if (shouldCleanUrl) {
+      const params = new URLSearchParams(window.location.search);
+      params.delete("status");
+      params.delete("status_description");
+      params.delete("error");
+      params.delete("error_description");
+
+      const newQueryString = params.toString();
+      router.replace(`${window.location.pathname}${newQueryString ? `?${newQueryString}` : ""}`);
     }
-  }, [message, error, success, toast, router, queryString]);
+  }, [status, statusDescription, error, errorDescription, toast, router]);
 
   return <div>{children}</div>;
 };
