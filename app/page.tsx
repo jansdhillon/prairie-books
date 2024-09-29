@@ -89,19 +89,17 @@ export default async function HomePage() {
         <Separator />
         <div className="p-4 space-y-4">
           <p>⭐️ ⭐️ ⭐️ ⭐️ ⭐️</p>
-          <p className="italic">
-            "An amazing selection of books! I always find something new and
-            exciting."
+          <p className="italic font-medium">
+            "An amazing selection of books! I can always count on Kathrin to find rare and unique books."
           </p>
-          <p className="mt-2 text-right font-semibold">- Griffin Sherwood</p>
+          <p className="mt-2 text-right ">- Griffin Sherwood</p>
         </div>
         <div className="p-4 space-y-4">
           <p>⭐️ ⭐️ ⭐️ ⭐️ ⭐️</p>
-          <p className="italic">
-            "Kathrin's Books has become my go-to place for all my reading
-            needs."
+          <p className="italic font-medium">
+            "Kathrin's Books has become my go-to place for books, much better than Facebook Marketplace!"
           </p>
-          <p className="mt-2 text-right font-semibold">- B. Bean</p>
+          <p className="mt-2 text-right ">- B. Bean</p>
         </div>
       </section>
       <section className="space-y-6">
