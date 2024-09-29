@@ -1,13 +1,6 @@
-"use client";
-
+"use client";;
 import { BookType } from "./book-display";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { addToCartAction } from "@/app/actions/add-to-cart";
 import { Suspense, useEffect, useState, useTransition } from "react";
@@ -25,9 +18,8 @@ import {
 import Loading from "@/app/loading";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
-import { createClient } from "@/utils/supabase/client";
 import { User } from "@supabase/auth-js";
-import { getUser } from "@/app/actions/get-user";
+import { getUserAndUserData } from "@/app/actions/get-user";
 import { Database } from "@/utils/database.types";
 
 type BookDetailsProps = {
@@ -66,14 +58,14 @@ export function BookDetails({ book }: BookDetailsProps) {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const {
-        data: { user },
-      } = await createClient().auth.getUser();
-      setUser(user);
-      if (user) {
-        const { userData } = await getUser(user.id);
-        setUserData(userData);
+      const data = await getUserAndUserData();
+      const user = data?.user;
+      const userData = data?.userData;
+      if (!user || !userData) {
+        return;
       }
+      setUser(user);
+      setUserData(userData);
     };
 
     fetchUserData();
@@ -99,7 +91,6 @@ export function BookDetails({ book }: BookDetailsProps) {
                     alt={book.title}
                     fill
                     className="object-contain rounded-lg"
-                    priority
                   />
                 </div>
               </Link>
@@ -111,12 +102,10 @@ export function BookDetails({ book }: BookDetailsProps) {
               >
                 <Link href={`${image}`} className="relative w-full h-[400px]  my-5">
                   <Image
-                    priority
                     src={image}
                     alt={book.title}
                     fill
                     className="object-contain rounded-xl"
-                    loading="eager"
                   />
                 </Link>
               </CarouselItem>
@@ -235,7 +224,8 @@ export function BookDetails({ book }: BookDetailsProps) {
             <h3 className="text-lg sm:text-xl font-semibold mb-2 text-primary">
               Description
             </h3>
-            <p>{book.description || "No description available."}</p>
+            <Separator className="my-4" />
+            <p className="leading-relaxed">{book.description || "No description available."}</p>
           </CardContent>
         </div>
       </div>

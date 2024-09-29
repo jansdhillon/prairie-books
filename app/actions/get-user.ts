@@ -1,19 +1,19 @@
 "use server";
+import { getUser, getUserData } from "@/utils/supabase/queries";
 import { createClient } from "@/utils/supabase/server";
 
-const getUser = async (id: string) => {
-// This is for the users table not the auth table
-//Takes the auth.users.id and returns the user object from the users table
+const getUserAndUserData = async () => {
   const supabase = createClient();
-  const { data: user, error } = await supabase.from("users").select("*").eq("id", id).single();
-
-
-  if (error) {
-    console.error("Error fetching books:", error.message);
+  const user = await getUser(supabase);
+  if (!user) {
+    return null;
   }
-
-
-  return {userData: user};
+  const userData = await getUserData(supabase, user.id);
+  const data = {
+    user: user,
+    userData: userData.data,
+  };
+  return data;
 };
 
-export { getUser };
+export { getUserAndUserData };

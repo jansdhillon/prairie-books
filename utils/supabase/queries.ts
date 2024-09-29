@@ -7,6 +7,15 @@ export const getUser = cache(async (supabase: SupabaseClient) => {
   return user.user;
 });
 
+export const getUserData = cache(async (supabase: SupabaseClient, userId: string) => {
+  const { data: userData, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('id', userId)
+    .single();
+  return { data: userData, error };
+});
+
 export const getProducts = cache(async (supabase: SupabaseClient) => {
   const { data: products, error } = await supabase
     .from('products')

@@ -46,13 +46,11 @@ export function Book({ book }: BookProps) {
           href={`/books/${book.id}`}
         >
           <Image
-            priority
             src={coverImage}
             alt={book.title}
             fill
             sizes="400px"
             className="object-contain rounded-lg"
-            loading="eager"
           />
         </Link>
         <CardTitle className="text-xl font-semibold text-primary line-clamp-2 text-ellipsis">

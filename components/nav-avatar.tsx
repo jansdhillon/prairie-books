@@ -40,15 +40,6 @@ export const NavAvatar = ({ user, userData }: { user: any; userData: any }) => {
           </Link>
           <DropdownMenuSeparator />
 
-          {userData.is_admin && (
-            <>
-              <Link href="/admin">
-                <DropdownMenuItem>Admin</DropdownMenuItem>
-              </Link>
-              <DropdownMenuSeparator />
-
-            </>
-          )}
           <Link href="/orders">
             <DropdownMenuItem>Orders</DropdownMenuItem>
           </Link>

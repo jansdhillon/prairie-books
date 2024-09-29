@@ -1,18 +1,11 @@
-"use client";
-
-import { FormEvent, ReactNode, useState } from "react";
+"use client";;
+import { ReactNode, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { motion } from "framer-motion";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import { NavLink } from "@/components/nav-link";
 import { Input } from "@/components/ui/input";
@@ -83,36 +76,30 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
           </Button> */}
       </nav>
 
-      <div className="flex items-center w-full justify-between md:hidden px-5 py-6">
+      <div className="flex items-center w-full justify-between md:hidden px-9 py-6">
         <Link
           href="/"
           className="text-primary text-base font-bold line-clamp-1  tracking-tight hover:text-muted-foreground"
         >
-          Kathrin's Books
+        Kathrin's Books
         </Link>
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" >
+            <Button variant="ghost" size="icon">
               <RxHamburgerMenu className="h-5 w-5" />
             </Button>
           </SheetTrigger>
-          <div className="flex justify-between items-center gap-3">
-                {" "}
-
-                <div onClick={() => setIsOpen(false)}>{headerAuth}</div>
-                <ThemeSwitcher />
-              </div>
           <SheetContent>
-            <div className="flex flex-col space-y-4 mt-8">
-              {navItems.map((item) => (
+            <div className="flex flex-col gap-4 mt-8">
+              {navItems.map((item, index) => (
                 <div key={item.href}>
                   <NavLink href={item.href} onClick={() => setIsOpen(false)}>
                     {item.label}
                   </NavLink>
-                  <Separator className="my-2" />
+                  {index !== navItems.length - 1 && <Separator className="my-2" />}
                 </div>
               ))}
-              <div className="relative">
+              <div className="relative my-4">
                 <Input
                   placeholder="Search books..."
                   value={searchTerm}
@@ -125,15 +112,17 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
                   size={14}
                 />
               </div>
-              {/* <Button onClick={handleSearch} variant="ghost" size={"sm"}>
-                  Search
-                </Button> */}
-
+              <div
+                className="flex items-center justify-start gap-3"
+                onClick={() => setIsOpen(false)}
+              >
+                {headerAuth}
+                <ThemeSwitcher />
+              </div>
             </div>
           </SheetContent>
         </Sheet>
       </div>
-
     </header>
   );
 };

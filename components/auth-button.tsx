@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Button } from "./ui/button";
 import { createClient } from "@/utils/supabase/server";
 import { ShoppingCart } from "lucide-react";
-import { Input } from "./ui/input";
 
 export default async function AuthButton() {
   const {
@@ -11,20 +10,21 @@ export default async function AuthButton() {
   } = await createClient().auth.getUser();
 
   return user ? (
-    <div className="flex items-center gap-4">
-      <Link href="/cart">
-        <Button variant={"outline"}>
-          <ShoppingCart className="h-4" />
-        </Button>
-      </Link>
+    <div className="flex items-center">
+
       <form action={signOutAction}>
         <Button type="submit" variant="outline">
           Sign out
         </Button>
       </form>
+      <Link href="/cart">
+        <Button variant={"outline"}>
+          <ShoppingCart className="h-4" />
+        </Button>
+      </Link>
     </div>
   ) : (
-    <div className="flex gap-2">
+    <div className="flex pt-4">
       <Button asChild size="sm" variant="outline">
         <Link href="/sign-in">Sign in</Link>
       </Button>

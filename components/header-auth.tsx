@@ -1,15 +1,14 @@
-import { signOutAction } from "@/app/actions/sign-out";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { createClient } from "@/utils/supabase/server";
 import { ShoppingCart } from "lucide-react";
-import { getUser } from "@/app/actions/get-user";
+import { getUserAndUserData } from "@/app/actions/get-user";
 import { NavAvatar } from "./nav-avatar";
 
 export default async function AuthButton() {
-  const {
-    data: { user },
-  } = await createClient().auth.getUser();
+  const data = await getUserAndUserData();
+
+  const user = data?.user;
+  const userData = data?.userData;
 
   if (!user) {
     return (
@@ -23,15 +22,13 @@ export default async function AuthButton() {
       </div>
     );
   } else {
-    const { userData } = await getUser(user.id);
-
     return (
       <div className="flex items-center gap-3 md:gap-5">
-        {/* {userData && userData.is_admin ? (
+        {userData && userData.is_admin ? (
           <Link href="/admin">
             <Button variant={"outline"}  size={"sm"}>Admin</Button>
           </Link>
-        ) : null} */}
+        ) : null}
         <Link href="/cart">
           <Button variant={"ghost"} size={"sm"}>
             <ShoppingCart className="h-4 text-muted-foreground" />

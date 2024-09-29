@@ -48,7 +48,8 @@ export default async function HomePage() {
               width={350}
               height={350}
               sizes="350px"
-              loading="eager"
+              placeholder="blur"
+              blurDataURL="/book-cat2.png"
             />
           </div>
         </section>
@@ -58,7 +59,7 @@ export default async function HomePage() {
           </h2>
           <div className="space-y-6 mt-6">
             <Separator />
-            <p className="text-md mb-6">Handpicked weekly by Kathrin.</p>
+            <p className="text-lg mb-6">Handpicked weekly by Kathrin.</p>
 
             <BookDisplay books={featuredBooks || []} />
           </div>
@@ -67,7 +68,7 @@ export default async function HomePage() {
           <h2 className="text-3xl font-semibold">Latest Releases</h2>
           <div className="space-y-6 mt-6">
             <Separator />
-            <p className="text-md mb-6">Just posted.</p>
+            <p className="text-lg mb-6">Just posted.</p>
             <BookDisplay books={sortedBooks.slice(0, 8)} />
           </div>
           <Link href="/books" className="flex items-center justify-center py-6">
@@ -81,16 +82,18 @@ export default async function HomePage() {
       </div>
       <section className="pt-6">
         <h2 className="text-3xl font-semibold mb-2">What Readers Are Saying</h2>
-        <Separator />
         <div className="space-y-6 mt-6">
-          <div className="p-4 bg-secondary/50 backdrop-blur-sm rounded-xl border ">
+        <Separator />
+          <div className="p-4 space-y-4">
+            <p>⭐️ ⭐️ ⭐️ ⭐️ ⭐️</p>
             <p className="italic">
               "An amazing selection of books! I always find something new and
               exciting."
             </p>
             <p className="mt-2 text-right font-semibold">- Griffin Sherwood</p>
           </div>
-          <div className="p-4 bg-secondary/50 backdrop-blur-sm rounded-xl border ">
+          <div className="p-4 space-y-4">
+            <p>⭐️ ⭐️ ⭐️ ⭐️ ⭐️</p>
             <p className="italic">
               "Kathrin's Books has become my go-to place for all my reading
               needs."
@@ -101,23 +104,26 @@ export default async function HomePage() {
       </section>
       <section className="pt-6">
         <h2 className="text-3xl font-semibold mb-2">About</h2>
+
+        <div className="space-y-6 mt-6">
         <Separator />
-        <div className="flex leading-loose items-center  gap-5 mt-4 ">
-          <Avatar>
-            <AvatarImage
-              src="/kathrin.png"
-              alt="Kathrin Dhillon"
-              width={50}
-              height={50}
-              className=" rounded-full"
-            />
-            <AvatarFallback>KD</AvatarFallback>
-          </Avatar>
-          <p>
-            Kathrin's Books is an online bookstore curated by Kathrin, offering
-            a wide range of books selected with love and care. Our mission is to
-            connect readers with their next great read.
-          </p>
+          <div className="flex gap-4 items-center">
+            <Avatar>
+              <AvatarImage
+                src="/kathrin.png"
+                alt="Kathrin Dhillon"
+                width={50}
+                height={50}
+                className=" rounded-full"
+              />
+              <AvatarFallback>KD</AvatarFallback>
+            </Avatar>
+            <p className="text-sm font-medium text-muted-foreground">
+              Kathrin's Books is an online bookstore curated by Kathrin, offering
+              a wide range of books selected with love and care. Our mission is to
+              connect readers with their next great read.
+            </p>
+          </div>
         </div>
       </section>
     </>

@@ -3,7 +3,7 @@ import { encodedRedirect } from "@/utils/utils";
 import { getUserAndUserData } from "../actions/get-user";
 import { getErrorRedirect } from "@/utils/helpers";
 
-export default async function Layout({
+export default async function Template({
   children,
 }: {
   children: React.ReactNode;
@@ -14,13 +14,16 @@ export default async function Layout({
   const userData = data?.userData;
 
   if (!user) {
-    getErrorRedirect(
+    encodedRedirect(
       "error",
       "/sign-in",
       "You must be signed in to view this page"
     );
   }
 
+  if (userData.is_admin !== true) {
+    getErrorRedirect("/", "Error", "You must be an admin to view this page");
+  }
 
-  return <div>{children}</div>;
+  return <div className="max-w-7xl flex flex-col gap-12 ">{children}</div>;
 }

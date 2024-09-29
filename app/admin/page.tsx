@@ -8,41 +8,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
-import {
-  BookOpen,
-  DollarSign,
-  EllipsisIcon,
-  LucideMenu,
-  Menu,
-  Option,
-  Settings,
-  ShoppingCart,
-  Users,
-} from "lucide-react";
-import { Book } from "@/components/book";
+import { EllipsisIcon } from "lucide-react";
 import { fetchBooks } from "../actions/fetch-books";
-import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import { getUser } from "@/app/actions/get-user";
-import { Database } from "@/utils/database.types";
+import { getUserAndUserData } from "@/app/actions/get-user";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { getOrdersByUserId } from "../actions/get-orders";
 import { deleteBook } from "../actions/delete-book";
-import { FormMessage, Message } from "@/components/form-message";
-import { SubmitButton } from "@/components/submit-button";
+import { Message } from "@/components/form-message";
 import { DeleteBookForm } from "@/components/delete-book-form";
-import EditBookForm from "@/components/edit-book-form";
-import { editBookAction } from "../actions/edit-book-action";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -55,16 +30,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { format } from "date-fns";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
-import { getProductAndPriceByBookId } from "@/utils/supabase/queries";
 import { getProductByBookId } from "../actions/get-product";
 
 export default async function AdminDashboard({
@@ -72,17 +39,12 @@ export default async function AdminDashboard({
 }: {
   searchParams: Message;
 }) {
-  const {
-    data: { user },
-  } = await createClient().auth.getUser();
+  const data = await getUserAndUserData();
 
-  if (!user) {
-    return redirect("/sign-in");
-  }
+  const user = data?.user;
+  const userData = data?.userData;
 
-  const { userData } = await getUser(user.id);
-
-  if (userData.is_admin !== true) {
+  if (!user || userData.is_admin !== true) {
     return redirect("/");
   }
 
@@ -208,22 +170,20 @@ export default async function AdminDashboard({
           </Card>
         </TabsContent>
         <TabsContent value="books" className="space-y-4 ">
-          <Card >
+          <Card>
             <CardHeader>
               <CardTitle>Books</CardTitle>
             </CardHeader>
             <CardContent className=" w-fit md:w-full overflow-hidden container ">
-              <Table >
-                <TableHeader >
-                  <TableRow >
+              <Table>
+                <TableHeader>
+                  <TableRow>
                     <TableHead>Title</TableHead>
                     <TableHead>Price</TableHead>
                     <TableHead className="hidden md:table-cell">
                       Author
                     </TableHead>
-                    <TableHead className="hidden md:table-cell">
-                      Date
-                    </TableHead>
+                    <TableHead className="hidden md:table-cell">Date</TableHead>
                     <TableHead className="p-0 md:px-4">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
