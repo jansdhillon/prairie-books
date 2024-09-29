@@ -26,7 +26,7 @@ export default async function AuthButton() {
     const { userData } = await getUser(user.id);
 
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3 md:gap-5">
         {/* {userData && userData.is_admin ? (
           <Link href="/admin">
             <Button variant={"outline"}  size={"sm"}>Admin</Button>

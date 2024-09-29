@@ -208,14 +208,14 @@ export default async function AdminDashboard({
           </Card>
         </TabsContent>
         <TabsContent value="books" className="space-y-4 ">
-          <Card>
+          <Card >
             <CardHeader>
               <CardTitle>Books</CardTitle>
             </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
+            <CardContent className=" w-fit md:w-full overflow-hidden container ">
+              <Table >
+                <TableHeader >
+                  <TableRow >
                     <TableHead>Title</TableHead>
                     <TableHead>Price</TableHead>
                     <TableHead className="hidden md:table-cell">
@@ -224,7 +224,7 @@ export default async function AdminDashboard({
                     <TableHead className="hidden md:table-cell">
                       Date
                     </TableHead>
-                    <TableHead>Actions</TableHead>
+                    <TableHead className="p-0 md:px-4">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
 
