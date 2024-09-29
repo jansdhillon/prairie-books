@@ -49,7 +49,6 @@ export const removeFromCartAction = async (formData: FormData) => {
       return encodedRedirect("error", "/cart", "Unauthorized action.");
     }
 
-    // Delete the cart item
     const { error: deleteError } = await supabase.from("cart_items").delete().eq("id", cartItemId);
 
     if (deleteError) {

@@ -258,6 +258,76 @@ const upsertPaymentRecord = async (paymentIntent: Stripe.PaymentIntent) => {
   }
 };
 
+async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent) {
+  const orderId = paymentIntent.metadata?.order_id;
+  if (!orderId) {
+    console.error('Order ID not found in payment intent metadata');
+    return;
+  }
+
+  const { error: orderUpdateError } = await supabaseAdmin
+    .from('orders')
+    .update({ status: 'Ordered' })
+    .eq('id', orderId);
+
+  if (orderUpdateError) {
+    console.error('Error updating order status:', orderUpdateError.message);
+    return;
+  }
+
+  const { data: orderData, error: orderFetchError } = await supabaseAdmin
+    .from('orders')
+    .select('user_id, order_items (book_id, quantity)')
+    .eq('id', orderId)
+    .single();
+
+  if (orderFetchError || !orderData) {
+    console.error('Error fetching order data:', orderFetchError?.message);
+    return;
+  }
+
+  const userId = orderData.user_id;
+  const orderItems = orderData.order_items;
+
+  for (const item of orderItems) {
+    const { error: stockUpdateError } = await  supabaseAdmin
+      .from('books')
+      .update({
+        stock:  (await supabaseAdmin.from('books').select('stock').eq('id', item.book_id).single()).data?.stock! - item.quantity
+      })
+      .eq('id', item.book_id);
+
+    if (stockUpdateError) {
+      console.error(
+        `Error reducing stock for book ID ${item.book_id}:`,
+        stockUpdateError.message
+      );
+    }
+  }
+
+  const { data: cartData, error: cartFetchError } = await supabaseAdmin
+    .from('cart')
+    .select('id')
+    .eq('user_id', userId)
+    .single();
+
+  if (cartFetchError || !cartData) {
+    console.error('Error fetching cart data:', cartFetchError?.message);
+    return;
+  }
+
+  const cartId = cartData.id;
+
+  const { error: cartClearError } = await supabaseAdmin
+    .from('cart_items')
+    .delete()
+    .eq('cart_id', cartId);
+
+  if (cartClearError) {
+    console.error('Error clearing cart items:', cartClearError.message);
+  }
+}
+
 
 
 export {
@@ -269,5 +339,6 @@ export {
   upsertPaymentRecord,
   deleteOrderRecord,
   deleteOrderItemsRecord,
-  deletePaymentRecord
+  deletePaymentRecord,
+  handlePaymentIntentSucceeded,
 };

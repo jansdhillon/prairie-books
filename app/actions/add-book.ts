@@ -29,6 +29,7 @@ export const addBookAction = async (formData: FormData) => {
     formData.get("original-release-date")?.toString().trim() || null;
   const condition = formData.get("condition")?.toString().trim() || null;
 
+
   const fileterdFiles = files.filter((file) => file.size > 0);
 
   const directoryPath = `${isbn}/`;
@@ -91,6 +92,7 @@ export const addBookAction = async (formData: FormData) => {
     num_images: numImages,
     original_release_date: originalReleaseDate,
     condition,
+    stock: 1,
   };
 
   const { data: book, error } = await supabase.from("books").insert([newBook]);

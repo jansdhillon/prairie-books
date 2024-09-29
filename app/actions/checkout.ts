@@ -49,19 +49,51 @@ export const checkoutAction = async () => {
 
 
   let amount = 0;
+
   for (const item of cart.cart_items) {
     const price = item.product.price[0];
+
+    const quantity = item.quantity;
+
     if (!price.unit_amount) {
       console.error(`Price unit_amount is undefined for price ${price.id}`);
       return {
         errorRedirect: encodedRedirect(
           "error",
           "/cart",
-          `Invalid price for book ${item.book.title}.`
+          `Invalid price for book with id ${item.book_id}.`
         ),
       };
     }
-    amount += item.quantity * price.unit_amount;
+
+    const { data: currentBook, error: bookError } = await supabase
+      .from("books")
+      .select("stock")
+      .eq("id", item.book_id)
+      .single();
+
+    if (bookError || !currentBook) {
+      console.error("Error fetching book stock:", bookError?.message);
+      return {
+        errorRedirect: encodedRedirect(
+          "error",
+          "/cart",
+          `Could not retrieve stock information for book with id ${item.book_id}.`
+        ),
+      };
+    }
+
+    if (currentBook.stock < quantity) {
+      return {
+        errorRedirect: encodedRedirect(
+          "error",
+          "/cart",
+          `Insufficient stock for book. Only ${currentBook.stock} left in stock.`
+        ),
+      };
+    }
+
+    amount += quantity * price.unit_amount;
   }
 
   const { data: order, error: orderError } = await createOrder(

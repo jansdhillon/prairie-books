@@ -2,7 +2,8 @@
 
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe, StripeElementsOptions } from "@stripe/stripe-js";
-import { ReactNode } from "react";
+import { useTheme } from "next-themes";
+import { ReactNode, useEffect, useState } from "react";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY || ""
@@ -19,10 +20,15 @@ export default function StripeWrapper({
     return null;
   }
 
+
+  const { resolvedTheme } = useTheme();
+
+
+
   const options: StripeElementsOptions = {
     clientSecret,
     appearance: {
-      theme: "stripe",
+      theme: resolvedTheme === "dark" ? "night" : "stripe",
     },
   };
 

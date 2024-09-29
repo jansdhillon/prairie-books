@@ -119,7 +119,6 @@ export const editBookAction = async (formData: FormData) => {
 
   const product = await getProductByBookId(bookId);
 
-  console.log("Product:", product);
 
 
   const productId = product.id;

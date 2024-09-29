@@ -51,8 +51,9 @@ export default function CheckoutWrapper({
   const router = useRouter();
 
   const [email, setEmail] = useState("");
-  const [message, setMessage] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isPaymentReady, setIsPaymentReady] = useState(false);
+  const [isAddressReady, setIsAddressReady] = useState(false);
 
   const handlePlaceOrder = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -72,12 +73,28 @@ export default function CheckoutWrapper({
     });
 
     if (error) {
-      setMessage(error.message || "An unexpected error occurred.");
       setIsProcessing(false);
+      const errorMessage = error.message || "An unexpected error occurred.";
+      // Redirect to an error page with the message in query parameters
+      const redirectUrl = `/checkout?status=error&title=Payment%20Error&message=${encodeURIComponent(
+        errorMessage
+      )}`;
+      router.push(redirectUrl);
     } else {
-      // Payment succeeded, redirect to success page
       router.push(`/checkout/success?order_id=${orderId}`);
     }
+  };
+
+  const handleAddressElementChange = (event: any) => {
+    setIsAddressReady(event.complete);
+  };
+
+  const handlePaymentElementChange = (event: any) => {
+    setIsPaymentReady(event.complete);
+  };
+
+  const handleEmailChange = (event: any) => {
+    setEmail(event.value.email);
   };
 
   return (
@@ -137,54 +154,63 @@ export default function CheckoutWrapper({
             </Card>
           </div>
 
-          <TabsContent value="shipping" className="p-0 m-0">
-            <Card>
-              <CardHeader>
-                <CardTitle>Shipping Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="shipping-address">Shipping Address</Label>
-                  <AddressElement
-                    id="shipping-address"
-                    options={{ mode: "shipping" }}
-                  />
+          <div>
+            <TabsContent value="shipping" className="p-0 m-0">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Shipping Information</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="shipping-address">Shipping Address</Label>
+                    <AddressElement
+                      id="shipping-address"
+                      options={{ mode: "shipping" }}
+                      onChange={handleAddressElementChange}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="payment" className="p-0 m-0">
-            <Card>
-              <CardHeader>
-                <CardTitle>Payment Details</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <LinkAuthenticationElement
-                    id="link-authentication-element"
-                    onChange={(event) => {
-                      setEmail(event.value.email);
-                    }}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <PaymentElement
-                    id="payment-element"
-                    options={{ layout: "tabs" }}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+            <TabsContent value="payment" className="p-0 m-0">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Payment Details</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <LinkAuthenticationElement
+                      id="link-authentication-element"
+                      onChange={handleEmailChange}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <PaymentElement
+                      id="payment-element"
+                      options={{ layout: "tabs" }}
+                      onChange={handlePaymentElementChange}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </div>
         </div>
       </Tabs>
 
-      {message && <div id="payment-message">{message}</div>}
-
       <div className="flex justify-end">
-        <Button type="submit" disabled={isProcessing || !stripe || !elements}>
+        <Button
+          type="submit"
+          disabled={
+            isProcessing ||
+            !stripe ||
+            !elements ||
+            !email ||
+            !isPaymentReady ||
+            !isAddressReady
+          }
+        >
           {isProcessing ? "Processing..." : "Place Order"}
         </Button>
       </div>

@@ -55,7 +55,7 @@ export function Book({ book }: BookProps) {
             loading="eager"
           />
         </Link>
-        <CardTitle className="text-xl font-semibold text-primary line-clamp-2 min-w-[300px]">
+        <CardTitle className="text-xl font-semibold text-primary line-clamp-2 text-ellipsis">
           {book.title}
         </CardTitle>
         <Separator />
@@ -82,13 +82,20 @@ export function Book({ book }: BookProps) {
           onClick={handleAddToCart}
           size="sm"
           variant="default"
-          disabled={isPending}
+          disabled={isPending || book.stock === 0}
         >
           {isPending ? (
             "Adding..."
           ) : (
             <>
-              <ShoppingCart className="mr-2 h-4 w-4" />${book.price.toFixed(2)}
+              {book.stock > 0 ? (
+                <>
+                  <ShoppingCart className="mr-2 h-4 w-4" /> $
+                  {book.price.toFixed(2)}
+                </>
+              ) : (
+                `Sold for $${book.price.toFixed(2)}`
+              )}
             </>
           )}
         </Button>
