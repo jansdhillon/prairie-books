@@ -96,10 +96,12 @@ export default function CheckoutWrapper({
     setEmail(event.value.email);
   };
 
+
+
   return (
     <form
       onSubmit={handlePlaceOrder}
-      className="container mx-auto p-6 space-y-8"
+      className="flex flex-1 flex-col space-y-6"
     >
       <Tabs defaultValue="shipping" className="space-y-4">
         <div className="flex flex-col gap-3 md:gap-0 md:flex-row items-start md:items-center justify-between">

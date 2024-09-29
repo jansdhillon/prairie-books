@@ -16,7 +16,7 @@ export default async function SearchPage({
   const books = await fetchBooks()
 
   const filteredBooks = books.filter((book) =>
-    book.title.toLowerCase().includes(query.toLowerCase())
+    book.title.toLowerCase().includes(query.toLowerCase()) || book.author.toLowerCase().includes(query.toLowerCase()) || book.description?.toLowerCase().includes(query.toLowerCase()) || book.genre?.some((genre: string) => genre?.toLowerCase().includes(query.toLowerCase())) || book.publisher?.toLowerCase().includes(query.toLowerCase())
   )
 
   return (

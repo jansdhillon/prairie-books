@@ -48,11 +48,10 @@ export default async function CartPage() {
         Review and manage the items in your cart.
       </p>
 
-      <Table className="border-2 rounded-md">
+      <Table className="border-2 rounded-xl">
         <TableHeader>
           <TableRow>
             <TableHead>Book</TableHead>
-            <TableHead>Quantity</TableHead>
             <TableHead>Price</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
@@ -61,7 +60,6 @@ export default async function CartPage() {
           {cartItems.map((item: any) => (
             <TableRow key={item.id}>
               <TableCell>{item.book.title}</TableCell>
-              <TableCell>{item.quantity}</TableCell>
               <TableCell>${item.book.price.toFixed(2)}</TableCell>
               <TableCell>
                 <form>

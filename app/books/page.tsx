@@ -20,8 +20,6 @@ export default function AllBooksPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const booksPerPage = 6
   const [books, setBooks] = useState<BookType[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
 
   useEffect(() => {
     const getBooks = async () => {
@@ -29,9 +27,7 @@ export default function AllBooksPage() {
         const fetchedBooks = await fetchBooks()
         setBooks(fetchedBooks)
       } catch (err: any) {
-        setError(err.message)
-      } finally {
-        setLoading(false)
+        console.error(err.message)
       }
     }
     getBooks()
@@ -45,14 +41,6 @@ export default function AllBooksPage() {
   const handlePageChange = (pageNumber: number) => {
     if (pageNumber < 1 || pageNumber > totalPages) return
     setCurrentPage(pageNumber)
-  }
-
-  if (loading) {
-    return <Loading/>
-  }
-
-  if (error) {
-    return <p className="text-lg text-red-500">Error: {error}</p>
   }
 
   return (
