@@ -34,24 +34,29 @@ export const NavAvatar = ({ user, userData }: { user: any; userData: any }) => {
       <DropdownMenuContent>
         <DropdownMenuGroup>
           <Link href="/" className=" text-ellipsis">
-            <DropdownMenuItem className="line-clamp-1">Hello, {userData.email}!</DropdownMenuItem>
+            <DropdownMenuItem className="line-clamp-1">
+              Hello, {userData.email}!
+            </DropdownMenuItem>
           </Link>
           <DropdownMenuSeparator />
-          <Separator />
+
+          {userData.is_admin && (
+            <>
+              <Link href="/admin">
+                <DropdownMenuItem>Admin</DropdownMenuItem>
+              </Link>
+              <DropdownMenuSeparator />
+            </>
+          )}
           <Link href="/orders">
             <DropdownMenuItem>Orders</DropdownMenuItem>
           </Link>
           <DropdownMenuSeparator />
-          <Separator />
-          <Link href="/">
-            <DropdownMenuItem>Home</DropdownMenuItem>
-          </Link>
-          <DropdownMenuSeparator />
-          <Separator />
+
           <form action={signOutAction}>
-            <DropdownMenuItem>
-              <button type="submit">Sign out</button>
-            </DropdownMenuItem>
+            <button type="submit" className="block w-full cursor-pointer">
+              <DropdownMenuItem>Sign out</DropdownMenuItem>
+            </button>
           </form>
         </DropdownMenuGroup>
       </DropdownMenuContent>

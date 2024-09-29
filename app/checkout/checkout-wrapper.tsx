@@ -75,7 +75,6 @@ export default function CheckoutWrapper({
     if (error) {
       setIsProcessing(false);
       const errorMessage = error.message || "An unexpected error occurred.";
-      // Redirect to an error page with the message in query parameters
       const redirectUrl = `/checkout?status=error&title=Payment%20Error&message=${encodeURIComponent(
         errorMessage
       )}`;
@@ -103,8 +102,8 @@ export default function CheckoutWrapper({
       className="container mx-auto p-6 space-y-8"
     >
       <Tabs defaultValue="shipping" className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold">Checkout</h1>
+        <div className="flex flex-col gap-3 md:gap-0 md:flex-row items-start md:items-center justify-between">
+          <h1 className="text-3xl font-bold text-left">Checkout</h1>
           <TabsList>
             <TabsTrigger value="shipping">
               <Truck className="h-4 w-4 mr-2" />
@@ -118,7 +117,6 @@ export default function CheckoutWrapper({
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
-          {/* Order Summary */}
           <div className="space-y-6">
             <Card>
               <CardHeader>

@@ -26,15 +26,15 @@ export default async function AuthButton() {
     const { userData } = await getUser(user.id);
 
     return (
-      <div className="flex items-center gap-6">
-        {userData && userData.is_admin ? (
+      <div className="flex items-center gap-2">
+        {/* {userData && userData.is_admin ? (
           <Link href="/admin">
             <Button variant={"outline"}  size={"sm"}>Admin</Button>
           </Link>
-        ) : null}
+        ) : null} */}
         <Link href="/cart">
-          <Button variant={"outline"} size={"sm"}>
-            <ShoppingCart className="h-4" />
+          <Button variant={"ghost"} size={"sm"}>
+            <ShoppingCart className="h-4 text-muted-foreground" />
           </Button>
         </Link>
         <NavAvatar userData={userData} user={user} />

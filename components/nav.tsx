@@ -73,8 +73,9 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
             {item.label}
           </NavLink>
         ))}
-        <ThemeSwitcher />
+
         {headerAuth}
+        <ThemeSwitcher />
 
         {/* Search Button */}
         {/* <Button onClick={handleSearch} variant="outline" size={"sm"}>
@@ -82,7 +83,7 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
           </Button> */}
       </nav>
 
-      <div className="flex items-center w-full justify-evenly md:hidden px-10 gap-5 py-6">
+      <div className="flex items-center w-full justify-between md:hidden px-5 py-6">
         <Link
           href="/"
           className="text-primary text-base font-bold line-clamp-1  tracking-tight hover:text-muted-foreground"
@@ -91,10 +92,16 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
         </Link>
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="ml-2">
+            <Button variant="ghost" size="icon" >
               <RxHamburgerMenu className="h-5 w-5" />
             </Button>
           </SheetTrigger>
+          <div className="flex justify-between items-center gap-3">
+                {" "}
+
+                <div onClick={() => setIsOpen(false)}>{headerAuth}</div>
+                <ThemeSwitcher />
+              </div>
           <SheetContent>
             <div className="flex flex-col space-y-4 mt-8">
               {navItems.map((item) => (
@@ -121,17 +128,12 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
               {/* <Button onClick={handleSearch} variant="ghost" size={"sm"}>
                   Search
                 </Button> */}
-              <div className="flex justify-around items-center gap-4  pt-4 ">
-                {" "}
-                <ThemeSwitcher />
-                <div onClick={() => setIsOpen(false)}>{headerAuth}</div>
-              </div>
+
             </div>
           </SheetContent>
         </Sheet>
       </div>
 
-      <div className="flex items-center gap-3"></div>
     </header>
   );
 };
