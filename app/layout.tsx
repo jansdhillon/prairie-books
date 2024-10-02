@@ -39,23 +39,23 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={GeistSans.className} suppressHydrationWarning>
-      <body className="bg-background text-foreground font-normal">
+      <body className="bg-background text-primary font-normal">
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >
           <div className="flex min-h-screen flex-col">
             <Suspense
-              fallback={<Skeleton className="w-full h-full bg-accent" />}
+              fallback={<Skeleton className="w-full h-full bg-accent/30" />}
             >
               <Nav headerAuth={<HeaderAuth />} />
             </Suspense>
 
             <main className="flex-1 mt-20">
               <Suspense
-                fallback={<Skeleton className="w-full h-full bg-accent" />}
+                fallback={<Skeleton className="w-full h-full bg-accent/30" />}
               >
                 <div className="container  mx-auto max-w-5xl flex flex-col space-y-12   px-8 md:px-12 py-8">
                   <Feedback>{children}</Feedback>

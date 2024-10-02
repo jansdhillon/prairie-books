@@ -129,7 +129,6 @@ export default function CheckoutWrapper({
                   <TableHeader>
                     <TableRow>
                       <TableHead>Book</TableHead>
-                      <TableHead>Quantity</TableHead>
                       <TableHead>Price</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -144,7 +143,6 @@ export default function CheckoutWrapper({
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell>{item.quantity}</TableCell>
                         <TableCell>${(item.price / 100).toFixed(2)}</TableCell>
                       </TableRow>
                     ))}

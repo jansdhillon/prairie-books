@@ -8,6 +8,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRightIcon } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import BgGlowContainer from "@/components/bg-glow-container";
 
 export default async function HomePage() {
   const books = await fetchBooks();
@@ -19,70 +20,59 @@ export default async function HomePage() {
   );
 
   return (
-    <>
-      <div className="space-y-12">
-        <section className="flex flex-col-reverse md:flex-row gap-12 items-center justify-between space-y-6 md:space-y-0 md:mb-20 ">
-          <div className="md:w-1/2">
-            <h1 className="text-5xl font-bold mb-4">
-              Find Your Next Page-Turner
-            </h1>
-            <p className="text-lg  mb-6 ">
-              Discover a curated selection of rare books. From classics to
-              lifestyle books and modern novels,{" "}
-              <span className="font-bold">Kathrin&apos;s Books</span> has
-              something for every reader.
-            </p>
-            <Link href="/books">
-              <Button
-                variant={"default"}
-                className="flex items-center space-x-2"
-              >
-                <span>Browse Books</span>
-                <ArrowRightIcon />
-              </Button>
-            </Link>
+    <div className="flex flex-col justify-center gap-24 py-16 ">
+      <BgGlowContainer>
+        <div className=" flex flex-col gap-12 justify-center items-center text-center md:px-12 ">
+          <div className="text-5xl md:text-6xl font-black text-center  md:leading-relaxed">
+            Find Your Next<br/> Great Read 📚
           </div>
-          <div className="md:w-1/2 ">
-            <Image
-              priority
-              src="/book-cat2.png"
-              alt="Bookshelf"
-              width={350}
-              height={350}
-              sizes="350px"
-              placeholder="blur"
-              blurDataURL="/book-cat2.png"
-            />
-          </div>
-        </section>
-        <section className="space-y-6">
-          <h2 className="text-3xl font-semibold" id="featured">
-            Featured
-          </h2>
-
-          <Separator />
-          <p className="text-lg mb-6 text-muted-foreground">Handpicked weekly by Kathrin.</p>
-
-          <BookDisplay books={featuredBooks || []} />
-        </section>
-        <section className="space-y-6">
-          <h2 className="text-3xl font-semibold">Latest Releases</h2>
-
-          <Separator />
-          <p className="text-lg mb-6 text-muted-foreground">Just posted.</p>
-          <BookDisplay books={sortedBooks.slice(0, 8)} />
-
-          <Link
-            href="/books"
-            className="flex items-center justify-center py-6 md:py-12"
-          >
-            <Button className="flex items-center justify-center space-x-2">
-              <span>View All Books</span>
+          <p className="text-lg md:text-2xl   md:px-12">
+            Discover a curated selection of rare books. From classics to
+            lifestyle books and modern novels,{" "}
+            <span className="font-bold">Kathrin&apos;s Books</span> has
+            something for every reader.
+          </p>
+          <Link href="/books">
+            <Button
+              size={"lg"}
+              className="flex items-center space-x-2 z-30 font-bold"
+            >
+              Browse Books
               <ArrowRightIcon />
             </Button>
           </Link>
-        </section>
-      </div>
+        </div>
+      </BgGlowContainer>
+
+      <section className="space-y-6">
+        <h2 className="text-3xl font-semibold" id="featured">
+          Featured
+        </h2>
+
+        <Separator />
+        <p className="text-lg mb-6 text-muted-foreground">
+          Handpicked weekly by Kathrin.
+        </p>
+
+        <BookDisplay books={featuredBooks || []} />
+      </section>
+      <section className="space-y-6">
+        <h2 className="text-3xl font-semibold">Latest Releases</h2>
+
+        <Separator />
+        <p className="text-lg mb-6 text-muted-foreground">Just posted.</p>
+        <BookDisplay books={sortedBooks.slice(0, 8)} />
+
+        <Link
+          href="/books"
+          className="flex items-center justify-center py-6 md:py-12"
+        >
+          <Button className="flex items-center justify-center space-x-2">
+            <span>View All Books</span>
+            <ArrowRightIcon />
+          </Button>
+        </Link>
+      </section>
       <section className="space-y-6">
         <h2 className="text-3xl font-semibold mb-2">What Readers Are Saying</h2>
 
@@ -90,14 +80,16 @@ export default async function HomePage() {
         <div className="p-4 space-y-4">
           <p>⭐️ ⭐️ ⭐️ ⭐️ ⭐️</p>
           <p className="italic font-medium">
-            "An amazing selection of books! I can always count on Kathrin to find rare and unique books."
+            "An amazing selection of books! I can always count on Kathrin to
+            find rare and unique books."
           </p>
           <p className="mt-2 text-right ">- Griffin Sherwood</p>
         </div>
         <div className="p-4 space-y-4">
           <p>⭐️ ⭐️ ⭐️ ⭐️ ⭐️</p>
           <p className="italic font-medium">
-            "Kathrin's Books has become my go-to place for books, much better than Facebook Marketplace!"
+            "Kathrin's Books has become my go-to place for books, much better
+            than Facebook Marketplace!"
           </p>
           <p className="mt-2 text-right ">- B. Bean</p>
         </div>
@@ -126,6 +118,6 @@ export default async function HomePage() {
           </p>
         </div>
       </section>
-    </>
+    </div>
   );
 }

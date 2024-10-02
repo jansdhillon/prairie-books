@@ -4,25 +4,25 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 33.3 100% 96.5%;
     --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
+    --card: 327.3 73.3% 97.1%;
     --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
+    --popover: 33.3 100% 96.5%;
     --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
+    --primary: 243.8 47.1% 20%;
     --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
+    --secondary: 327.3 73.3% 97.1%;
     --secondary-foreground: 0 0% 9%;
     --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
+    --muted-foreground: 242.2 47.4% 34.3%;
+    --accent: 325.7 77.8% 94.7%;
     --accent-foreground: 0 0% 9%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
+    --border: 325.9 84.6% 89.8%;
+    --input:229.7 93.5% 81.8%;
+    --ring: 238.7 83.5% 66.7%;
     --radius: 0.5rem;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
@@ -68,5 +68,8 @@
   }
   html {
     @apply w-screen;
+  }
+  .bg-cool-color {
+    @apply bg-gradient-to-tl from-orange-500 dark:from-orange-300 via-fuchsia-500 dark:via-fuchsia-300 to-indigo-700 dark:to-indigo-600;
   }
 }

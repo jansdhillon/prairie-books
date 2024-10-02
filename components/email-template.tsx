@@ -24,7 +24,6 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
     <p>Please respond to this inquiry as soon as possible.</p>
     <div style={{ marginTop: '30px', borderTop: '1px solid #e2e8f0', paddingTop: '10px', fontSize: '0.9em', color: '#718096' }}>
       <p>This email was sent from the contact form at Kathrin's Books.</p>
-      <p>contact@orders.kathrinsbooks.com | +1 (403) 999-2489 | Calgary, Alberta, Canada</p>
     </div>
   </div>
 );

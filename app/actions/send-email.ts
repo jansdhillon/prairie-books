@@ -1,6 +1,8 @@
 "use server";
 
 import { EmailTemplate } from "@/components/email-template";
+import { getErrorRedirect, getStatusRedirect } from "@/utils/helpers";
+import { redirect } from "next/navigation";
 import { Resend } from "resend";
 
 export const sendEmail = async (formData: FormData) => {
@@ -15,13 +17,15 @@ export const sendEmail = async (formData: FormData) => {
         return console.error('Missing required fields');
       }
       const { data, error } = await resend.emails.send({
-        from: "Kathrin's Books <noreply@orders.kathrinsbooks.com>",
-        to: 'imightbejan@gmail.com',
+        from: "Kathrin's Books <noreply@updates.kathrinsbooks.com>",
+        to: 'kathrindhillon@gmail.com',
         subject: 'New Contact Form Submission',
         react: EmailTemplate({name, email, message}),
       });
     } catch (error) {
-        console.error(error);
+        return redirect(getErrorRedirect("/contact", "Error", "Failed to send message"));
     }
+
+    return redirect(getStatusRedirect("/contact", "Success", "Message sent!"));
 
 };

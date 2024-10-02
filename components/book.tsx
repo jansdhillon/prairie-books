@@ -39,7 +39,7 @@ export function Book({ book }: BookProps) {
     : "/placeholder.png";
 
   return (
-    <Card className="flex flex-col justify-between h-full bg-secondary/50 backdrop-blur-sm">
+    <Card className="flex flex-col justify-between h-full  backdrop-blur-sm">
       <CardHeader className="text-muted-foreground">
         <Link
           className="relative w-full h-[400px]  my-5"

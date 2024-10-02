@@ -54,7 +54,6 @@ export default function ShippingAndDeliveryPage() {
             </ul>
           </div>
 
-          {/* Local Delivery */}
           <div className="space-y-2">
             <h3 className="text-xl font-semibold">
               3. Local Delivery (Calgary, Alberta)
