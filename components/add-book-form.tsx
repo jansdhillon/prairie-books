@@ -136,14 +136,14 @@ export default function AddBookForm({
             placeholder="Like New"
           />
         </div>
-        <div className="space-y-2">
+        {/* <div className="space-y-2">
           <Label htmlFor="original-release-date">Original Release Date</Label>
           <Input
             type="date"
             name="original-release-date"
             id="original-release-date"
           />
-        </div>
+        </div> */} {/*removed by request*/}
         <div className="space-y-2">
           <Label htmlFor="publication-date">Publication Date</Label>
           <Input type="date" name="publication-date" id="publication-date" />

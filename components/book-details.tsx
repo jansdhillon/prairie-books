@@ -139,7 +139,7 @@ export function BookDetails({ book }: BookDetailsProps) {
 
             <div className="space-y-2 pb-4">
               <p>
-                <span className="text-primary font-semibold">Author:</span>{" "}
+                <span className="text-primary font-semibold">Author(s):</span>{" "}
                 {book.author}
               </p>
               {book.isbn && (
@@ -165,14 +165,14 @@ export function BookDetails({ book }: BookDetailsProps) {
                     </div>
                   </div>
                 )}
-              {book.original_release_date && (
+              {/* {book.original_release_date && (
                 <p>
                   <span className="text-primary font-semibold">
                     Original Release Date:
                   </span>{" "}
                   {book.original_release_date || "Not specified"}
                 </p>
-              )}
+              )} */}
               {book.publication_date && (
                 <p>
                   {" "}

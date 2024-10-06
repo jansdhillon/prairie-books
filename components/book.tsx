@@ -40,10 +40,10 @@ export function Book({ book }: BookProps) {
     : "/placeholder.png";
 
   return (
-    <Card className="flex flex-col justify-between h-full  backdrop-blur-sm">
+    <Card className=" rounded-xl drop-shadow-sm flex flex-col justify-between h-full max-h-[800px]  backdrop-blur-sm">
       <CardHeader className="text-muted-foreground">
         <Link
-          className="relative w-full h-[400px]  my-5"
+          className="relative w-full h-[400px]"
           href={`/books/${book.id}`}
         >
           <Image
@@ -71,8 +71,8 @@ export function Book({ book }: BookProps) {
         )}
       </CardHeader>
       {book.description && (
-        <CardContent className="line-clamp-2  text-ellipsis">
-          <p>{book.description || "No description available."}</p>
+        <CardContent className="line-clamp-4   text-ellipsis">
+          <p className="text-ellipsis">{book.description || "No description available."}</p>
         </CardContent>
       )}
 
