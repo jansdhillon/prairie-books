@@ -141,14 +141,10 @@ export const editBookAction = async (formData: FormData) => {
         }
       }
 
-      const stripeImages = hasImages
-        ? [`${imageDirectory}image-1.png`]
-        : undefined;
 
       const updatedProduct = await stripe.products.update(productId, {
         name: title,
         description: description || undefined,
-        images: stripeImages,
         metadata,
       });
 
@@ -179,7 +175,7 @@ export const editBookAction = async (formData: FormData) => {
       console.error("Error updating Stripe product or price:", err);
       return encodedRedirect(
         "error",
-        "/admin/edit",
+        "/admin",
         "Failed to update product in Stripe."
       );
     }

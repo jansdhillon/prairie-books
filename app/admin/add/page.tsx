@@ -21,8 +21,6 @@ export default async function HomePage({searchParams}: {searchParams: Message}) 
   }
 
 
-  console.log(userData.is_admin);
-
   if (userData.is_admin !== true) {
     redirect("/");
   }

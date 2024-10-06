@@ -1,6 +1,6 @@
 "use client";
 
-import { BookType } from "./book-display";
+
 import {
   Card,
   CardContent,
@@ -17,6 +17,7 @@ import { Separator } from "@/components/ui/separator";
 import { ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
+import { BookType } from "@/lib/types/types";
 
 type BookProps = {
   book: BookType;
@@ -59,12 +60,12 @@ export function Book({ book }: BookProps) {
         <Separator />
         <p> by {book.author}</p>
         {book.genre && (
-          <div className="space-x-1">
+          <div  className="">
             {book.genre.map((g) =>
               g
                 .split(",")
                 .filter((g) => g.length > 0)
-                .map((g) => <Badge key={g}>{g}</Badge>)
+                .map((g) => <Badge key={g} className="mr-0.5"><p className="line-clamp-1 max-w-[200px]">{g}</p></Badge>)
             )}
           </div>
         )}

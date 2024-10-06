@@ -12,9 +12,9 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
-import { BookType } from "@/components/book-display"
 import { Book } from "@/components/book"
 import Loading from "../loading"
+import { BookType } from "@/lib/types/types"
 
 export default function AllBooksPage() {
   const [currentPage, setCurrentPage] = useState(1)

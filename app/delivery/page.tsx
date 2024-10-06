@@ -16,62 +16,23 @@ export default function ShippingAndDeliveryPage() {
       </p>
 
       <div className="space-y-8">
-        {/* Shipping Options */}
-        <div className="space-y-4">
-          <h2 className="text-2xl font-semibold">Shipping Options</h2>
+        <h2 className="text-2xl font-semibold">Shipping Options</h2>
 
-          <div className="space-y-2">
-            <h3 className="text-xl font-semibold">1. Standard Shipping</h3>
-            <ul className="list-disc list-inside ml-4 space-y-1">
-              <li>
-                <strong>Cost:</strong> $5 flat rate per order.
-              </li>
-              <li>
-                <strong>Delivery Time:</strong> 3-5 business days within Canada.
-              </li>
-              <li>
-                <strong>Details:</strong> Orders are shipped via Canada Post or
-                similar carriers. Tracking information will be provided once
-                your order has been shipped.
-              </li>
-            </ul>
-          </div>
-
-          {/* Free Shipping */}
-          <div className="space-y-2">
-            <h3 className="text-xl font-semibold">2. Free Shipping</h3>
-            <ul className="list-disc list-inside ml-4 space-y-1">
-              <li>
-                <strong>Eligibility:</strong> Orders over $75 before taxes.
-              </li>
-              <li>
-                <strong>Delivery Time:</strong> 3-5 business days within Canada.
-              </li>
-              <li>
-                <strong>Details:</strong> Free standard shipping is
-                automatically applied at checkout for eligible orders.
-              </li>
-            </ul>
-          </div>
-
-          <div className="space-y-2">
-            <h3 className="text-xl font-semibold">
-              3. Local Delivery (Calgary, Alberta)
-            </h3>
-            <ul className="list-disc list-inside ml-4 space-y-1">
-              <li>
-                <strong>Cost:</strong> Free.
-              </li>
-              <li>
-                <strong>Delivery Time:</strong> 1-2 business days.
-              </li>
-              <li>
-                <strong>Details:</strong> We offer free local delivery within
-                Calgary city limits. Simply select "Local Delivery" at checkout
-                if your shipping address is within Calgary. Kathrin will contact you to arrange a delivery time.
-              </li>
-            </ul>
-          </div>
+        <div className="space-y-2">
+          <h3 className="text-xl font-semibold">1. Standard Shipping</h3>
+          <ul className="list-disc list-inside ml-4 space-y-1">
+            <li>
+              <strong>Cost:</strong> $15 flat rate per order.
+            </li>
+            <li>
+              <strong>Delivery Time:</strong> 3-5 business days within Canada.
+            </li>
+            <li>
+              <strong>Details:</strong> Orders are shipped via Canada Post or
+              similar carriers. Tracking information will be provided once your
+              order has been shipped.
+            </li>
+          </ul>
         </div>
 
         {/* Order Processing Time */}
@@ -101,16 +62,13 @@ export default function ShippingAndDeliveryPage() {
           </p>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <div>
-              <h2 className="text-2xl font-semibold">
-                Questions or Special Requests?
-              </h2>
-          </div>
+        <div className="flex flex-col gap-2 ">
+          <h2 className="text-2xl font-semibold">
+            Questions or Special Requests?
+          </h2>
+
           <Link href="/contact">
-              <Button variant="default" >
-                Contact
-              </Button>
+            <Button variant="default">Contact</Button>
           </Link>
         </div>
       </div>

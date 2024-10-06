@@ -47,7 +47,8 @@ export const getPaymentById = cache(async (supabase: SupabaseClient, orderId: st
 export const getAllBooks = cache(async (supabase: SupabaseClient) => {
   const { data: books, error } = await supabase
     .from('books')
-    .select('*');
+    .select('*')
+    .order('created_at', { ascending: false });
   return { data: books, error };
 });
 

@@ -1,6 +1,6 @@
 # Prairie Books
 
-An online book store by Kathrin Dhillon, located in Calgary, Alberta, Canada. Offering local delivery and domestic shipping. A curated collection of used books.
+An online book store by Kathrin.
 
 ## Requirements:
 

@@ -1,5 +1,4 @@
 "use client";;
-import { BookType } from "./book-display";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { addToCartAction } from "@/app/actions/add-to-cart";
@@ -21,6 +20,7 @@ import { Badge } from "./ui/badge";
 import { User } from "@supabase/auth-js";
 import { getUserAndUserData } from "@/app/actions/get-user";
 import { Database } from "@/utils/database.types";
+import { BookType } from "@/lib/types/types";
 
 type BookDetailsProps = {
   book: BookType;

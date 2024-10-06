@@ -146,6 +146,20 @@ export default function CheckoutWrapper({
                         <TableCell>${(item.price / 100).toFixed(2)}</TableCell>
                       </TableRow>
                     ))}
+                     <TableRow>
+                      <TableCell className="font-medium">Shipping</TableCell>
+                      <TableCell>$15.00</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-semibold">Total</TableCell>
+                      <TableCell>
+                        $
+                        {(
+                          orderItems.reduce((acc, item) => acc + (item.price / 100) * item.quantity, 0) + 15
+                        ).toFixed(2)}
+                      </TableCell>
+                    </TableRow>
+
                   </TableBody>
                 </Table>
               </CardContent>

@@ -11,8 +11,7 @@ import {
   CarouselPrevious,
 } from "./ui/carousel";
 import Loading from "@/app/loading";
-
-export type BookType = Database["public"]["Tables"]["books"]["Row"];
+import { BookType } from "@/lib/types/types";
 
 const BookDisplay = ({ books }: { books: BookType[] }) => {
   if (!books || books.length === 0) {

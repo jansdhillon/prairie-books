@@ -115,8 +115,6 @@ export const addBookAction = async (formData: FormData) => {
 
   const product = await stripe.products.create({
     name: title,
-    description: description || undefined,
-    images: hasImages ? [`${newBook.image_directory}image-1.png`] : undefined,
     metadata: {
       bookId: newBookId?.id!,
       author,

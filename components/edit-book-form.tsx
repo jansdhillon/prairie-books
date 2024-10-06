@@ -8,10 +8,10 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SubmitButton } from "./submit-button";
 import { FormMessage, Message } from "./form-message";
-import { BookType } from "./book-display";
 import { Badge } from "./ui/badge";
 import { X } from "lucide-react";
 import { set } from "date-fns";
+import { BookType } from "@/lib/types/types";
 
 export default function EditBookForm({
   editBookAction,
