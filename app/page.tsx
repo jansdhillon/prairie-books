@@ -44,24 +44,13 @@ export default async function HomePage() {
         </div>
       </BgGlowContainer>
 
+
       <section className="space-y-6">
-        <h2 className="text-3xl font-semibold" id="featured">
-          Featured
-        </h2>
+        <h2 className="text-3xl font-semibold">Latest Books</h2>
 
         <Separator />
-        <p className="text-lg mb-6 text-muted-foreground">
-          Handpicked weekly by Kathrin.
-        </p>
-
-        <BookDisplay books={featuredBooks || []} />
-      </section>
-      <section className="space-y-6">
-        <h2 className="text-3xl font-semibold">Latest Releases</h2>
-
-        <Separator />
-        <p className="text-lg mb-6 text-muted-foreground">Just posted.</p>
-        <BookDisplay books={sortedBooks.slice(0, 8)} />
+        <p className="text-lg mb-6 text-muted-foreground">Just listed.</p>
+        <BookDisplay books={sortedBooks} />
 
         <Link
           href="/books"
@@ -72,6 +61,18 @@ export default async function HomePage() {
             <ArrowRightIcon />
           </Button>
         </Link>
+      </section>
+      <section className="space-y-6">
+        <h2 className="text-3xl font-semibold" id="featured">
+          Featured
+        </h2>
+
+        <Separator />
+        <p className="text-lg mb-6 text-muted-foreground">
+          Handpicked by Kathrin.
+        </p>
+
+        <BookDisplay books={featuredBooks} />
       </section>
       <section className="space-y-6">
         <h2 className="text-3xl font-semibold mb-2">What Readers Are Saying</h2>
