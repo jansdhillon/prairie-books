@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,30 +22,54 @@ import {
 } from "@stripe/react-stripe-js";
 import { useRouter } from "next/navigation";
 import { Label } from "@/components/ui/label";
+import {
+  BookType,
+  CartItemType,
+  EnhancedCartItemType,
+  OrderItemType,
+  ProductType,
+} from "@/lib/types/types";
 
 interface Book {
   title: string;
   author: string;
 }
 
-interface OrderItem {
-  id: string;
-  quantity: number;
-  price: number;
-  book: Book;
+interface ShippingAddress {
+  name: string;
+  address: {
+    line1: string;
+    line2: string;
+    city: string;
+    country: string;
+    postal_code: string;
+    state: string;
+  };
 }
 
-interface CheckoutWrapperProps {
-  clientSecret: string;
-  orderItems: OrderItem[];
-  orderId: string;
+interface ShippingOption {
+  id: string;
+  name: string;
+  cost: number;
+  description: string;
+  eligibility?: (orderTotal: number, address: any) => boolean;
 }
 
 export default function CheckoutWrapper({
-  clientSecret,
-  orderItems,
-  orderId,
-}: CheckoutWrapperProps) {
+  paymentIntentId,
+  cartItems,
+  completeCheckoutAction,
+  cancelCheckoutAction,
+}: {
+  paymentIntentId: string;
+  cartItems: EnhancedCartItemType[];
+  completeCheckoutAction: (
+    cartItems: EnhancedCartItemType[],
+    paymentIntentId: string,
+    finalAmount: number
+  ) => Promise<any>;
+  cancelCheckoutAction: (paymentIntentId: string) => Promise<any>;
+}) {
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
@@ -54,6 +78,73 @@ export default function CheckoutWrapper({
   const [isProcessing, setIsProcessing] = useState(false);
   const [isPaymentReady, setIsPaymentReady] = useState(false);
   const [isAddressReady, setIsAddressReady] = useState(false);
+  const [shippingAddress, setShippingAddress] =
+    useState<ShippingAddress | null>(null);
+  const [selectedShipping, setSelectedShipping] =
+    useState<ShippingOption | null>(null);
+  const [shippingOptions, setShippingOptions] = useState<ShippingOption[]>([]);
+  const [orderTotal, setOrderTotal] = useState<number>(0);
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      console.log("Cancelling checkout...");
+      cancelCheckoutAction(paymentIntentId);
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [paymentIntentId, cancelCheckoutAction]);
+
+  useEffect(() => {
+    const total = cartItems.reduce(
+      (acc, item) => acc + item.price * item.quantity,
+      0
+    );
+    setOrderTotal(total);
+    console.log("Order Total: ", total);
+  }, [cartItems]);
+
+  const allShippingOptions: ShippingOption[] = [
+    {
+      id: "standard",
+      name: "Standard Shipping ($15)",
+      cost: 15,
+      description: "Delivery in 3-5 business days via Canada Post.",
+    },
+    {
+      id: "free",
+      name: "Free Shipping",
+      cost: 0,
+      description: "Eligible for orders over $75 before taxes.",
+      eligibility: (total) => total >= 75,
+    },
+    {
+      id: "local",
+      name: "Local Delivery (Calgary)",
+      cost: 0,
+      description:
+        "Free delivery within Calgary. Delivery in 1-2 business days.",
+      eligibility: (total, shippingAddress) =>
+        shippingAddress &&
+        shippingAddress.address.city.toLowerCase() === "calgary",
+    },
+  ];
+
+  useEffect(() => {
+    if (shippingAddress && isAddressReady && elements) {
+      const eligibleOptions = allShippingOptions.filter((option) => {
+        if (option.eligibility) {
+          return option.eligibility(orderTotal, shippingAddress);
+        }
+        return true;
+      });
+      setShippingOptions(eligibleOptions);
+      setSelectedShipping(eligibleOptions[0] || null);
+    }
+  }, [isAddressReady, orderTotal, elements, shippingAddress]);
 
   const handlePlaceOrder = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -64,28 +155,55 @@ export default function CheckoutWrapper({
 
     setIsProcessing(true);
 
-    const { error } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: `${window.location.origin}/checkout/success?order_id=${orderId}`,
+    if (!selectedShipping) {
+      return;
+    }
+
+    console.log("Selected shipping:", selectedShipping);
+    console.log("Order total:", orderTotal);
+
+
+
+
+    const totalAmount = orderTotal + selectedShipping.cost;
+
+    console.log("Total amount:", totalAmount);
+
+
+
+    const response = await fetch("/api/create-checkout-session", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-      redirect: "if_required",
+      body: JSON.stringify({
+        cartItems,
+        successUrl: window.location.origin + "/checkout/success",
+      }),
     });
 
-    if (error) {
+    const { sessionId } = await response.json();
+
+    if (!sessionId) {
       setIsProcessing(false);
-      const errorMessage = error.message || "An unexpected error occurred.";
-      const redirectUrl = `/checkout?status=error&title=Payment%20Error&message=${encodeURIComponent(
-        errorMessage
-      )}`;
-      router.push(redirectUrl);
-    } else {
-      router.push(`/checkout/success?order_id=${orderId}`);
+      console.error("Failed to create session");
+      return;
+    }
+
+    const { error } = await stripe?.redirectToCheckout({ sessionId });
+
+    if (error) {
+      console.error("Stripe Checkout error:", error.message);
+      setIsProcessing(false);
     }
   };
 
+
   const handleAddressElementChange = (event: any) => {
     setIsAddressReady(event.complete);
+    if (event.value) {
+      setShippingAddress(event.value);
+    }
   };
 
   const handlePaymentElementChange = (event: any) => {
@@ -95,8 +213,6 @@ export default function CheckoutWrapper({
   const handleEmailChange = (event: any) => {
     setEmail(event.value.email);
   };
-
-
 
   return (
     <form
@@ -133,35 +249,80 @@ export default function CheckoutWrapper({
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {orderItems.map((item) => (
+                    {cartItems.map((item) => (
                       <TableRow key={item.id}>
                         <TableCell>
                           <div>
-                            <div className="font-medium">{item.book.title}</div>
+                            <div className="font-medium">
+                              {item.book?.title}
+                            </div>
                             <div className="text-sm text-muted-foreground">
-                              {item.book.author}
+                              {item.book?.author}
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell>${(item.price / 100).toFixed(2)}</TableCell>
+                        <TableCell>${item.price.toFixed(2)}</TableCell>
                       </TableRow>
                     ))}
-                     <TableRow>
-                      <TableCell className="font-medium">Shipping</TableCell>
-                      <TableCell>$15.00</TableCell>
-                    </TableRow>
+                    {selectedShipping && (
+                      <TableRow>
+                        <TableCell className="font-semibold">
+                          Shipping
+                        </TableCell>
+                        <TableCell>
+                          ${selectedShipping.cost.toFixed(2)}
+                        </TableCell>
+                      </TableRow>
+                    )}
                     <TableRow>
                       <TableCell className="font-semibold">Total</TableCell>
                       <TableCell>
                         $
                         {(
-                          orderItems.reduce((acc, item) => acc + (item.price / 100) * item.quantity, 0) + 15
+                          cartItems.reduce(
+                            (acc, item) => acc + item.price * item.quantity,
+                            0
+                          ) + (selectedShipping?.cost || 0)
                         ).toFixed(2)}
                       </TableCell>
                     </TableRow>
-
                   </TableBody>
                 </Table>
+                {shippingOptions.length > 0 && (
+                  <Table className="w-full">
+                    <TableBody>
+                      {shippingOptions.map((option) => (
+                        <TableRow key={option.id}>
+                          <TableCell>
+                            <div>
+                              <input
+                                type="radio"
+                                id={option.id}
+                                name="shipping"
+                                value={option.id}
+                                checked={selectedShipping?.id === option.id}
+                                onChange={() => setSelectedShipping(option)}
+                                className="mr-2"
+                              />
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {" "}
+                            <label
+                              htmlFor={option.id}
+                              className="flex flex-col"
+                            >
+                              <span className="">{option.name}</span>
+                              <span className="text-sm text-muted-foreground">
+                                {option.description}
+                              </span>
+                            </label>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -220,7 +381,8 @@ export default function CheckoutWrapper({
             !elements ||
             !email ||
             !isPaymentReady ||
-            !isAddressReady
+            !isAddressReady ||
+            !selectedShipping
           }
         >
           {isProcessing ? "Processing..." : "Place Order"}

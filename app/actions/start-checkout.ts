@@ -11,9 +11,9 @@ import {
   getCartDetailsByUserId,
   getPriceByProductId,
 } from "@/utils/supabase/queries";
-import { createOrRetrieveCustomer } from "@/utils/supabase/admin";
+import { createOrRetrieveCustomer, upsertPaymentRecord } from "@/utils/supabase/admin";
 
-export const checkoutAction = async () => {
+export const startCheckoutAction = async () => {
   const supabase = createClient();
 
   const user = await getUser(supabase);
@@ -36,6 +36,8 @@ export const checkoutAction = async () => {
     userId
   )
 
+  console.log("cart", cart.cart_items)
+
 
 
 
@@ -48,10 +50,13 @@ export const checkoutAction = async () => {
   }
 
 
-  let amount = 0;
+  let initialAmount = 0;
+
+  let cartDetails = [];
 
   for (const item of cart.cart_items) {
-    const price = item.product.price[0];
+    console.log("item", item)
+    const price = item.product.price[item.product.price.length - 1];
 
     const quantity = item.quantity;
 
@@ -68,7 +73,7 @@ export const checkoutAction = async () => {
 
     const { data: currentBook, error: bookError } = await supabase
       .from("books")
-      .select("stock")
+      .select("*")
       .eq("id", item.book_id)
       .single();
 
@@ -93,56 +98,53 @@ export const checkoutAction = async () => {
       };
     }
 
-    amount += quantity * price.unit_amount;
+    initialAmount += quantity * price.unit_amount;
+
+    console.log("price", price)
+    console.log("quantity", quantity)
+
+    console.log("initialAmount", initialAmount)
+
+
+
+    cartDetails.push(
+      {
+        id: item.id,
+        price: price.unit_amount / 100,
+        quantity: quantity,
+        book: currentBook,
+        product: item.product,
+      }
+    )
   }
 
-  const { data: order, error: orderError } = await createOrder(
-    supabase,
-    userId,
-    cart.cart_items
-  );
-
-  if (orderError) {
-    console.error("Error creating order:", orderError.message);
-    // return {
-    //   errorRedirect: encodedRedirect(
-    //     "error",
-    //     "/cart",
-    //     "Failed to create order."
-    //   ),
-    // };
-  }
 
   const stripeCustomer = await createOrRetrieveCustomer({email: user.email!, uuid: user.id});
 
   const paymentIntent = await stripe.paymentIntents.create({
-    amount: amount,
+    amount: initialAmount,
     currency: "cad",
     customer: stripeCustomer,
-    metadata: {
-      order_id: order.id,
-    },
     automatic_payment_methods: {
       enabled: true,
     },
   });
 
   const paymentData = {
-    order_id: order.id,
-    amount: amount / 100,
+    amount: initialAmount / 100,
     currency: "CAD",
     status: "initiated",
     payment_intent_id: paymentIntent.id,
+    user_id: userId,
   };
 
   const { error: paymentError } = await createPayment(
     supabase,
-    order.id,
     paymentData
   );
 
   if (paymentError) {
-    console.error("Error storing payment info:", paymentError.message);
+    console.error("Error storing payment info:", paymentError);
     // return {
     //   errorRedirect: encodedRedirect(
     //     "error",
@@ -157,14 +159,12 @@ export const checkoutAction = async () => {
   try {
 
 
-    await supabase
-      .from("payments")
-      .update({ payment_intent_id: paymentIntent.id })
-      .eq("order_id", order.id);
 
     return {
       clientSecret: paymentIntent.client_secret,
-      orderId: order.id,
+      paymentIntentId: paymentIntent.id,
+      initialAmount: initialAmount,
+      cartDetails: cartDetails,
     };
   } catch (error) {
     console.error("Error creating PaymentIntent:", error);

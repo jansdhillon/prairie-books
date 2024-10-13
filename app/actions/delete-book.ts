@@ -1,11 +1,8 @@
-"use server";
-import { Database } from "@/utils/database.types";
+"use server";;
 import { getErrorRedirect, getStatusRedirect } from "@/utils/helpers";
-import { stripe } from "@/utils/stripe/config";
 import { deletePriceRecord, deleteProductRecord } from "@/utils/supabase/admin";
 import { getPriceByProductId } from "@/utils/supabase/queries";
 import { createClient } from "@/utils/supabase/server";
-import { encodedRedirect} from "@/utils/utils";
 import { Storage } from "@google-cloud/storage";
 import { redirect } from "next/navigation";
 

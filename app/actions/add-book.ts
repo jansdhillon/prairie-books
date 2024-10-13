@@ -25,8 +25,6 @@ export const addBookAction = async (formData: FormData) => {
   const edition = formData.get("edition")?.toString().trim() || null;
   const publicationDate =
     formData.get("publication-date")?.toString().trim() || null;
-  const originalReleaseDate =
-    formData.get("original-release-date")?.toString().trim() || null;
   const condition = formData.get("condition")?.toString().trim() || null;
 
 
@@ -90,7 +88,6 @@ export const addBookAction = async (formData: FormData) => {
     edition,
     publication_date: publicationDate,
     num_images: numImages,
-    original_release_date: originalReleaseDate,
     condition,
     stock: 1,
   };

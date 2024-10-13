@@ -6,8 +6,8 @@ import { ReactNode, useEffect } from "react";
 
 const Feedback = ({ children }: { children: ReactNode | ReactNode[] }) => {
   const searchParams = useSearchParams();
-  const status = searchParams.get("success");
-  const statusDescription = searchParams.get("description");
+  const status = searchParams.get("status");
+  const statusDescription = searchParams.get("status_description");
   const error = searchParams.get("error");
   const errorDescription = searchParams.get("error_description");
 

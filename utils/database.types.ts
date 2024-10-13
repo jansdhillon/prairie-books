@@ -275,33 +275,36 @@ export type Database = {
           created_at: string | null
           currency: string
           id: string
-          order_id: string
+          order_id: string | null
           payment_intent_id: string
           price_id: string | null
           status: Database["public"]["Enums"]["payment_status"]
           updated_at: string | null
+          user_id: string | null
         }
         Insert: {
           amount: number
           created_at?: string | null
           currency: string
           id?: string
-          order_id: string
+          order_id?: string | null
           payment_intent_id: string
           price_id?: string | null
           status: Database["public"]["Enums"]["payment_status"]
           updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
           amount?: number
           created_at?: string | null
           currency?: string
           id?: string
-          order_id?: string
+          order_id?: string | null
           payment_intent_id?: string
           price_id?: string | null
           status?: Database["public"]["Enums"]["payment_status"]
           updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -316,6 +319,13 @@ export type Database = {
             columns: ["price_id"]
             isOneToOne: false
             referencedRelation: "prices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -402,35 +412,35 @@ export type Database = {
       users: {
         Row: {
           avatar_url: string | null
-          billing_address: string | null
+          billing_address: Json | null
           created_at: string | null
           email: string
           full_name: string | null
           id: string
           is_admin: boolean | null
-          shipping_address: string | null
+          shipping_address: Json | null
           updated_at: string | null
         }
         Insert: {
           avatar_url?: string | null
-          billing_address?: string | null
+          billing_address?: Json | null
           created_at?: string | null
           email: string
           full_name?: string | null
           id: string
           is_admin?: boolean | null
-          shipping_address?: string | null
+          shipping_address?: Json | null
           updated_at?: string | null
         }
         Update: {
           avatar_url?: string | null
-          billing_address?: string | null
+          billing_address?: Json | null
           created_at?: string | null
           email?: string
           full_name?: string | null
           id?: string
           is_admin?: boolean | null
-          shipping_address?: string | null
+          shipping_address?: Json | null
           updated_at?: string | null
         }
         Relationships: [

@@ -26,7 +26,7 @@ export default function StripeWrapper({
 
 
   const options: StripeElementsOptions = {
-    clientSecret,
+    clientSecret: clientSecret,
     appearance: {
       theme: resolvedTheme === "dark" ? "night" : "stripe",
     },

@@ -17,3 +17,11 @@ export type ProductType = Database["public"]["Tables"]["products"]["Row"];
 export type PriceType = Database["public"]["Tables"]["prices"]["Row"];
 
 export type PaymentType = Database["public"]["Tables"]["payments"]["Row"];
+
+export type EnhancedCartItemType =  {
+    id: string;
+    price: number;
+    quantity: number;
+    book: BookType;
+    product: ProductType;
+  }

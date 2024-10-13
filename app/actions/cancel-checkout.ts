@@ -1,86 +1,131 @@
 "use server";
 import { createClient } from "@/utils/supabase/server";
 import { encodedRedirect } from "@/utils/utils";
-import { fixOneToOne } from "../fixOneToOne";
 import { stripe } from "@/utils/stripe/config";
-import { Database } from "@/utils/database.types";
 
-export const cancelCheckoutAction = async () => {
-    const supabase = createClient();
+export const cancelCheckoutAction = async (paymentIntentId: string) => {
+  const supabase = createClient();
 
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
 
-    if (userError || !user) {
-      return encodedRedirect(
+  if (userError || !user) {
+    return {
+      errorRedirect: encodedRedirect(
         "error",
         "/sign-in",
-        "You must be signed in to checkout."
-      );
-    }
+        "You must be signed in to cancel the checkout."
+      ),
+    };
+  }
 
-    const userId = user.id;
+  const userId = user.id;
 
-
-    const { data: cart, error: cartError } = await supabase
-      .from("cart")
-      .select("id")
-      .eq("user_id", userId)
-      .single();
-
-    if (cartError || !cart) {
-      console.error("Error fetching cart:", cartError?.message);
-      return encodedRedirect("error", "/cart", "Your cart is empty.");
-    }
-
-
-    const { data: cartItems, error: cartItemsError } = await supabase
-      .from("cart_items")
-      .select("id, quantity, book:books(id, price, title)")
-      .eq("cart_id", cart.id)
-
-    if (cartItemsError || !cartItems || cartItems.length === 0) {
-      console.error("Error fetching cart items:", cartItemsError?.message);
-      return encodedRedirect("error", "/cart", "Your cart is empty.");
-    }
-
-    const { data: order, error: orderError } = await supabase
-    .from("orders")
-    .delete()
+  const { data: payment, error: paymentError } = await supabase
+    .from("payments")
+    .select("id, payment_intent_id, status")
+    .eq("payment_intent_id", paymentIntentId)
     .eq("user_id", userId)
     .single();
 
-  if (orderError) {
-    console.error("Error creating order:", orderError.message);
-    return encodedRedirect("error", "/cart", "Failed to create order.");
+  if (paymentError || !payment) {
+    console.error("Error fetching payment:", paymentError?.message);
+    return {
+      errorRedirect: encodedRedirect("error", "/cart", "Payment record not found."),
+    };
   }
 
+  // Check if the payment is already canceled or succeeded
+  if (payment.status === "canceled") {
+    return {
+      errorRedirect: encodedRedirect("error", `/cart`, "Checkout is already canceled."),
+    };
+  }
 
+  if (payment.status === "succeeded") {
+    return {
+      errorRedirect: encodedRedirect(
+        "error",
+        `/cart`,
+        "Completed payments cannot be canceled."
+      ),
+    };
+  }
 
+  try {
+    const canceledPaymentIntent = await stripe.paymentIntents.cancel(paymentIntentId);
+    console.log("PaymentIntent canceled:", canceledPaymentIntent.id);
+  } catch (error: any) {
+    console.error("Error canceling PaymentIntent:", error.message);
+    return {
+      errorRedirect: encodedRedirect(
+        "error",
+        `/cart`,
+        "Failed to cancel payment intent. Please contact support."
+      ),
+    };
+  }
 
+  // Update the payment status to 'canceled' in Supabase
+  const { error: updateError } = await supabase
+    .from("payments")
+    .update({ status: "canceled" })
+    .eq("payment_intent_id", paymentIntentId)
+    .eq("user_id", userId);
 
+  if (updateError) {
+    console.error("Error updating payment status:", updateError.message);
+    return {
+      errorRedirect: encodedRedirect(
+        "error",
+        `/cart`,
+        "Failed to update payment status."
+      ),
+    };
+  }
 
+  // Optionally, restore stock quantities if necessary
+  const { data: cart, error: cartError } = await supabase
+    .from("cart")
+    .select("id")
+    .eq("user_id", userId)
+    .single();
 
+  if (cartError || !cart) {
+    console.error("Error fetching cart:", cartError?.message);
+  } else {
+    const { data: cartItems, error: cartItemsError } = await supabase
+      .from("cart_items")
+      .select("book_id, quantity")
+      .eq("cart_id", cart.id);
 
-    // const orderItemsData = cartItems.map((item) => ({
-    //   order_id: order.id,
-    //   book_id: fixOneToOne(item.book)?.id,
-    //   quantity: item.quantity,
-    //   price: fixOneToOne(item?.book)?.price,
-    // }));
+    if (cartItemsError || !cartItems) {
+      console.error("Error fetching cart items:", cartItemsError?.message);
+    } else {
+      for (const item of cartItems) {
+        const { error: stockError } = await supabase
+          .from("books")
+          .update({ stock: { _inc: item.quantity } })
+          .eq("id", item.book_id);
 
-    // const { error: orderItemsError } = await supabase.from("order_items").delete().eq("order_id", orderItemsData.order_id);
+        if (stockError) {
+          console.error(
+            `Error restoring stock for book ${item.book_id}:`,
+            stockError.message
+          );
 
-    // if (orderItemsError) {
-    //   console.error("Error creating order items:", orderItemsError.message);
-    //   return encodedRedirect("error", "/cart", "Failed to process order items.");
-    // }
+        }
+      }
+    }
+  }
 
-
-
-
-    // return encodedRedirect("success", "/orders/[id]", order.id);
-
+  return {
+    successRedirect: encodedRedirect(
+      "success",
+      `/cart`,
+      "Checkout has been successfully canceled."
+    ),
   };
+};

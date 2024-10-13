@@ -51,7 +51,7 @@ export function Book({ book }: BookProps) {
             alt={book.title}
             fill
             sizes="400px"
-            className="object-contain rounded-lg"
+            className="object-contain rounded-lg py-4"
           />
         </Link>
         <CardTitle className="text-xl font-semibold text-primary line-clamp-2 text-ellipsis">

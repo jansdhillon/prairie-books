@@ -1,4 +1,4 @@
-"use server";
+"use server";;
 import { getStatusRedirect } from "@/utils/helpers";
 import {
   getCartByUserId,
@@ -6,7 +6,6 @@ import {
 } from "@/utils/supabase/queries";
 import { createClient } from "@/utils/supabase/server";
 import { encodedRedirect } from "@/utils/utils";
-import { get } from "http";
 import { redirect } from "next/navigation";
 
 export const addToCartAction = async (formData: FormData) => {

@@ -27,19 +27,6 @@ def backfill_books_to_stripe():
         language = book.get('language') or ''
         publisher = book.get('publisher') or ''
         edition = book.get('edition') or ''
-        condition = book.get('condition') or ''
-        image_directory = book.get('image_directory') or ''
-        num_images = book.get('num_images') or 0
-
-        image_urls = []
-        if image_directory and num_images > 0:
-            if not image_directory.endswith('/'):
-                image_directory += '/'
-
-            for i in range(num_images):
-                image_urls.append(f"{image_directory}image-{i + 1}.png")
-        else:
-            image_urls = None
 
         metadata = {
             'bookId': str(book_id),
@@ -59,7 +46,6 @@ def backfill_books_to_stripe():
             stripe_product = stripe.Product.create(
                 name=title,
                 description=description or None,
-                images=image_urls or None,
                 metadata=metadata
             )
             product_id = stripe_product['id']
@@ -78,7 +64,6 @@ def backfill_books_to_stripe():
                 'active': stripe_product['active'],
                 'name': stripe_product['name'],
                 'description': stripe_product['description'],
-                'image': image_urls[0] if image_urls else None,
                 'metadata': metadata,
                 'book_id': book_id
             }

@@ -5,7 +5,9 @@ import { getErrorRedirect, getStatusRedirect } from "@/utils/helpers";
 import { redirect } from "next/navigation";
 import { Resend } from "resend";
 
-export const sendEmail = async (formData: FormData) => {
+type emailType = "contact" | "newsletter" | "order-confirmation" | "shipping-confirmation" | "delivery-confirmation";
+
+export const sendEmail = async (formData: FormData, type: emailType) => {
     const resend = new Resend(process.env.RESEND_API_KEY);
     try {
       const name = formData.get('name')?.toString();
