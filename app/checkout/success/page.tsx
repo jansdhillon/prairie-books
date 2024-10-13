@@ -1,12 +1,7 @@
 "use client";
-import { createClient } from "@/utils/supabase/server";
-import { getOrderById } from "@/app/actions/get-order-by-id";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -15,55 +10,89 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
+export default function SuccessPage() {
+  const [order, setOrder] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const searchParams = useSearchParams();
 
-interface SessionType {
-  id: string;
-  amount_total: number;
-  currency: string;
-  payment_status: string;
-}
-
-export default function SuccessPage({ searchParams }: { searchParams: { order_id: string, session_id: string } }) {
-  const orderId = searchParams.order_id;
-  const sessionId = searchParams.session_id!;
-
-  const [session, setSession] = useState<SessionType | null>(null);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
-
+  const orderId = searchParams?.get("order_id");
+  const sessionId = searchParams?.get("session_id");
 
   useEffect(() => {
-
-    if (sessionId) {
-      fetch(`/api/retrieve-session?session_id=${sessionId}`)
-        .then((response) => response.json())
-        .then((data) => {
-          setSession(data.session);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error("Error fetching session:", error);
-          setLoading(false);
-        });
-    } else {
-      router.push("/");
+    if (!orderId || !sessionId) {
+      window.location.href = "/";
+      return;
     }
-  }, [router]);
 
+    const fetchOrderDetails = async () => {
+      try {
+        const response = await fetch(`/api/get-order-details?order_id=${orderId}&session_id=${sessionId}`);
+        const data = await response.json();
 
-  if (loading) return <div>Loading...</div>;
+        if (!response.ok) {
+          throw new Error(data.message || "Failed to fetch order details.");
+        }
 
-  if (!session) return <div>Payment not found</div>;
+        setOrder(data.order);
+      } catch (error: any) {
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchOrderDetails();
+  }, [orderId, sessionId]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
-    <div>
-      <h1>Thank you for your order!</h1>
-      <p>Order ID: {session.id}</p>
-      <p>Total Amount: ${(session.amount_total / 100).toFixed(2)} {session.currency.toUpperCase()}</p>
-      <p>Status: {session.payment_status}</p>
+    <div className="container mx-auto p-6 space-y-8">
+      <h1 className="text-3xl font-bold">Thank you for your purchase!</h1>
+      <p>Your order has been successfully processed.</p>
+
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Order Summary</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Book</TableHead>
+                  <TableHead>Quantity</TableHead>
+                  <TableHead>Price</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {order.items.map((item: any) => (
+                  <TableRow key={item.id}>
+                    <TableCell>
+                      <div>
+                        <div className="font-medium">{item.book.title}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {item.book.author}
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>{item.quantity}</TableCell>
+                    <TableCell>${(item.price).toFixed(2)}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

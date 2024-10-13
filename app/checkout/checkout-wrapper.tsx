@@ -13,39 +13,10 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CreditCard, Truck } from "lucide-react";
-import {
-  useStripe,
-  useElements,
-  PaymentElement,
-  AddressElement,
-  LinkAuthenticationElement,
-} from "@stripe/react-stripe-js";
+import { useStripe } from "@stripe/react-stripe-js";
 import { useRouter } from "next/navigation";
 import { Label } from "@/components/ui/label";
-import {
-  BookType,
-  CartItemType,
-  EnhancedCartItemType,
-  OrderItemType,
-  ProductType,
-} from "@/lib/types/types";
-
-interface Book {
-  title: string;
-  author: string;
-}
-
-interface ShippingAddress {
-  name: string;
-  address: {
-    line1: string;
-    line2: string;
-    city: string;
-    country: string;
-    postal_code: string;
-    state: string;
-  };
-}
+import { EnhancedCartItemType } from "@/lib/types/types";
 
 interface ShippingOption {
   id: string;
@@ -56,47 +27,19 @@ interface ShippingOption {
 }
 
 export default function CheckoutWrapper({
-  paymentIntentId,
   cartItems,
-  completeCheckoutAction,
   cancelCheckoutAction,
 }: {
-  paymentIntentId: string;
   cartItems: EnhancedCartItemType[];
-  completeCheckoutAction: (
-    cartItems: EnhancedCartItemType[],
-    paymentIntentId: string,
-    finalAmount: number
-  ) => Promise<any>;
-  cancelCheckoutAction: (paymentIntentId: string) => Promise<any>;
+  cancelCheckoutAction: () => Promise<any>;
 }) {
   const stripe = useStripe();
-  const elements = useElements();
   const router = useRouter();
-
-  const [email, setEmail] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
-  const [isPaymentReady, setIsPaymentReady] = useState(false);
-  const [isAddressReady, setIsAddressReady] = useState(false);
-  const [shippingAddress, setShippingAddress] =
-    useState<ShippingAddress | null>(null);
   const [selectedShipping, setSelectedShipping] =
     useState<ShippingOption | null>(null);
   const [shippingOptions, setShippingOptions] = useState<ShippingOption[]>([]);
   const [orderTotal, setOrderTotal] = useState<number>(0);
-
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      console.log("Cancelling checkout...");
-      cancelCheckoutAction(paymentIntentId);
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [paymentIntentId, cancelCheckoutAction]);
 
   useEffect(() => {
     const total = cartItems.reduce(
@@ -104,7 +47,6 @@ export default function CheckoutWrapper({
       0
     );
     setOrderTotal(total);
-    console.log("Order Total: ", total);
   }, [cartItems]);
 
   const allShippingOptions: ShippingOption[] = [
@@ -125,93 +67,53 @@ export default function CheckoutWrapper({
       id: "local",
       name: "Local Delivery (Calgary)",
       cost: 0,
-      description:
-        "Free delivery within Calgary. Delivery in 1-2 business days.",
+      description: "Free delivery within Calgary.",
       eligibility: (total, shippingAddress) =>
-        shippingAddress &&
-        shippingAddress.address.city.toLowerCase() === "calgary",
+        shippingAddress?.address.city.toLowerCase() === "calgary",
     },
   ];
 
   useEffect(() => {
-    if (shippingAddress && isAddressReady && elements) {
-      const eligibleOptions = allShippingOptions.filter((option) => {
-        if (option.eligibility) {
-          return option.eligibility(orderTotal, shippingAddress);
-        }
-        return true;
-      });
-      setShippingOptions(eligibleOptions);
-      setSelectedShipping(eligibleOptions[0] || null);
-    }
-  }, [isAddressReady, orderTotal, elements, shippingAddress]);
+    setShippingOptions(allShippingOptions); // You can filter options based on the shipping address here if needed
+    setSelectedShipping(allShippingOptions[0] || null); // Default to the first option
+  }, [orderTotal]);
 
-  const handlePlaceOrder = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!stripe || !elements) {
-      return;
-    }
-
+  const handlePlaceOrder = async () => {
     setIsProcessing(true);
 
-    if (!selectedShipping) {
-      return;
-    }
+    const totalAmount = orderTotal + (selectedShipping?.cost || 0);
 
-    console.log("Selected shipping:", selectedShipping);
-    console.log("Order total:", orderTotal);
+    try {
+      const response = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          cartItems,
+          shippingCost: selectedShipping?.cost * 100, // Shipping cost in cents
+          totalAmount, // Total amount for the order
+        }),
+      });
 
+      const { sessionId } = await response.json();
 
+      if (!sessionId) {
+        setIsProcessing(false);
+        console.error("Failed to create session");
+        return;
+      }
 
+      const { error } = await stripe?.redirectToCheckout({ sessionId });
 
-    const totalAmount = orderTotal + selectedShipping.cost;
-
-    console.log("Total amount:", totalAmount);
-
-
-
-    const response = await fetch("/api/create-checkout-session", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        cartItems,
-        successUrl: window.location.origin + "/checkout/success",
-      }),
-    });
-
-    const { sessionId } = await response.json();
-
-    if (!sessionId) {
+      if (error) {
+        console.error("Stripe Checkout error:", error.message);
+        setIsProcessing(false);
+      }
+    } catch (error) {
       setIsProcessing(false);
-      console.error("Failed to create session");
-      return;
+      console.error("Error during checkout:", error);
     }
-
-    const { error } = await stripe?.redirectToCheckout({ sessionId });
-
-    if (error) {
-      console.error("Stripe Checkout error:", error.message);
-      setIsProcessing(false);
-    }
-  };
-
-
-  const handleAddressElementChange = (event: any) => {
-    setIsAddressReady(event.complete);
-    if (event.value) {
-      setShippingAddress(event.value);
-    }
-  };
-
-  const handlePaymentElementChange = (event: any) => {
-    setIsPaymentReady(event.complete);
-  };
-
-  const handleEmailChange = (event: any) => {
-    setEmail(event.value.email);
   };
 
   return (
