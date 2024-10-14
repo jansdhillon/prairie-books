@@ -4,6 +4,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -15,15 +16,19 @@ import { startCheckoutAction } from "../actions/start-checkout";
 import { removeFromCartAction } from "../actions/remove-from-cart";
 import { getStripe } from "@/utils/stripe/client";
 import Loading from "../loading";
+import Image from "next/image";
+import { Card } from "@/components/ui/card";
+import { Eye, Trash } from "lucide-react";
 import { postData } from "@/utils/helpers";
-import { set } from "date-fns";
 
 export default function CartPage() {
   const router = useRouter();
   const [cartItems, setCartItems] = useState<
     EnhancedCartItemType[] | undefined
   >();
-  const [totalAmount, setTotalAmount] = useState<number | undefined>(0);
+  const [initialAmount, setInitialAmount] = useState<number>(0);
+  const [shippingCost, setShippingCost] = useState<number>(0);
+  const [totalAmount, setTotalAmount] = useState<number>(0);
   const [userId, setUserId] = useState<string | undefined>();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -37,8 +42,10 @@ export default function CartPage() {
           return;
         }
         setUserId(userData.id);
-
-        setTotalAmount(amount);
+        setInitialAmount(amount);
+        const calculatedShipping = amount > 75 || !amount ? 0.0 : 15.0;
+        setShippingCost(calculatedShipping);
+        setTotalAmount(amount + calculatedShipping);
         setCartItems(cartDetails);
       } catch (error: any) {
         console.error("Error fetching cart items:", error?.message);
@@ -61,7 +68,7 @@ export default function CartPage() {
       url: "/api/create-checkout-session",
       data: {
         cartItems,
-        total: totalAmount,
+        total: initialAmount,
         userId,
       },
     });
@@ -81,49 +88,168 @@ export default function CartPage() {
 
       {isLoading ? (
         <Loading />
-      ) : cartItems?.length ? (
+      ) : (
         <>
-          <Table className="border-2 rounded-xl">
-            <TableHeader>
-              <TableRow>
-                <TableHead>Book</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
 
-            <TableBody>
-              {cartItems?.map((item: any) => (
-                <TableRow key={item.id}>
-                  <TableCell>{item.book.title}</TableCell>
-                  <TableCell>${item.book.price.toFixed(2)}</TableCell>
-                  <TableCell>
+          <Card className="hidden md:block">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Book</TableHead>
+                  <TableHead>Title</TableHead>
+                  <TableHead>Author</TableHead>
+                  <TableHead className="text-center" colSpan={2}>
+                    Actions
+                  </TableHead>
+                  <TableHead>Price</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {cartItems?.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center">
+                      Your cart is empty.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  cartItems?.map((item: EnhancedCartItemType) => (
+                    <TableRow key={item.id}>
+                      <TableCell>
+                        <Image
+                          src={`${item.book.image_directory}image-1.png`}
+                          alt={item.book.title}
+                          width={50}
+                          height={75}
+                        />
+                      </TableCell>
+                      <TableCell>{item.book.title}</TableCell>
+                      <TableCell>{item.book.author}</TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          onClick={() => router.push(`/books/${item.book.id}`)}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          onClick={() => handleRemoveFromCart(item.id)}
+                        >
+                          <Trash className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </TableCell>
+                      <TableCell>${item.price.toFixed(2)}</TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+
+              <TableFooter className="text-end">
+                <TableRow>
+                  <TableCell colSpan={5} className="text-right">
+                    Shipping:
+                  </TableCell>
+                  <TableCell>${shippingCost.toFixed(2)}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell colSpan={5} className="text-right font-bold">
+                    Total:
+                  </TableCell>
+                  <TableCell className="font-bold">
+                    ${totalAmount.toFixed(2)}
+                  </TableCell>
+                </TableRow>
+              </TableFooter>
+            </Table>
+
+          </Card>
+          <div className="hidden md:flex justify-end items-center">
+              <Button
+                variant="default"
+                onClick={handleCheckout}
+                disabled={cartItems?.length === 0}
+              >
+                Proceed to Checkout
+              </Button>
+            </div>
+
+          <div className="block md:hidden space-y-4">
+            {cartItems?.length === 0 ? (
+              <div className="text-center">Your cart is empty.</div>
+            ) : (
+              cartItems?.map((item: EnhancedCartItemType) => (
+                <Card key={item.id} className="flex flex-col p-4">
+                  <div className="flex items-center space-x-4">
+                    <Image
+                      src={`${item.book.image_directory}image-1.png`}
+                      alt={item.book.title}
+                      width={75}
+                      height={100}
+                    />
+                    <div className="flex-1">
+                      <h2 className="text-lg font-semibold">
+                        {item.book.title}
+                      </h2>
+                      <p className="text-sm text-muted-foreground">
+                        {item.book.author}
+                      </p>
+                      <p className="text-sm font-bold mt-2">
+                        Price: ${item.price.toFixed(2)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex justify-end space-x-2 mt-4">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => router.push(`/books/${item.book.id}`)}
+                    >
+                      <Eye className="h-4 w-4 mr-1" />
+                      View
+                    </Button>
                     <Button
                       variant="destructive"
                       size="sm"
                       onClick={() => handleRemoveFromCart(item.id)}
                     >
+                      <Trash className="h-4 w-4 mr-1" />
                       Remove
                     </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          <div className="flex justify-between items-center">
-            <div>
-              <h3 className="text-lg font-semibold">
-                Total: ${totalAmount?.toFixed(2)} CAD
-              </h3>
-            </div>
+                  </div>
+                </Card>
+              ))
 
-            <Button variant="default" onClick={handleCheckout}>
-              Proceed to Checkout
-            </Button>
+            )}
+            {cartItems && cartItems.length > 0 && (
+              <Card className="p-4">
+                <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+                <div className="flex justify-between">
+                  <p>Subtotal:</p>
+                  <p>${initialAmount.toFixed(2)}</p>
+                </div>
+                <div className="flex justify-between">
+                  <p>Shipping:</p>
+                  <p>${shippingCost.toFixed(2)}</p>
+                </div>
+                <div className="flex justify-between font-bold mt-2">
+                  <p>Total:</p>
+                  <p>${totalAmount.toFixed(2)}</p>
+                </div>
+                <Button
+                  className="w-full mt-4"
+                  onClick={handleCheckout}
+                  disabled={cartItems?.length === 0}
+                >
+                  Proceed to Checkout
+                </Button>
+              </Card>
+            )}
+
+
           </div>
         </>
-      ) : (
-        <div className="text-lg text-muted-foreground">Your cart is empty.</div>
       )}
     </div>
   );

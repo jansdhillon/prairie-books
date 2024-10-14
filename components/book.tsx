@@ -17,6 +17,7 @@ import { ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { BookType } from "@/lib/types/types";
+import { useRouter } from "next/navigation";
 
 type BookProps = {
   book: BookType;
@@ -24,6 +25,7 @@ type BookProps = {
 
 export function Book({ book }: BookProps) {
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const handleAddToCart = () => {
     startTransition(() => {
@@ -40,19 +42,25 @@ export function Book({ book }: BookProps) {
 
   return (
     <Card className=" rounded-xl drop-shadow-sm flex flex-col justify-between h-full max-h-[800px] ">
-      <CardHeader className="text-muted-foreground">
-        <Link className="relative w-full h-[400px]" href={`/books/${book.id}`}>
+      <CardHeader className="text-muted-foreground ">
+        <Link
+          href={`/books/${book.id}`}
+          className="relative w-full cursor-pointer space-y-4  "
+        >
           <Image
             src={coverImage}
             alt={book.title}
-            fill
-            sizes="400px"
-            className="object-contain rounded-lg py-4"
+            width={600}
+            height={800}
+            className="object-contain rounded-xl"
+            sizes="(max-width: 768px) 100vw, 50vw"
+            priority
           />
+          <CardTitle className="text-xl font-semibold text-primary line-clamp-2 text-ellipsis ">
+            {book.title}
+          </CardTitle>
         </Link>
-        <CardTitle className="text-xl font-semibold text-primary line-clamp-2 text-ellipsis">
-          {book.title}
-        </CardTitle>
+
         <Separator />
         <p> by {book.author}</p>
         {book.genre && (
@@ -62,8 +70,11 @@ export function Book({ book }: BookProps) {
                 .split(",")
                 .filter((g) => g.length > 0)
                 .map((g) => (
-                  <Link key={g} href={`/search?query=${encodeURIComponent(g.trim())}`}>
-                    <Badge  className="mr-0.5">
+                  <Link
+                    key={g}
+                    href={`/search?query=${encodeURIComponent(g.trim())}`}
+                  >
+                    <Badge className="mr-0.5">
                       <p className="line-clamp-1 max-w-[200px]">{g}</p>
                     </Badge>
                   </Link>
@@ -73,10 +84,8 @@ export function Book({ book }: BookProps) {
         )}
       </CardHeader>
       {book.description && (
-        <CardContent className="line-clamp-4   text-ellipsis">
-          <p className="text-ellipsis">
-            {book.description || "No description available."}
-          </p>
+        <CardContent className="overflow-scroll">
+          {book.description || "No description available."}
         </CardContent>
       )}
 
@@ -102,7 +111,7 @@ export function Book({ book }: BookProps) {
             </>
           )}
         </Button>
-        <Button size="sm" variant="outline" asChild>
+        <Button size="sm" variant="ghost" asChild>
           <Link href={`/books/${book.id}`}>Details</Link>
         </Button>
       </CardFooter>

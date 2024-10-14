@@ -1,5 +1,10 @@
-"use client";;
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+"use client";
+
+import {
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { addToCartAction } from "@/app/actions/add-to-cart";
 import { Suspense, useEffect, useState, useTransition } from "react";
@@ -17,7 +22,6 @@ import {
 import Loading from "@/app/loading";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
-import { User } from "@supabase/auth-js";
 import { Database } from "@/utils/database.types";
 import { BookType } from "@/lib/types/types";
 import { getUserDataAction } from "@/app/actions/get-user";
@@ -51,14 +55,13 @@ export function BookDetails({ book }: BookDetailsProps) {
     });
   };
 
-  const [user, setUser] = useState<User | null>(null);
   const [userData, setUserData] = useState<
     Database["public"]["Tables"]["users"]["Row"] | null
   >(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const {data: userData, error: authError} = await getUserDataAction();
+      const { data: userData } = await getUserDataAction();
       setUserData(userData);
     };
 
@@ -76,31 +79,42 @@ export function BookDetails({ book }: BookDetailsProps) {
         <Carousel className="mx-6 md:mx-0">
           <CarouselContent>
             <CarouselItem
-              className={`flex flex-col  rounded-xl ${book.num_images && book.num_images > 1 ? "md:basis-1/2 lg:basis-1/3" : ""}`}
+              className={`flex flex-col rounded-xl ${
+                book.num_images && book.num_images > 1
+                  ? "md:basis-1/2 lg:basis-1/3"
+                  : ""
+              }`}
             >
-              <Link href={`${coverImage}`}>
-                <div className="relative w-full h-[400px]  my-5">
+              <Link href={coverImage}>
+                <div className="relative w-full cursor-pointer">
                   <Image
                     src={coverImage}
                     alt={book.title}
-                    fill
-                    className="object-contain rounded-lg"
+                    width={600}
+                    height={800}
+                    className="object-contain rounded-xl"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    priority
                   />
                 </div>
               </Link>
             </CarouselItem>
-            {additionalImages.map((image, index) => (
+            {book?.image_directory !== null && additionalImages.map((image, index) => (
               <CarouselItem
                 key={index}
-                className="flex flex-col md:basis-1/2 lg:basis-1/3 rounded-xl"
+                className="flex flex-col md:basis-1/2 lg:basis-1/3 rounded-xl justify-center"
               >
-                <Link href={`${image}`} className="relative w-full h-[400px]  my-5">
-                  <Image
-                    src={image}
-                    alt={book.title}
-                    fill
-                    className="object-contain rounded-xl"
-                  />
+                <Link href={image}>
+                  <div className="relative w-full cursor-pointer mb-5">
+                    <Image
+                      src={image}
+                      alt={`${book.title} - Image ${index + 2}`}
+                      width={600}
+                      height={800}
+                      className="object-contain rounded-xl"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                  </div>
                 </Link>
               </CarouselItem>
             ))}
@@ -117,12 +131,12 @@ export function BookDetails({ book }: BookDetailsProps) {
       <div className="flex md:flex-col items-center gap-4 justify-between">
         <div className="flex-1 w-full">
           <CardHeader className="text-muted-foreground">
-            <div className="flex md:flex-col justify-between items-start flex-row ">
+            <div className="flex md:flex-col justify-between items-start flex-row">
               <div className="flex items-baseline">
                 <CardTitle className="text-3xl font-semibold text-primary mb-4">
                   {book.title}
                 </CardTitle>
-                {user && userData && userData?.is_admin && (
+                {userData && userData?.is_admin && (
                   <Link className="mx-5" href={`/admin/edit/${book.id}`}>
                     <Pen size={20} width={20} height={20} />
                   </Link>
@@ -142,34 +156,20 @@ export function BookDetails({ book }: BookDetailsProps) {
                   {book.isbn}
                 </p>
               )}
-              {book.genre &&
-                book.genre.map((g) => g.split(",").filter((g) => g.length > 0))
-                  .length > 0 && (
-                  <div className="flex gap-1">
-                    <span className="text-primary font-semibold">
-                      Genre(s):
-                    </span>{" "}
-                    <div className="space-x-1">
-                      {book.genre.map((g) =>
-                        g
-                          .split(",")
-                          .filter((g) => g.length > 0)
-                          .map((g) => <Badge key={g}>{g}</Badge>)
-                      )}
-                    </div>
-                  </div>
-                )}
-              {/* {book.original_release_date && (
-                <p>
-                  <span className="text-primary font-semibold">
-                    Original Release Date:
-                  </span>{" "}
-                  {book.original_release_date || "Not specified"}
-                </p>
-              )} */}
+              {book.genre && book.genre.length > 0 && (
+                <div className="flex gap-1 flex-wrap">
+                  <span className="text-primary font-semibold">Genre(s):</span>
+                  {book.genre
+                    .join(",")
+                    .split(",")
+                    .filter((g) => g.trim().length > 0)
+                    .map((g) => (
+                      <Badge key={g.trim()}>{g.trim()}</Badge>
+                    ))}
+                </div>
+              )}
               {book.publication_date && (
                 <p>
-                  {" "}
                   <span className="text-primary font-semibold">
                     Publication Date:
                   </span>{" "}
@@ -178,7 +178,6 @@ export function BookDetails({ book }: BookDetailsProps) {
               )}
               {book.publisher && (
                 <p>
-                  {" "}
                   <span className="text-primary font-semibold">
                     Publisher:
                   </span>{" "}
@@ -193,7 +192,9 @@ export function BookDetails({ book }: BookDetailsProps) {
               )}
               {book.condition && (
                 <p>
-                  <span className="text-primary font-semibold">Condition:</span>{" "}
+                  <span className="text-primary font-semibold">
+                    Condition:
+                  </span>{" "}
                   {book.condition || "Not specified"}
                 </p>
               )}
@@ -219,7 +220,9 @@ export function BookDetails({ book }: BookDetailsProps) {
               Description
             </h3>
             <Separator className="my-4" />
-            <p className="leading-relaxed">{book.description || "No description available."}</p>
+            <p className="leading-relaxed">
+              {book.description || "No description available."}
+            </p>
           </CardContent>
         </div>
       </div>

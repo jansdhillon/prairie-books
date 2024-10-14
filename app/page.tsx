@@ -22,7 +22,7 @@ export default async function HomePage() {
   return (
     <div className="flex flex-col justify-center gap-16 py-16 ">
       <BgGlowContainer>
-        <div className=" flex flex-col gap-6 justify-center items-center text-center md:px-12 ">
+        <div className=" flex flex-col gap-6 justify-center items-center text-center md:px-12 text-primary ">
           <div className="text-5xl md:text-6xl font-black text-center ">
             Find Your Next<br/> Great Read
           </div>

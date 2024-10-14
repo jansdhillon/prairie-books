@@ -61,6 +61,7 @@ export const addBookAction = async (formData: FormData) => {
     publication_date: publicationDate,
     num_images: numImages,
     condition,
+    stock: 1,
   };
 
   const { data: book, error } = await supabase

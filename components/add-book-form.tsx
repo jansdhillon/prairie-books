@@ -50,7 +50,7 @@ export default function AddBookForm({
   };
 
   return (
-    <form className="space-y-2 w-sm md:w-2xl mx-auto" ref={formRef}>
+    <form className="space-y-2 " ref={formRef}>
       <div className="space-y-2">
         <h2 className="text-2xl font-bold">Add New Book</h2>
         <Separator />
@@ -144,10 +144,10 @@ export default function AddBookForm({
           />
         </div> */}{" "}
         {/*removed by request*/}
-        <div className="space-y-2">
+        {/* <div className="space-y-2">
           <Label htmlFor="quantity">Quantity</Label>
           <Input type="number" name="quantity" id="quantity" defaultValue={1}  />
-        </div>
+        </div> */}
         <div className="space-y-2">
           <Label htmlFor="publication-date">Publication Date</Label>
           <Input type="date" name="publication-date" id="publication-date" />

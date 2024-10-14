@@ -1,7 +1,9 @@
 "use server"
+import { getStatusRedirect } from "@/utils/helpers";
 import { createClient } from "@/utils/supabase/server";
 import { encodedRedirect } from "@/utils/utils";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 export const signUpAction = async (formData: FormData) => {
     const email = formData.get("email")?.toString();
@@ -26,10 +28,6 @@ export const signUpAction = async (formData: FormData) => {
       console.error(error.code + " " + error.message);
       return encodedRedirect("error", "/sign-up", error.message);
     } else {
-      return encodedRedirect(
-        "success",
-        "/sign-up",
-        "Thanks for signing up! Please check your email for a verification link.",
-      );
+      return redirect(getStatusRedirect("/sign-in", "Success", "Please check your email to verify your account."));
     }
   };

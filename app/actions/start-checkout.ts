@@ -31,6 +31,7 @@ export const startCheckoutAction = async () => {
   );
 
   if (cartError){
+    console.error("Error fetching cart details:", cartError.message);
     return encodedRedirect("error", "/", "Error fetching cart details");
   }
 

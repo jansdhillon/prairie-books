@@ -51,7 +51,6 @@ export const deleteBook = async (formData: FormData) => {
     return encodedRedirect("error", "/admin", "Product not found.");
   }
 
-  console.log("product", product);
 
   for (const price of product.prices) {
     await stripe.prices.update(price.id, { active: false });
@@ -71,7 +70,7 @@ export const deleteBook = async (formData: FormData) => {
     return encodedRedirect("error", "/admin", "Failed to delete book.");
   }
 
-  return encodedRedirect("success", "/admin", "Book deleted successfully.");
+  return redirect(getStatusRedirect("/admin", "Book deleted successfully."));
 
 
 

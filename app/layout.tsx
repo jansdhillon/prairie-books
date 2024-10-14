@@ -37,7 +37,7 @@ export default function RootLayout({
         >
           <div className="bg-background h-full flex flex-col justify-between ">
             <Nav headerAuth={<HeaderAuth />} />
-            <main className="mt-20   text-primary font-normal container  mx-auto max-w-5xl flex flex-col space-y-12   px-8 md:px-12 py-8">
+            <main className="mt-20 font-normal container  mx-auto max-w-5xl flex flex-col space-y-12   px-8 md:px-12 py-8">
               <Feedback>{children}</Feedback>
             </main>
             <Footer />

@@ -26,17 +26,7 @@ export async function POST(req: Request) {
         allowed_countries: ["CA"],
       },
       shipping_options: [
-        {
-          shipping_rate_data: {
-            type: 'fixed_amount',
-            fixed_amount: { amount: 1500, currency: 'cad' },
-            display_name: 'Standard shipping',
-            delivery_estimate: {
-              minimum: { unit: 'business_day', value: 3 },
-              maximum: { unit: 'business_day', value: 5 },
-            },
-          },
-        },
+
         total > 75 ? {
           shipping_rate_data: {
             type: 'fixed_amount',
@@ -47,7 +37,17 @@ export async function POST(req: Request) {
               maximum: { unit: 'business_day', value: 5 },
             },
           },
-        } : {},
+        } : {
+          shipping_rate_data: {
+            type: 'fixed_amount',
+            fixed_amount: { amount: 1500, currency: 'cad' },
+            display_name: 'Standard shipping',
+            delivery_estimate: {
+              minimum: { unit: 'business_day', value: 3 },
+              maximum: { unit: 'business_day', value: 5 },
+            },
+          },
+        },
         ],
       success_url: `${getURL("success")}?session_id={CHECKOUT_SESSION_ID}`,
       metadata: {

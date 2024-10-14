@@ -7,7 +7,7 @@
     --background: 0 0% 98%;
     --foreground: 0 0% 3.9%;
     --card: 327.3 73.3% 97.1%;
-    --card-foreground: 243.8 47.1% 20%;
+    --card-foreground: 0 0% 9%;
     --popover: 0 0% 98%;
     --popover-foreground: 0 0% 3.9%;
     --primary: 243.8 47.1% 20%;
@@ -70,6 +70,6 @@
     @apply antialiased h-[100dvh]
   }
   .bg-cool-color {
-    @apply bg-gradient-to-tl from-orange-500 dark:from-orange-300 via-fuchsia-500 dark:via-fuchsia-300 to-indigo-700 dark:to-indigo-600;
+    @apply bg-gradient-to-br from-pink-300 to-indigo-700;
   }
 }

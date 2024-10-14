@@ -41,7 +41,7 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
     <header className="fixed top-0 left-0 right-0 z-50 border-b">
       {/* Logo */}
 
-      <nav className="hidden md:flex space-x-4 items-center justify-center gap-2 py-4 px-12 bg-accent">
+      <nav className="hidden md:flex space-x-5 items-center justify-center gap-2 py-4 px-12 bg-accent">
         <Link
           href="/"
           className="text-primary text-base font-bold min-w-[115px]  tracking-wider hover:text-muted-foreground pr-2"

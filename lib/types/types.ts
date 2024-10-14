@@ -25,6 +25,7 @@ export type EnhancedCartItemType =  {
     quantity: number;
     book: BookType;
     product: ProductType;
+    image_directory: string | null;
   }
 
 
