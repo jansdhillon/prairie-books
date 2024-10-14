@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { encodedRedirect } from "@/utils/utils";
 import { getErrorRedirect } from "@/utils/helpers";
-import { getAllUserData } from "@/utils/supabase/queries";
+import { getUserDataById } from "@/utils/supabase/queries";
 
 export default async function Layout({
   children,
@@ -10,11 +10,12 @@ export default async function Layout({
 }) {
   const supabase = createClient();
 
-  const { data: userData, error } = await getAllUserData(supabase);
+  const { data: user } = await supabase.auth.getUser();
 
-  if (error) {
-    return encodedRedirect("error", "/sign-in", error.message);
+  if (!user.user) {
+    return encodedRedirect("error", "/sign-in", "You must be signed in to view this page");
   }
+
 
 
   return <div>{children}</div>;

@@ -2,20 +2,8 @@ import { EnhancedCartItemType, OrderItemType } from "@/lib/types/types";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { cache } from "react";
 
-export const getAllUserData = async (supabase: SupabaseClient) => {
-  const { data: user, error: authError } = await supabase.auth.getUser();
 
-  if (authError) {
-    console.error("Error fetching user data:", authError.message);
-    return { data: null, error: authError };
-  }
-
-  const {data: userData} = await getUserDataById(supabase, user.user.id);
-
-  return { data: userData, error: authError };
-};
-
-export const getUserDataById = async (
+export const getUserDataById = cache(async (
   supabase: SupabaseClient,
   userId: string
 ) => {
@@ -24,8 +12,13 @@ export const getUserDataById = async (
     .select("*")
     .eq("id", userId)
     .single();
+
+  if (error) {
+    console.error("Error fetching user data:", error.message);
+    return { data: null, error };
+  }
   return { data: userData, error: error };
-};
+});
 
 export const getAllBooks = cache(async (supabase: SupabaseClient) => {
   const { data: books, error } = await supabase
@@ -91,26 +84,39 @@ export const getProductAndPriceByBookId = cache(
   }
 );
 
-export const getCartDetailsByUserId = cache(
+export const createCart = async (supabase: SupabaseClient, userId: string) => {
+  const { data: cart, error } = await supabase
+    .from("cart")
+    .insert({ user_id: userId })
+    .select("*")
+    .maybeSingle();
+  return { data: cart, error };
+}
+
+
+export const getOrCreateCart = cache(
   async (supabase: SupabaseClient, userId: string) => {
-    const { data: cart, error: cartError } = await supabase
-      .from("cart")
-      .select("*, cart_items(*, product:products(*, price: prices(*)))")
-      .eq("user_id", userId)
-      .single();
+    const { data: cart, error: cartError } = await getCartByUserId(supabase, userId);
 
     if (cartError) {
-      console.error("Error fetching cart details:", cartError?.message);
+      return { error: cartError };
     }
+
+    if (cart) {
+      return { data: cart, error: null };
+    }
+
+    const { data: newCart, error: newCartError } = await createCart(supabase, userId);
+
 
     let amount = 0;
     let cartDetails = {
-      id: cart?.id,
+      id: newCart?.id,
       total: amount,
       cart_items: [] as EnhancedCartItemType[],
     };
 
-    for (const item of cart?.cart_items) {
+    for (const item of newCart.cart_items) {
       const price = item.product.price[item.product.price.length - 1];
 
       const quantity = item.quantity;

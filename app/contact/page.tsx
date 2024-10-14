@@ -1,12 +1,9 @@
-"use client";
+"use client";;
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Mail, Phone, MapPin } from "lucide-react";
-import { sendEmail } from "../actions/send-email";
-import { FormMessage, Message } from "@/components/form-message";
+import { Message } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
 import { useRef } from "react";
 import { contactFormAction } from "../actions/contact-form-action";

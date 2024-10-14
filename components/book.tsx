@@ -1,6 +1,5 @@
 "use client";
 
-
 import {
   Card,
   CardContent,
@@ -40,12 +39,9 @@ export function Book({ book }: BookProps) {
     : "/placeholder.png";
 
   return (
-    <Card className=" rounded-xl drop-shadow-sm flex flex-col justify-between h-full max-h-[800px]  backdrop-blur-sm">
+    <Card className=" rounded-xl drop-shadow-sm flex flex-col justify-between h-full max-h-[800px] ">
       <CardHeader className="text-muted-foreground">
-        <Link
-          className="relative w-full h-[400px]"
-          href={`/books/${book.id}`}
-        >
+        <Link className="relative w-full h-[400px]" href={`/books/${book.id}`}>
           <Image
             src={coverImage}
             alt={book.title}
@@ -60,19 +56,27 @@ export function Book({ book }: BookProps) {
         <Separator />
         <p> by {book.author}</p>
         {book.genre && (
-          <div  className="">
+          <div className="">
             {book.genre.map((g) =>
               g
                 .split(",")
                 .filter((g) => g.length > 0)
-                .map((g) => <Badge key={g} className="mr-0.5"><p className="line-clamp-1 max-w-[200px]">{g}</p></Badge>)
+                .map((g) => (
+                  <Link key={g} href={`/search?query=${encodeURIComponent(g.trim())}`}>
+                    <Badge  className="mr-0.5">
+                      <p className="line-clamp-1 max-w-[200px]">{g}</p>
+                    </Badge>
+                  </Link>
+                ))
             )}
           </div>
         )}
       </CardHeader>
       {book.description && (
         <CardContent className="line-clamp-4   text-ellipsis">
-          <p className="text-ellipsis">{book.description || "No description available."}</p>
+          <p className="text-ellipsis">
+            {book.description || "No description available."}
+          </p>
         </CardContent>
       )}
 

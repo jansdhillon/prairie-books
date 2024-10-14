@@ -1,23 +1,26 @@
 import { addBookAction } from "@/app/actions/add-book";
-import { getUserDataAction } from "@/app/actions/get-user";
+
 import AddBookForm from "@/components/add-book-form";
 import { Message } from "@/components/form-message";
 import { getErrorRedirect } from "@/utils/helpers";
+import { getUserDataById } from "@/utils/supabase/queries";
+import { createClient } from "@/utils/supabase/server";
 import { encodedRedirect } from "@/utils/utils";
 import { redirect } from "next/navigation";
 
-export default async function HomePage({
-  searchParams,
-}: {
-  searchParams: Message;
-}) {
-  const { data: userData, error: authError } = await getUserDataAction();
+export default async function HomePage() {
+  const supabase = createClient();
+  const { data: user } = await supabase.auth.getUser();
 
-  if (authError) {
-    redirect(
-      getErrorRedirect("/", "Error fetching user data", authError.message)
+  if (!user.user) {
+    return encodedRedirect(
+      "error",
+      "/sign-in",
+      "You must be signed in to view this page"
     );
   }
+
+  const { data: userData } = await getUserDataById(supabase, user?.user!.id);
 
   try {
     if (userData.is_admin !== true) {
@@ -27,6 +30,6 @@ export default async function HomePage({
     getErrorRedirect("/", "Error", "You must be an admin to view this page");
   }
   return (
-    <AddBookForm addBookAction={addBookAction} searchParams={searchParams} />
+    <AddBookForm addBookAction={addBookAction}  />
   );
 }

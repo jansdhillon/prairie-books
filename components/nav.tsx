@@ -38,13 +38,13 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
   };
 
   return (
-    <header className="backdrop-blur-sm fixed top-0 left-0 right-0 z-50 border-b">
+    <header className="fixed top-0 left-0 right-0 z-50 border-b">
       {/* Logo */}
 
-      <nav className="hidden md:flex space-x-4 items-center justify-center gap-2 py-4 px-12 bg-accent/30">
+      <nav className="hidden md:flex space-x-4 items-center justify-center gap-2 py-4 px-12 bg-accent">
         <Link
           href="/"
-          className="text-primary text-base font-bold min-w-[115px] tracking-tight hover:text-muted-foreground pr-2"
+          className="text-primary text-base font-bold min-w-[115px]  tracking-wider hover:text-muted-foreground pr-2"
         >
           Kathrin's Books
         </Link>
@@ -76,7 +76,7 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
           </Button> */}
       </nav>
 
-      <div className="flex items-center w-full justify-between md:hidden px-9 py-6 bg-accent/30 backdrop-blur-sm ">
+      <div className="flex items-center w-full justify-between md:hidden py-4 px-12 bg-accent ">
         <Link
           href="/"
           className="text-primary text-base font-bold line-clamp-1  tracking-tight hover:text-muted-foreground"

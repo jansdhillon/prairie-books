@@ -13,21 +13,16 @@ import Loading from "./loading";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Toaster } from "@/components/ui/toaster";
 import { Viewport } from "next";
+import { getURL } from "@/utils/helpers";
 
-const defaultUrl =
-  process.env.NODE_ENV === "production"
-    ? "https://kathrinsbooks.com"
-    : "http://localhost:3000";
-
-
-    export const viewport: Viewport = {
-      initialScale: 1,
-      width: "device-width",
-      maximumScale: 1,
-  };
+export const viewport: Viewport = {
+  initialScale: 1,
+  width: "device-width",
+  maximumScale: 1,
+};
 
 export const metadata = {
-  metadataBase: new URL(defaultUrl),
+  metadataBase: getURL(),
   title: "Kathrin's Books",
   description: "A curated online book store",
 };
@@ -39,32 +34,20 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={GeistSans.className} suppressHydrationWarning>
-      <body className="bg-background text-primary font-normal">
+      <body >
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >
-          <div className="flex min-h-screen flex-col">
-            <Suspense
-              fallback={<Skeleton className="w-full h-full bg-accent/30" />}
-            >
-              <Nav headerAuth={<HeaderAuth />} />
-            </Suspense>
+          <main className="flex-1 mt-10 bg-background text-primary font-normal container  mx-auto max-w-5xl flex flex-col space-y-12   px-8 md:px-12 py-8">
+            <Nav headerAuth={<HeaderAuth />} />
 
-            <main className="flex-1 mt-20">
-              <Suspense
-                fallback={<Skeleton className="w-full h-full bg-accent/30" />}
-              >
-                <div className="container  mx-auto max-w-5xl flex flex-col space-y-12   px-8 md:px-12 py-8">
-                  <Feedback>{children}</Feedback>
-                </div>
-              </Suspense>
-            </main>
-            <Toaster />
-            <Footer />
-          </div>
+            <Feedback>{children}</Feedback>
+          </main>
+          <Toaster />
+          <Footer />
         </ThemeProvider>
       </body>
     </html>

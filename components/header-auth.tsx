@@ -2,19 +2,17 @@ import Link from "next/link";
 import { Button } from "./ui/button";
 import { ShoppingCart } from "lucide-react";
 import { NavAvatar } from "./nav-avatar";
-import { getAllUserData } from "@/utils/supabase/queries";
+
 import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
-import { getErrorRedirect } from "@/utils/helpers";
-import { encodedRedirect } from "@/utils/utils";
+import { getUserDataById } from "@/utils/supabase/queries";
 
 export default async function AuthButton() {
   const supabase = createClient();
-  const { data: userData} = await getAllUserData(supabase);
+  const { data: user } = await supabase.auth.getUser();
 
 
 
-  if (!userData) {
+  if (!user.user) {
     return (
       <div className="flex gap-5">
         <Button asChild size="sm" variant={"outline"}>
@@ -26,11 +24,14 @@ export default async function AuthButton() {
       </div>
     );
   } else {
+    const { data: userData } = await getUserDataById(supabase, user?.user!.id);
     return (
       <div className="flex items-center gap-3 md:gap-5">
         {userData && userData.is_admin ? (
           <Link href="/admin">
-            <Button variant={"outline"}  size={"sm"}>Admin</Button>
+            <Button variant={"outline"} size={"sm"}>
+              Admin
+            </Button>
           </Link>
         ) : null}
         <Link href="/cart">

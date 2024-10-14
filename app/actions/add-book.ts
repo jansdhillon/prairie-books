@@ -4,6 +4,7 @@ import { getErrorRedirect, getStatusRedirect } from "@/utils/helpers";
 import { stripe } from "@/utils/stripe/config";
 import { updateBookImageDirectory } from "@/utils/supabase/queries";
 import { createClient } from "@/utils/supabase/server";
+import { encodedRedirect } from "@/utils/utils";
 import { Storage } from "@google-cloud/storage";
 import { redirect } from "next/navigation";
 
@@ -26,9 +27,7 @@ export const addBookAction = async (formData: FormData) => {
     formData.get("publication-date")?.toString().trim() || null;
   const condition = formData.get("condition")?.toString().trim() || null;
 
-
   const fileterdFiles = files.filter((file) => file.size > 0);
-
 
   let hasImages = false;
 
@@ -38,17 +37,15 @@ export const addBookAction = async (formData: FormData) => {
 
   const storage = new Storage();
 
-  if (!title || !author || !isbn || price === null || isNaN(price)) {
-    return redirect(
-      getStatusRedirect(
-        "/admin",
-        "Error",
-        "Title, Author, ISBN, and Price are required and Price must be a number."
-      )
+  if (!title || !author ||  price === null || isNaN(price)) {
+    return encodedRedirect(
+      "error",
+      "/admin",
+      "Title, Author, and Price are required and Price must be a number."
     );
   }
 
-  const newBook: Database["public"]["Tables"]["books"]["Insert"] = {
+  const newBook = {
     title,
     author,
     isbn,
@@ -64,19 +61,24 @@ export const addBookAction = async (formData: FormData) => {
     publication_date: publicationDate,
     num_images: numImages,
     condition,
-    stock: 1,
   };
 
-
-
-  const { data: book, error } = await supabase.from("books").insert([newBook]).select("*").single();
+  const { data: book, error } = await supabase
+    .from("books")
+    .insert([newBook])
+    .select("*")
+    .single();
 
   const directoryPath = `${book?.id}/`;
 
   const imageDirectory = `https://storage.googleapis.com/${bucketName}/${directoryPath}`;
 
   if (hasImages) {
-   const {error} = await updateBookImageDirectory(supabase, book?.id!, imageDirectory);
+    const { error } = await updateBookImageDirectory(
+      supabase,
+      book?.id!,
+      imageDirectory
+    );
 
     if (error) {
       console.error("Error updating book image directory:", error.message);
@@ -84,24 +86,20 @@ export const addBookAction = async (formData: FormData) => {
         getErrorRedirect("/admin", "Failed to update book image directory.")
       );
     }
-
   }
   if (error) {
     console.error("Error adding book:", error.message);
-    return redirect(
-      getErrorRedirect("/admin", "Failed to add book.")
-    );
+    return redirect(getErrorRedirect("/admin", "Failed to add book."));
   }
-
 
   const product = await stripe.products.create({
     name: title,
     description: author,
     images: [`${imageDirectory}image-1.png`],
+
     metadata: {
       bookId: book?.id!,
       author,
-      isbn,
       genres: JSON.stringify(genres),
       publisher,
       language,
@@ -116,16 +114,16 @@ export const addBookAction = async (formData: FormData) => {
   });
 
   const { error: updateError } = await supabase
-      .from("books")
-      .update({ product_id: product.id })
-      .eq("id", book?.id!);
+    .from("books")
+    .update({ product_id: product.id })
+    .eq("id", book?.id!);
 
-    if (updateError) {
-      console.error("Error updating book with product_id:", updateError.message);
-      return redirect(
-        getErrorRedirect("/admin", "Failed to update book with product_id.")
-      )
-    }
+  if (updateError) {
+    console.error("Error updating book with product_id:", updateError.message);
+    return redirect(
+      getErrorRedirect("/admin", "Failed to update book with product_id.")
+    );
+  }
 
   if (fileterdFiles.length > 0) {
     hasImages = true;
@@ -147,8 +145,6 @@ export const addBookAction = async (formData: FormData) => {
       }
     }
   }
-
-
 
   return redirect(
     getStatusRedirect("/admin", "Success", "Book added successfully!")

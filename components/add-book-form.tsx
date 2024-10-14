@@ -7,17 +7,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SubmitButton } from "./submit-button";
-import { FormMessage, Message } from "./form-message";
-import Feedback from "./feedback";
 import { Badge } from "./ui/badge";
 import { X } from "lucide-react";
+import { Separator } from "./ui/separator";
 
 export default function AddBookForm({
   addBookAction,
-  searchParams,
 }: {
   addBookAction: (formData: FormData) => void;
-  searchParams: Message;
 }) {
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -56,6 +53,7 @@ export default function AddBookForm({
     <form className="space-y-2 w-sm md:w-2xl mx-auto" ref={formRef}>
       <div className="space-y-2">
         <h2 className="text-2xl font-bold">Add New Book</h2>
+        <Separator />
         <p className="text-muted-foreground">
           Fill in the details to add a new book to the store.
         </p>
@@ -65,26 +63,27 @@ export default function AddBookForm({
           <Label htmlFor="title">
             Title<span className="text-destructive">*</span>
           </Label>
-          <Input type="text" name="title" id="title" required />
+          <Input type="text" name="title" id="title" required placeholder="The Count of Monte Cristo" />
         </div>
         <div className="space-y-2">
           <Label htmlFor="author">
             Author<span className="text-destructive">*</span>
           </Label>
-          <Input type="text" name="author" id="author" required />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="isbn">
-            ISBN<span className="text-destructive">*</span>
-          </Label>
-          <Input type="text" name="isbn" id="isbn" required />
+          <Input type="text" name="author" id="author" required placeholder="Alexandre Dumas" />
         </div>
         <div className="space-y-2">
           <Label htmlFor="price">
             Price ($)<span className="text-destructive">*</span>
           </Label>
-          <Input type="number" name="price" id="price" step="0.01" required />
+          <Input type="number" name="price" id="price" step="0.01" placeholder="10" required />
         </div>
+        <div className="space-y-2">
+          <Label htmlFor="isbn">
+            ISBN
+          </Label>
+          <Input type="text" name="isbn" id="isbn" />
+        </div>
+
         <div className="space-y-2">
           <Label htmlFor="genre">Genre</Label>
           <div className="flex items-center space-x-2">
@@ -99,9 +98,9 @@ export default function AddBookForm({
             />
           </div>
           <div className="flex flex-wrap gap-2 mt-2">
-            {genres.map((genre) => (
+            {genres.map((genre, index) => (
               <Badge
-                key={genre}
+                key={index}
                 variant="secondary"
                 className="flex items-center"
               >
@@ -143,14 +142,19 @@ export default function AddBookForm({
             name="original-release-date"
             id="original-release-date"
           />
-        </div> */} {/*removed by request*/}
+        </div> */}{" "}
+        {/*removed by request*/}
+        <div className="space-y-2">
+          <Label htmlFor="quantity">Quantity</Label>
+          <Input type="number" name="quantity" id="quantity" defaultValue={1}  />
+        </div>
         <div className="space-y-2">
           <Label htmlFor="publication-date">Publication Date</Label>
           <Input type="date" name="publication-date" id="publication-date" />
         </div>
         <div className="space-y-2">
           <Label htmlFor="language">Language</Label>
-          <Input type="text" name="language" id="language" />
+          <Input type="text" name="language" id="language" defaultValue={"English"} />
         </div>
         <div className="space-y-2">
           <Label htmlFor="images">Images</Label>

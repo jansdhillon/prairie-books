@@ -1,7 +1,8 @@
-"use server";;
+"use server";
 import { getStatusRedirect } from "@/utils/helpers";
 import {
-  getCartDetailsByUserId,
+  createCart,
+  getOrCreateCart,
   getProductAndPriceByBookId,
 } from "@/utils/supabase/queries";
 import { createClient } from "@/utils/supabase/server";
@@ -51,25 +52,12 @@ export const addToCartAction = async (formData: FormData) => {
 
   const userId = user.id;
 
-  let { data: cart, error: cartError } = await getCartDetailsByUserId(
+  const { data: cartDetails, error: cartError } = await getOrCreateCart(
     supabase,
     userId
   );
 
-  if (cartError && cartError.code === "PGRST116") {
-    const { data: newCart, error: newCartError } = await supabase
-      .from("cart")
-      .insert({ user_id: userId })
-      .select("*")
-      .single();
-
-    if (newCartError) {
-      console.error("Error creating cart:", newCartError.message);
-      return encodedRedirect("error", "/books", "Failed to create cart.");
-    }
-
-    cart = newCart;
-  } else if (cartError) {
+  if (cartError) {
     console.error("Error fetching cart:", cartError.message);
     return encodedRedirect("error", "/books", "Failed to fetch cart.");
   }
@@ -77,11 +65,11 @@ export const addToCartAction = async (formData: FormData) => {
   const { data: existingCartItem, error: cartItemError } = await supabase
     .from("cart_items")
     .select("*")
-    .eq("cart_id", cart.id)
+    .eq("cart_id", cartDetails.id)
     .eq("book_id", bookId)
-    .single();
+    .maybeSingle();
 
-  if (cartItemError && cartItemError.code !== "PGRST116") {
+  if (cartItemError) {
     console.error("Error checking cart item:", cartItemError.message);
     return encodedRedirect("error", "/books", "Failed to add item to cart.");
   }
@@ -90,7 +78,7 @@ export const addToCartAction = async (formData: FormData) => {
     return encodedRedirect("error", "/cart", "Item already in cart.");
   } else {
     const { error: insertError } = await supabase.from("cart_items").insert({
-      cart_id: cart.id,
+      cart_id: cartDetails.id,
       book_id: bookId,
       product_id: product.id,
       quantity,

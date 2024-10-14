@@ -36,31 +36,37 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import { getProductByBookId } from "../actions/get-product";
-import { getUserDataAction } from "../actions/get-user";
 import { createClient } from "@/utils/supabase/server";
 import { getErrorRedirect } from "@/utils/helpers";
-import { getOrdersWithOrderItems } from "@/utils/supabase/queries";
+import {
+  getOrdersWithOrderItems,
+  getUserDataById,
+} from "@/utils/supabase/queries";
+import { encodedRedirect } from "@/utils/utils";
 
-export default async function AdminDashboard({
-  searchParams,
-}: {
-  searchParams: Message;
-}) {
-  const { data: userData, error: authError } = await getUserDataAction();
-  if (authError || userData.is_admin !== true) {
+export default async function AdminDashboard() {
+  const supabase = createClient();
+  const { data: user } = await supabase.auth.getUser();
+
+  if (!user.user) {
+    return encodedRedirect(
+      "error",
+      "/sign-in",
+      "You must be signed in to view this page"
+    );
+  }
+
+  const { data: userData } = await getUserDataById(supabase, user?.user!.id);
+  if (userData.is_admin !== true) {
     redirect("/sign-in");
   }
 
   const books = await fetchBooks();
 
-  const supabase = createClient();
-
   const { data: orders, error } = await getOrdersWithOrderItems(
     supabase,
     userData.id
   );
-
-
 
   if (error) {
     console.error("Error fetching orders:", error.message);

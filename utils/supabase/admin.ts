@@ -4,7 +4,7 @@ import Stripe from "stripe";
 import type { Database } from "../database.types";
 import {
   createOrder,
-  getCartDetailsByUserId,
+  getOrCreateCart,
   getUserDataById,
 } from "./queries";
 import { OrderItemInsertType, PriceType, ProductType } from "@/lib/types/types";
@@ -271,7 +271,7 @@ const placeOrder = async (session: Stripe.Checkout.Session) => {
     throw userError;
   }
 
-  const { data: cartDetails, error: cartError } = await getCartDetailsByUserId(
+  const { data: cartDetails, error: cartError } = await getOrCreateCart(
     supabaseAdmin,
     userId
   );
@@ -280,7 +280,7 @@ const placeOrder = async (session: Stripe.Checkout.Session) => {
     throw cartError;
   }
 
-  const orderItemsData = cartDetails.cart_items.map((item) => ({
+  const orderItemsData = cartDetails.cart_items.map((item: any) => ({
     order_id: order.id!,
     book_id: item.book.id,
     book_title: item.book.title,

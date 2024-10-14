@@ -1,8 +1,9 @@
-"use server";
-import { getErrorRedirect, getStatusRedirect } from "@/utils/helpers";
-import { deletePriceRecord, deleteProductRecord } from "@/utils/supabase/admin";
-import { getPriceByProductId } from "@/utils/supabase/queries";
+"use server";;
+import { getStatusRedirect } from "@/utils/helpers";
+import { stripe } from "@/utils/stripe/config";
+import { getProductAndPriceByBookId } from "@/utils/supabase/queries";
 import { createClient } from "@/utils/supabase/server";
+import { encodedRedirect } from "@/utils/utils";
 import { Storage } from "@google-cloud/storage";
 import { redirect } from "next/navigation";
 
@@ -24,9 +25,11 @@ export const deleteBook = async (formData: FormData) => {
 
   if (bookError || !book) {
     console.error("Error fetching book:", bookError?.message);
-    return redirect(
-      getErrorRedirect("/admin", "Error", "Failed to delete the book.")
-    );
+    return encodedRedirect("error", "/admin", "Failed to fetch book.");
+  }
+
+  if (!productId) {
+    return encodedRedirect("error", "/admin", "Product ID is required.");
   }
 
   try {
@@ -35,7 +38,25 @@ export const deleteBook = async (formData: FormData) => {
     console.error("Error deleting images from Google Cloud Storage:", error);
   }
 
-  return redirect(
-    getStatusRedirect("/admin", "Success", "Book deleted successfully!")
-  );
+  await supabase.from("books").delete().eq("id", book.id);
+
+  const { data: product, error: productError } = await getProductAndPriceByBookId(supabase, book.id);
+
+  if (productError) {
+    console.error("Error fetching product:", productError.message);
+    return encodedRedirect("error", "/admin", "Failed to fetch product.");
+  }
+
+  if (!product) {
+    return encodedRedirect("error", "/admin", "Product not found.");
+  }
+
+  for (const price of product.prices.data) {
+    await stripe.prices.update(price.id, { active: false });
+  }
+
+  await stripe.products.del(productId);
+
+
+
 };
