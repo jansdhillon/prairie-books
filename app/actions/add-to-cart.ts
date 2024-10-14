@@ -1,7 +1,7 @@
 "use server";;
 import { getStatusRedirect } from "@/utils/helpers";
 import {
-  getCartByUserId,
+  getCartDetailsByUserId,
   getProductAndPriceByBookId,
 } from "@/utils/supabase/queries";
 import { createClient } from "@/utils/supabase/server";
@@ -51,7 +51,7 @@ export const addToCartAction = async (formData: FormData) => {
 
   const userId = user.id;
 
-  let { data: cart, error: cartError } = await getCartByUserId(
+  let { data: cart, error: cartError } = await getCartDetailsByUserId(
     supabase,
     userId
   );

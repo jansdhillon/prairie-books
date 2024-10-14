@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
 import { stripe } from '@/utils/stripe/config';
+import { getURL } from '@/utils/helpers';
 
 export async function POST(req: Request) {
   const body = await req.json();
-  const { cartItems, successUrl, cancelUrl } = body;
+  const { cartItems, total, userId } = body;
 
   try {
-    console.log("image dir:", `${cartItems[0].book.image_directory.split(" ").join("%20")}image-1.png`);
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: cartItems.map((item: any) => ({
@@ -15,8 +15,7 @@ export async function POST(req: Request) {
           product_data: {
             name: item.book.title,
             description: item.book.author,
-            images: [`${item.book.image_directory.split(" ").join("%20")}image-1.png`],
-
+            images: [`${item.book.image_directory}image-1.png`],
           },
           unit_amount: Math.round(item.price * 100),
         },
@@ -38,21 +37,26 @@ export async function POST(req: Request) {
             },
           },
         },
-        {
+        total > 75 ? {
           shipping_rate_data: {
             type: 'fixed_amount',
             fixed_amount: { amount: 0, currency: 'cad' },
-            display_name: 'Free Delivery in Calgary',
+            display_name: 'Free shipping on orders over $75',
             delivery_estimate: {
-              minimum: { unit: 'business_day', value: 5 },
-              maximum: { unit: 'business_day', value: 7 },
+              minimum: { unit: 'business_day', value: 3 },
+              maximum: { unit: 'business_day', value: 5 },
             },
           },
-        },
-      ],
-      success_url: `${successUrl}?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: cancelUrl,
+        } : {},
+        ],
+      success_url: `${getURL("success")}?session_id={CHECKOUT_SESSION_ID}`,
+      metadata: {
+        userId: userId,
+      },
+
     });
+
+
 
     return NextResponse.json({ sessionId: session.id });
   } catch (error) {

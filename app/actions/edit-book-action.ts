@@ -34,7 +34,7 @@ export const editBookAction = async (formData: FormData) => {
 
   const filteredFiles = files.filter((file) => file.size > 0);
 
-  const directoryPath = `${isbn}/`;
+  const directoryPath = `${bookId}/`;
 
   let hasImages = false;
   const numImages = filteredFiles.length;
@@ -142,13 +142,11 @@ export const editBookAction = async (formData: FormData) => {
       }
 
 
-      const updatedProduct = await stripe.products.update(productId, {
+      await stripe.products.update(productId, {
         name: title,
         description: description || undefined,
         metadata,
       });
-
-      await upsertProductRecord(updatedProduct);
 
       const existingPrices = product.prices;
 

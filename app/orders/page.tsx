@@ -10,23 +10,28 @@ import {
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { getOrdersByUserId } from "../actions/get-orders";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { format } from "date-fns";
-import { convertStatus } from "./convert-status";
-import { getUser } from "@/utils/supabase/queries";
+import { getOrdersWithOrderItems } from "@/utils/supabase/queries";
+import { getUserDataAction } from "../actions/get-user";
 
 export default async function OrdersPage() {
   const supabase = createClient();
 
-  const user = await getUser(supabase);
-
-  if (!user) {
-    return redirect("/sign-in");
+  const { data: userData, error: authError } = await getUserDataAction();
+  if (authError) {
+    redirect("/sign-in");
   }
 
-  const orders = await getOrdersByUserId(user.id);
+  const { data: orders, error } = await getOrdersWithOrderItems(
+    supabase,
+    userData.id
+  );
+
+  if (error) {
+    console.error("Error fetching orders:", error.message);
+  }
 
 
   return (
@@ -50,7 +55,7 @@ export default async function OrdersPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {orders.map((order: any) => (
+            {orders?.map((order: any) => (
               <TableRow key={order.id}>
                 <TableCell>{order.id}</TableCell>
                 <TableCell>
@@ -74,9 +79,7 @@ export default async function OrdersPage() {
                     className="text-xs text-center mx-auto line-clamp-1"
                     variant={"default"}
                   >
-                    {order.payment && order.payment.status
-                      ? convertStatus(order.payment.status)
-                      : "Pending"}
+                    {order.status}
                   </Badge>
                 </TableCell>
                 <TableCell>
@@ -92,7 +95,7 @@ export default async function OrdersPage() {
         </Table>
       </div>
 
-      {orders.length === 0 && (
+      {orders?.length === 0 && (
         <p className="text-center text-muted-foreground">
           You haven't placed any orders yet.
         </p>

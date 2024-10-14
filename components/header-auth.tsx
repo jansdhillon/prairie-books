@@ -1,16 +1,21 @@
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { ShoppingCart } from "lucide-react";
-import { getUserAndUserData } from "@/app/actions/get-user";
 import { NavAvatar } from "./nav-avatar";
+import { getAllUserData } from "@/utils/supabase/queries";
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
+import { getErrorRedirect } from "@/utils/helpers";
 
 export default async function AuthButton() {
-  const data = await getUserAndUserData();
+  const supabase = createClient();
+  const { data: userData, error: authError} = await getAllUserData(supabase);
 
-  const user = data?.user;
-  const userData = data?.userData;
+  if (authError){
+    redirect(getErrorRedirect("/sign-in", "Error fetching user data", authError.message));
+  }
 
-  if (!user) {
+  if (!userData) {
     return (
       <div className="flex gap-5">
         <Button asChild size="sm" variant={"outline"}>
@@ -34,7 +39,7 @@ export default async function AuthButton() {
             <ShoppingCart className="h-4 text-muted-foreground" />
           </Button>
         </Link>
-        <NavAvatar userData={userData} user={user} />
+        <NavAvatar userData={userData} />
       </div>
     );
   }

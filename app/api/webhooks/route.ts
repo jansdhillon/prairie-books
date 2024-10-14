@@ -5,7 +5,7 @@ import {
   upsertPriceRecord,
   deleteProductRecord,
   deletePriceRecord,
-  handlePaymentIntentSucceeded,
+  handleCheckoutSucceeded,
 } from '@/utils/supabase/admin';
 
 const relevantEvents = new Set([
@@ -16,8 +16,6 @@ const relevantEvents = new Set([
   'price.updated',
   'price.deleted',
   'checkout.session.completed',
-  'payment_intent.succeeded',
-  'payment_intent.payment_failed',
 ]);
 
 export async function POST(req: Request) {
@@ -31,7 +29,6 @@ export async function POST(req: Request) {
       return new Response('Webhook secret not found.', { status: 400 });
 
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
-    console.log(`🔔  Webhook received: ${event.type}`);
   } catch (err: any) {
     console.log(`❌ Error message: ${err.message}`);
     return new Response(`Webhook Error: ${err.message}`, { status: 400 });
@@ -54,9 +51,11 @@ export async function POST(req: Request) {
         case 'product.deleted':
           await deleteProductRecord((event.data.object as Stripe.Product).id);
           break;
-        case 'payment_intent.succeeded':
-          const paymentIntent = event.data.object as Stripe.PaymentIntent;
-          await handlePaymentIntentSucceeded(paymentIntent);
+        case 'checkout.session.completed':
+          const checkoutSession = event.data.object as Stripe.Checkout.Session;
+          await handleCheckoutSucceeded(checkoutSession);
+
+
           break;
         default:
           console.warn(`Unhandled relevant event type: ${event.type}`);

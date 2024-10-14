@@ -18,9 +18,9 @@ import Loading from "@/app/loading";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { User } from "@supabase/auth-js";
-import { getUserAndUserData } from "@/app/actions/get-user";
 import { Database } from "@/utils/database.types";
 import { BookType } from "@/lib/types/types";
+import { getUserDataAction } from "@/app/actions/get-user";
 
 type BookDetailsProps = {
   book: BookType;
@@ -58,13 +58,7 @@ export function BookDetails({ book }: BookDetailsProps) {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const data = await getUserAndUserData();
-      const user = data?.user;
-      const userData = data?.userData;
-      if (!user || !userData) {
-        return;
-      }
-      setUser(user);
+      const {data: userData, error: authError} = await getUserDataAction();
       setUserData(userData);
     };
 

@@ -1,50 +1,30 @@
-import { EnhancedCartItemType } from "@/lib/types/types";
+import { EnhancedCartItemType, OrderItemType } from "@/lib/types/types";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { cache } from "react";
 
-export const getUser = cache(async (supabase: SupabaseClient) => {
-  const { data: user, error } = await supabase.auth.getUser();
-  return user.user;
-});
+export const getAllUserData = cache(async (supabase: SupabaseClient) => {
+  const { data: user, error: authError } = await supabase.auth.getUser();
 
-export const getUserData = cache(
-  async (supabase: SupabaseClient, userId: string) => {
-    const { data: userData, error } = await supabase
-      .from("users")
-      .select("*")
-      .eq("id", userId)
-      .single();
-    return { data: userData, error };
+  if (authError) {
+    return { data: null, error: authError };
   }
-);
 
-export const getProducts = cache(async (supabase: SupabaseClient) => {
-  const { data: products, error } = await supabase
-    .from("products")
-    .select("*, prices(*)")
-    .eq("active", true)
-    .eq("prices.active", true)
-    .order("metadata->index")
-    .order("unit_amount", { referencedTable: "prices" });
+  const {data: userData} = await getUserDataById(supabase, user.user.id);
 
-  return { data: products, error };
+  return { data: userData, error: authError };
 });
 
-export const getAllUsers = cache(async (supabase: SupabaseClient) => {
-  const { data: userDetails, error } = await supabase.from("users").select("*");
-  return { data: userDetails, error };
-});
-
-export const getPaymentById = cache(
-  async (supabase: SupabaseClient, orderId: string) => {
-    const { data: payment, error } = await supabase
-      .from("payments")
-      .select("*")
-      .eq("order_id", orderId)
-      .single();
-    return { data: payment, error };
-  }
-);
+export const getUserDataById = async (
+  supabase: SupabaseClient,
+  userId: string
+) => {
+  const { data: userData, error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("id", userId)
+    .single();
+  return { data: userData, error: error };
+};
 
 export const getAllBooks = cache(async (supabase: SupabaseClient) => {
   const { data: books, error } = await supabase
@@ -71,7 +51,7 @@ export const getOrderItemsByOrderId = cache(
       .from("order_items")
       .select("*")
       .eq("order_id", orderId);
-    return { data: orderItems, error };
+    return { data: orderItems as OrderItemType[], error };
   }
 );
 
@@ -98,79 +78,6 @@ export const getOrdersWithOrderItems = cache(
   }
 );
 
-export const getOrdersWithOrderItemsAndPayments = cache(
-  async (supabase: SupabaseClient, userId: string) => {
-    const { data: ordersWithItems, error: itemsError } =
-      await getOrdersWithOrderItems(supabase, userId);
-
-    if (itemsError) {
-      return { data: null, error: itemsError };
-    }
-
-    const ordersWithItemsAndPayments = await Promise.all(
-      ordersWithItems.map(async (order) => {
-        const { data: payment, error: paymentError } =
-          await getPaymentByOrderId(supabase, order.id);
-        return { ...order, payment, error: paymentError };
-      })
-    );
-
-    return { data: ordersWithItemsAndPayments, error: null };
-  }
-);
-
-export const getCartByUserId = cache(
-  async (supabase: SupabaseClient, userId: string) => {
-    const { data: cart, error } = await supabase
-      .from("cart")
-      .select("*")
-      .eq("user_id", userId)
-      .single();
-    return { data: cart, error };
-  }
-);
-
-export const getCartItemsByCartId = cache(
-  async (supabase: SupabaseClient, cartId: string) => {
-    const { data: cartItems, error } = await supabase
-      .from("cart_items")
-      .select("*")
-      .eq("cart_id", cartId);
-    return { data: cartItems, error };
-  }
-);
-
-export const getAllOrders = cache(async (supabase: SupabaseClient) => {
-  const { data: orders, error } = await supabase.from("orders").select("*");
-  return { data: orders, error };
-});
-
-export const getOrdersByUserId = cache(
-  async (supabase: SupabaseClient, userId: string) => {
-    const { data: orders, error } = await supabase
-      .from("orders")
-      .select("*")
-      .eq("user_id", userId);
-    return { data: orders, error };
-  }
-);
-
-export const getAllPayments = cache(async (supabase: SupabaseClient) => {
-  const { data: payments, error } = await supabase.from("payments").select("*");
-  return { data: payments, error };
-});
-
-export const getPaymentByOrderId = cache(
-  async (supabase: SupabaseClient, orderId: string) => {
-    const { data: payment, error } = await supabase
-      .from("payments")
-      .select("*")
-      .eq("order_id", orderId)
-      .single();
-    return { data: payment, error };
-  }
-);
-
 export const getProductAndPriceByBookId = cache(
   async (supabase: SupabaseClient, bookId: string) => {
     const { data: product, error: productsError } = await supabase
@@ -190,75 +97,83 @@ export const getCartDetailsByUserId = cache(
       .select("*, cart_items(*, product:products(*, price: prices(*)))")
       .eq("user_id", userId)
       .single();
-    return { data: cart, error: cartError };
+
+    if (cartError) {
+      console.error("Error fetching cart details:", cartError?.message);
+    }
+
+    let amount = 0;
+    let cartDetails = {
+      id: cart?.id,
+      total: amount,
+      cart_items: [] as EnhancedCartItemType[],
+    };
+
+    for (const item of cart?.cart_items) {
+      const price = item.product.price[item.product.price.length - 1];
+
+      const quantity = item.quantity;
+
+      const { data: currentBook, error: bookError } = await supabase
+        .from("books")
+        .select("*")
+        .eq("id", item.book_id)
+        .single();
+
+      if (bookError) {
+        throw new Error(`Error fetching book stock: ${bookError.message}`);
+      }
+
+      if (currentBook.stock < quantity) {
+        throw new Error(`Insufficient stock for book with id ${item.book_id}.`);
+      }
+
+      amount += (quantity * price.unit_amount) / 100;
+
+      cartDetails.cart_items?.push({
+        id: item.id,
+        price: price.unit_amount / 100,
+        quantity: quantity,
+        book: currentBook,
+        product: item.product,
+      });
+    }
+
+    cartDetails.total = amount;
+
+    return { data: cartDetails, error: cartError };
+  }
+);
+
+export const getCartByUserId = cache(
+  async (supabase: SupabaseClient, userId: string) => {
+    const { data: cart, error } = await supabase
+      .from("cart")
+      .select("*")
+      .eq("user_id", userId)
+      .single();
+    return { data: cart, error };
   }
 );
 
 export const createOrder = async (
   supabase: SupabaseClient,
   userId: string,
-  cartItems: EnhancedCartItemType[]
+  sessionId: string
 ) => {
   const { data: order, error } = await supabase
     .from("orders")
     .insert({
       user_id: userId,
-      status: "pending",
+      status: "Ordered",
+      session_id: sessionId,
     })
     .select("*")
     .single();
 
-  if (error) {
-    return { error };
-  }
-
-  const orderItemsData = cartItems.map((item) => ({
-    order_id: order.id,
-    book_id: item.book.id,
-    product_id: item.product.id,
-    quantity: item.quantity,
-    price: item.price,
-  }));
-
-  const { error: orderItemsError } = await supabase
-    .from("order_items")
-    .insert(orderItemsData);
-
-  if (orderItemsError) {
-    return { error: orderItemsError };
-  }
-
-  return { data: order };
+  return { data: order, error };
 };
 
-export const createPayment = async (
-  supabase: SupabaseClient,
-  paymentDetails: any
-) => {
-  const { data: payment, error } = await supabase
-    .from("payments")
-    .insert({
-      status: "initiated",
-      ...paymentDetails,
-    })
-    .select("*")
-    .single();
-
-  return { data: payment, error };
-};
-
-export const updatePaymentStatus = async (
-  supabase: SupabaseClient,
-  paymentId: string,
-  status: string
-) => {
-  const { data, error } = await supabase
-    .from("payments")
-    .update({ status })
-    .eq("id", paymentId)
-    .single();
-  return { data, error };
-};
 
 export const updateOrderStatus = async (
   supabase: SupabaseClient,
@@ -295,26 +210,24 @@ export const getPriceByProductId = cache(
   }
 );
 
-export const getOrderById = cache(
-  async (supabase: SupabaseClient, orderId: string) => {
-    const { data: orderItems, error } = await supabase
-      .from("order_items")
-      .select(
-        `
-      *,
-      book:books(
-        title,
-        author
-      )
-    `
-      )
-      .eq("order_id", orderId);
 
-    if (error) {
-      console.error("Error fetching order items:", error.message);
-      return { error };
-    }
+export const updateBookImageDirectory = cache(
+  async (supabase: SupabaseClient, bookId: string, imageDirectory: string) => {
+    const { error } = await supabase
+      .from("books")
+      .update({ image_directory: imageDirectory })
+      .eq("id", bookId);
 
-    return { data: { items: orderItems } };
+    return { error };
   }
 );
+
+export const getOrderBySessionId = async (supabase: SupabaseClient, sessionId: string) => {
+  const { data: order, error } = await supabase
+    .from("orders")
+    .select("*")
+    .eq("session_id", sessionId)
+    .single();
+
+  return { data: order, error };
+}

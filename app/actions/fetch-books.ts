@@ -1,8 +1,9 @@
 "use server";
 import { getAllBooks } from "@/utils/supabase/queries";
 import { createClient } from "@/utils/supabase/server";
+import { cache } from "react";
 
-const fetchBooks = async () => {
+const fetchBooks = cache(async () => {
   const supabase = createClient();
   const { data: books, error } = await getAllBooks(supabase);
 
@@ -15,6 +16,6 @@ const fetchBooks = async () => {
   }
 
   return books;
-};
+});
 
 export { fetchBooks };

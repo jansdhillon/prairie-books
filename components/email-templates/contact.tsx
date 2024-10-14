@@ -1,18 +1,20 @@
 import * as React from 'react';
 
-interface EmailTemplateProps {
+interface ContactEmailTemplateProps {
   name: string;
   email: string;
   message: string;
 }
 
-export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
+export const ContactEmailTemplate: React.FC<ContactEmailTemplateProps> = ({
   name,
   email,
   message,
 }) => (
   <div style={{ fontFamily: 'Arial, sans-serif', lineHeight: 1.6, color: '#333' }}>
-    <h1 style={{ color: '#4a5568', borderBottom: '1px solid #e2e8f0', paddingBottom: '10px' }}>New Contact Form Submission</h1>
+    <h1 style={{ color: '#4a5568', borderBottom: '1px solid #e2e8f0', paddingBottom: '10px' }}>
+      New Contact Form Submission
+    </h1>
     <p>Hello,</p>
     <p>You have received a new message from the contact form on Kathrin's Books website. Here are the details:</p>
     <div style={{ background: '#f7fafc', padding: '15px', borderRadius: '5px', marginBottom: '20px' }}>

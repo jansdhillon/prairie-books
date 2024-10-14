@@ -2,7 +2,7 @@ import type { Tables } from '@/utils/database.types';
 type Price = Tables<'prices'>;
 
 export const getURL = (path: string = '') => {
-  let url = process.env.NODE_ENV === 'production' ? "https://kathrinsbooks.com" :  'http://localhost:3000/';
+  let url = process.env.NODE_ENV === 'production' ? "https://kathrinsbooks.com" :  'http://localhost:3000';
 
   // Trim the URL and remove trailing slash if exists.
   url = url.replace(/\/+$/, '');

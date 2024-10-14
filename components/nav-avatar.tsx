@@ -22,8 +22,9 @@ import { signOutAction } from "@/app/actions/sign-out";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { Avatar, AvatarFallback } from "./ui/avatar";
+import { UserType } from "@/lib/types/types";
 
-export const NavAvatar = ({ user, userData }: { user: any; userData: any }) => {
+export const NavAvatar = ({ userData }: { userData: UserType }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

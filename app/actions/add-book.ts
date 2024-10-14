@@ -1,10 +1,9 @@
 "use server";
 import { Database } from "@/utils/database.types";
-import { getStatusRedirect } from "@/utils/helpers";
+import { getErrorRedirect, getStatusRedirect } from "@/utils/helpers";
 import { stripe } from "@/utils/stripe/config";
-import { upsertPriceRecord, upsertProductRecord } from "@/utils/supabase/admin";
+import { updateBookImageDirectory } from "@/utils/supabase/queries";
 import { createClient } from "@/utils/supabase/server";
-import { encodedRedirect } from "@/utils/utils";
 import { Storage } from "@google-cloud/storage";
 import { redirect } from "next/navigation";
 
@@ -30,7 +29,6 @@ export const addBookAction = async (formData: FormData) => {
 
   const fileterdFiles = files.filter((file) => file.size > 0);
 
-  const directoryPath = `${isbn}/`;
 
   let hasImages = false;
 
@@ -39,6 +37,95 @@ export const addBookAction = async (formData: FormData) => {
   const bucketName = "kathrins-books-images";
 
   const storage = new Storage();
+
+  if (!title || !author || !isbn || price === null || isNaN(price)) {
+    return redirect(
+      getStatusRedirect(
+        "/admin",
+        "Error",
+        "Title, Author, ISBN, and Price are required and Price must be a number."
+      )
+    );
+  }
+
+  const newBook: Database["public"]["Tables"]["books"]["Insert"] = {
+    title,
+    author,
+    isbn,
+    price,
+    genre: genres,
+    description,
+    publisher,
+    language,
+
+    is_featured,
+
+    edition,
+    publication_date: publicationDate,
+    num_images: numImages,
+    condition,
+    stock: 1,
+  };
+
+
+
+  const { data: book, error } = await supabase.from("books").insert([newBook]).select("*").single();
+
+  const directoryPath = `${book?.id}/`;
+
+  const imageDirectory = `https://storage.googleapis.com/${bucketName}/${directoryPath}`;
+
+  if (hasImages) {
+   const {error} = await updateBookImageDirectory(supabase, book?.id!, imageDirectory);
+
+    if (error) {
+      console.error("Error updating book image directory:", error.message);
+      return redirect(
+        getErrorRedirect("/admin", "Failed to update book image directory.")
+      );
+    }
+
+  }
+  if (error) {
+    console.error("Error adding book:", error.message);
+    return redirect(
+      getErrorRedirect("/admin", "Failed to add book.")
+    );
+  }
+
+
+  const product = await stripe.products.create({
+    name: title,
+    description: author,
+    images: [`${imageDirectory}image-1.png`],
+    metadata: {
+      bookId: book?.id!,
+      author,
+      isbn,
+      genres: JSON.stringify(genres),
+      publisher,
+      language,
+      edition,
+    },
+  });
+
+  await stripe.prices.create({
+    unit_amount: Math.round(price * 100),
+    currency: "cad",
+    product: product.id,
+  });
+
+  const { error: updateError } = await supabase
+      .from("books")
+      .update({ product_id: product.id })
+      .eq("id", book?.id!);
+
+    if (updateError) {
+      console.error("Error updating book with product_id:", updateError.message);
+      return redirect(
+        getErrorRedirect("/admin", "Failed to update book with product_id.")
+      )
+    }
 
   if (fileterdFiles.length > 0) {
     hasImages = true;
@@ -61,90 +148,7 @@ export const addBookAction = async (formData: FormData) => {
     }
   }
 
-  if (!title || !author || !isbn || price === null || isNaN(price)) {
-    return redirect(
-      getStatusRedirect(
-        "/admin",
-        "Error",
-        "Title, Author, ISBN, and Price are required and Price must be a number."
-      )
-    );
-  }
 
-  const newBook: Database["public"]["Tables"]["books"]["Insert"] = {
-    title,
-    author,
-    isbn,
-    price,
-    genre: genres,
-    description,
-    publisher,
-    language,
-    image_directory: hasImages
-      ? `https://storage.googleapis.com/${bucketName}/${directoryPath}`
-      : null,
-    is_featured,
-
-    edition,
-    publication_date: publicationDate,
-    num_images: numImages,
-    condition,
-    stock: 1,
-  };
-
-  const { data: book, error } = await supabase.from("books").insert([newBook]);
-
-  if (error) {
-    console.error("Error adding book:", error.message);
-    return encodedRedirect(
-      "error",
-      "/",
-      "Failed to add the book. Please try again."
-    );
-  }
-
-  const { data: newBookId, error: newBookError } = await supabase
-    .from("books")
-    .select("id")
-    .eq("isbn", isbn)
-    .eq("title", title)
-    .single();
-
-  const product = await stripe.products.create({
-    name: title,
-    metadata: {
-      bookId: newBookId?.id!,
-      author,
-      isbn,
-      genres: JSON.stringify(genres),
-      publisher,
-      language,
-      edition,
-    },
-  });
-
-  const stripePrice = await stripe.prices.create({
-    unit_amount: Math.round(price * 100),
-    currency: "cad",
-    product: product.id,
-  });
-
-  await upsertProductRecord(product);
-  await upsertPriceRecord(stripePrice);
-
-  const { error: updateError } = await supabase
-      .from("books")
-      .update({ product_id: product.id })
-      .eq("id", newBookId?.id!);
-
-    if (updateError) {
-      console.error("Error updating book with product_id:", updateError.message);
-      return encodedRedirect(
-        "error",
-        "/",
-        "Failed to update the book with the product ID. Please try again."
-      );
-    }
 
   return redirect(
     getStatusRedirect("/admin", "Success", "Book added successfully!")

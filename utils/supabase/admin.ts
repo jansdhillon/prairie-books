@@ -1,24 +1,15 @@
-import { toDateTime } from "../helpers";
 import { stripe } from "@/utils/stripe/config";
 import { createClient } from "@supabase/supabase-js";
 import Stripe from "stripe";
-import type { Database, Tables, TablesInsert } from "../database.types";
-import { getProductAndPriceByBookId } from "./queries";
+import type { Database } from "../database.types";
+import {
+  createOrder,
+  getCartDetailsByUserId,
+  getUserDataById,
+} from "./queries";
+import { OrderItemInsertType, PriceType, ProductType } from "@/lib/types/types";
+import { sendEmail } from "@/app/actions/send-email";
 
-type Product = Tables<"products">;
-type Price = Tables<"prices">;
-type Book = Tables<"books">;
-type Order = Tables<"orders">;
-type OrderItem = Tables<"order_items">;
-type Customer = Tables<"customers">;
-type Cart = Tables<"cart">;
-type CartItem = Tables<"cart_items">;
-
-// Change to control trial period length
-const TRIAL_PERIOD_DAYS = 0;
-
-// Note: supabaseAdmin uses the SERVICE_ROLE_KEY which you must only use in a secure server-side context
-// as it has admin privileges and overwrites RLS policies!
 const supabaseAdmin = createClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -31,7 +22,7 @@ const upsertProductRecord = async (product: Stripe.Product) => {
     .eq("id", product.metadata.bookId)
     .single();
 
-  const productData: Product = {
+  const productData: ProductType = {
     id: product.id,
     book_id: book?.id!,
     active: product.active,
@@ -53,7 +44,7 @@ const upsertPriceRecord = async (
   retryCount = 0,
   maxRetries = 3
 ) => {
-  const priceData: Price = {
+  const priceData: PriceType = {
     id: price.id,
     product_id: typeof price.product === "string" ? price.product : "",
     active: price.active,
@@ -120,15 +111,6 @@ const deleteOrderItemsRecord = async (orderId: string) => {
     throw new Error(`Order Items deletion failed: ${deletionError.message}`);
 };
 
-const deletePaymentRecord = async (paymentIntentId: string) => {
-  const { error: deletionError } = await supabaseAdmin
-    .from("payments")
-    .delete()
-    .eq("payment_intent_id", paymentIntentId);
-  if (deletionError)
-    throw new Error(`Payment deletion failed: ${deletionError.message}`);
-};
-
 const upsertCustomerToSupabase = async (uuid: string, customerId: string) => {
   const { error: upsertError } = await supabaseAdmin
     .from("customers")
@@ -157,7 +139,6 @@ const createOrRetrieveCustomer = async ({
   email: string;
   uuid: string;
 }) => {
-  // Check if the customer already exists in Supabase
   const { data: existingSupabaseCustomer, error: queryError } =
     await supabaseAdmin
       .from("customers")
@@ -169,7 +150,6 @@ const createOrRetrieveCustomer = async ({
     throw new Error(`Supabase customer lookup failed: ${queryError.message}`);
   }
 
-  // Retrieve the Stripe customer ID using the Supabase customer ID, with email fallback
   let stripeCustomerId: string | undefined;
   if (existingSupabaseCustomer?.stripe_customer_id) {
     const existingStripeCustomer = await stripe.customers.retrieve(
@@ -177,13 +157,11 @@ const createOrRetrieveCustomer = async ({
     );
     stripeCustomerId = existingStripeCustomer.id;
   } else {
-    // If Stripe ID is missing from Supabase, try to retrieve Stripe customer ID by email
     const stripeCustomers = await stripe.customers.list({ email: email });
     stripeCustomerId =
       stripeCustomers.data.length > 0 ? stripeCustomers.data[0].id : undefined;
   }
 
-  // If still no stripeCustomerId, create a new customer in Stripe
   const stripeIdToInsert = stripeCustomerId
     ? stripeCustomerId
     : await createCustomerInStripe(uuid, email);
@@ -205,14 +183,12 @@ const createOrRetrieveCustomer = async ({
         `Supabase customer record mismatched Stripe ID. Supabase record updated.`
       );
     }
-    // If Supabase has a record and matches Stripe, return Stripe customer ID
     return stripeCustomerId;
   } else {
     console.warn(
       `Supabase customer record was missing. A new record was created.`
     );
 
-    // If Supabase has no record, create a new record and return Stripe customer ID
     const upsertedStripeCustomer = await upsertCustomerToSupabase(
       uuid,
       stripeIdToInsert
@@ -224,129 +200,182 @@ const createOrRetrieveCustomer = async ({
   }
 };
 
-/**
- * Copies the billing details from the payment method to the customer object.
- */
-const copyBillingDetailsToCustomer = async (
-  uuid: string,
-  payment_method: Stripe.PaymentMethod
+const copyBillingAndShippingDetailsToCustomer = async (
+  userId: string,
+  payment_method: Stripe.PaymentMethod,
+  address_details: Stripe.Address
 ) => {
-  //Todo: check this assertion
   const customer = payment_method.customer as string;
-  const { name, phone, address } = payment_method.billing_details;
+  const { name, phone, address } =
+    payment_method.billing_details as Stripe.PaymentMethod.BillingDetails;
+  const { line1, line2, city, state, postal_code, country } =
+    address_details as Stripe.Address;
   if (!name || !phone || !address) return;
+
+  const sanitizedAddress = {
+    line1: line1 || undefined,
+    line2: line2 || undefined,
+    city: city || undefined,
+    state: state || undefined,
+    postal_code: postal_code || undefined,
+    country: country || undefined,
+  };
+
   //@ts-ignore
-  await stripe.customers.update(customer, { name, phone, address });
+  await stripe.customers.update(customer, {
+    name,
+    phone,
+    address: sanitizedAddress,
+    shipping: {
+      name,
+      phone,
+      address: sanitizedAddress,
+    },
+  });
   const { error: updateError } = await supabaseAdmin
     .from("users")
     .update({
+      shipping_address: { ...address_details },
       billing_address: { ...address },
       payment_method: { ...payment_method[payment_method.type] },
     })
-    .eq("id", uuid);
+    .eq("id", userId);
   if (updateError)
     throw new Error(`Customer update failed: ${updateError.message}`);
 };
 
-const upsertPaymentRecord = async (
-  paymentIntent: Stripe.PaymentIntent,
-  orderId: string
-) => {
-  const paymentData: Database["public"]["Tables"]["payments"]["Insert"] = {
-    order_id: orderId,
-    payment_intent_id: paymentIntent.id,
-    amount: paymentIntent.amount_received / 100,
-    currency: paymentIntent.currency.toUpperCase(),
-    status: paymentIntent.status,
-  };
+const placeOrder = async (session: Stripe.Checkout.Session) => {
+  const sessionId = session.id;
+  const userId = session?.metadata?.userId;
 
-  const { error } = await supabaseAdmin
-    .from("payments")
-    .upsert(paymentData, { onConflict: "payment_intent_id" });
-
-  if (error) {
-    console.error("Error upserting payment record:", error.message);
+  if (!userId) {
+    throw new Error("User ID not found in session metadata");
   }
+
+  const { data: order, error: orderError } = await createOrder(
+    supabaseAdmin,
+    userId,
+    sessionId
+  );
+
+  if (orderError) {
+    throw new Error(`Error creating order: ${orderError.message}`);
+  }
+
+  const { data: userData, error: userError } = await getUserDataById(
+    supabaseAdmin,
+    userId
+  );
+
+  if (userError) {
+    throw userError;
+  }
+
+  const { data: cartDetails, error: cartError } = await getCartDetailsByUserId(
+    supabaseAdmin,
+    userId
+  );
+
+  if (cartError) {
+    throw cartError;
+  }
+
+  const orderItemsData = cartDetails.cart_items.map((item) => ({
+    order_id: order.id!,
+    book_id: item.book.id,
+    book_title: item.book.title,
+    book_author: item.book.author,
+    product_id: item.product.id,
+    quantity: item.quantity,
+    price: item.price,
+    image_directory: item.book.image_directory,
+  })) as OrderItemInsertType[];
+
+  const { error: orderItemsError } = await supabaseAdmin
+    .from("order_items")
+    .insert(orderItemsData);
+
+  if (orderItemsError) {
+    throw orderItemsError;
+  }
+
+  return {
+    userData,
+    orderItemsData,
+    order,
+    userId,
+  };
 };
 
-async function handlePaymentIntentSucceeded(
-  paymentIntent: Stripe.PaymentIntent
-) {
-  const orderId = paymentIntent.metadata?.order_id;
-  if (!orderId) {
-    console.error("Order ID not found in payment intent metadata");
-    return;
-  }
+async function handleCheckoutSucceeded(session: Stripe.Checkout.Session) {
+  try {
+    const { userData, orderItemsData, order, userId } =
+      await placeOrder(session);
 
-  await upsertPaymentRecord(paymentIntent, orderId);
+    const email = userData.email;
+    const orderId = order.id;
+    const orderItems = orderItemsData;
+    const totalAmount = ((session.amount_total ?? 0) / 100).toFixed(2);
 
-  const { error: orderUpdateError } = await supabaseAdmin
-    .from("orders")
-    .update({ status: "Ordered" })
-    .eq("id", orderId);
+    await sendEmail(
+      { name: userData.name, email, orderId, orderItems, totalAmount },
+      "order-confirmation"
+    );
 
-  if (orderUpdateError) {
-    console.error("Error updating order status:", orderUpdateError.message);
-    return;
-  }
+    for (const item of orderItems) {
+      const { data: bookData, error: bookFetchError } = await supabaseAdmin
+        .from("books")
+        .select("stock")
+        .eq("id", item.book_id)
+        .single();
 
-  const { data: orderData, error: orderFetchError } = await supabaseAdmin
-    .from("orders")
-    .select("user_id, order_items (book_id, quantity)")
-    .eq("id", orderId)
-    .single();
+      if (bookFetchError) {
+        console.error(
+          `Error fetching stock for book ID ${item.book_id}:`,
+          bookFetchError.message
+        );
+        continue;
+      }
 
-  if (orderFetchError || !orderData) {
-    console.error("Error fetching order data:", orderFetchError?.message);
-    return;
-  }
+      const newStock = (bookData?.stock ?? 0) - item.quantity;
 
-  const userId = orderData.user_id;
-  const orderItems = orderData.order_items;
+      const { error: stockUpdateError } = await supabaseAdmin
+        .from("books")
+        .update({ stock: newStock })
+        .eq("id", item.book_id);
 
-  for (const item of orderItems) {
-    const { error: stockUpdateError } = await supabaseAdmin
-      .from("books")
-      .update({
-        stock:
-          (
-            await supabaseAdmin
-              .from("books")
-              .select("stock")
-              .eq("id", item.book_id)
-              .single()
-          ).data?.stock! - item.quantity,
-      })
-      .eq("id", item.book_id);
-
-    if (stockUpdateError) {
-      console.error(
-        `Error reducing stock for book ID ${item.book_id}:`,
-        stockUpdateError.message
-      );
+      if (stockUpdateError) {
+        console.error(
+          `Error reducing stock for book ID ${item.book_id}:`,
+          stockUpdateError.message
+        );
+      }
     }
-  }
 
-  const { data: cartData, error: cartFetchError } = await supabaseAdmin
-    .from("cart")
-    .select("id")
-    .eq("user_id", userId)
-    .single();
+    const { data: cartData, error: cartFetchError } = await supabaseAdmin
+      .from("cart")
+      .select("id")
+      .eq("user_id", userId)
+      .single();
 
-  if (cartFetchError || !cartData) {
-    console.error("Error fetching cart data:", cartFetchError?.message);
+    if (cartFetchError || !cartData) {
+      console.error("Error fetching cart data:", cartFetchError?.message);
+      return;
+    }
+
+    const cartId = cartData.id;
+
+    const { error: cartClearError } = await supabaseAdmin
+      .from("cart_items")
+      .delete()
+      .eq("cart_id", cartId);
+
+    if (cartClearError) {
+      console.error("Error clearing cart items:", cartClearError.message);
+    }
+  } catch (error: any) {
+    console.error("Error placing order:", error?.message);
     return;
-  }
-
-  const cartId = cartData.id;
-
-  const { error: cartClearError } = await supabaseAdmin
-    .from("cart_items")
-    .delete()
-    .eq("cart_id", cartId);
-
-  if (cartClearError) {
-    console.error("Error clearing cart items:", cartClearError.message);
   }
 }
 
@@ -356,9 +385,7 @@ export {
   deleteProductRecord,
   deletePriceRecord,
   createOrRetrieveCustomer,
-  upsertPaymentRecord,
   deleteOrderRecord,
   deleteOrderItemsRecord,
-  deletePaymentRecord,
-  handlePaymentIntentSucceeded,
+  handleCheckoutSucceeded,
 };

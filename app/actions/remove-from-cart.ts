@@ -5,9 +5,8 @@ import { fixOneToOne } from "../fixOneToOne";
 import { getStatusRedirect } from "@/utils/helpers";
 import { redirect } from "next/navigation";
 
-export const removeFromCartAction = async (formData: FormData) => {
+export const removeFromCartAction = async (cartItemId: string) => {
     const supabase = createClient();
-    const cartItemId = formData.get("cartItemId")?.toString();
 
     if (!cartItemId) {
       return encodedRedirect("error", "/cart", "Cart item ID is required.");

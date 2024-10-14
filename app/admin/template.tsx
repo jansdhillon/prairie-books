@@ -1,6 +1,5 @@
-import { createClient } from "@/utils/supabase/server";
-import { encodedRedirect } from "@/utils/utils";
-import { getUserAndUserData } from "../actions/get-user";
+import { redirect } from "next/navigation";
+import { getUserDataAction } from "../actions/get-user";
 import { getErrorRedirect } from "@/utils/helpers";
 
 export default async function Template({
@@ -8,16 +7,11 @@ export default async function Template({
 }: {
   children: React.ReactNode;
 }) {
-  const data = await getUserAndUserData();
+  const { data: userData, error: authError } = await getUserDataAction();
 
-  const user = data?.user;
-  const userData = data?.userData;
-
-  if (!user) {
-    encodedRedirect(
-      "error",
-      "/sign-in",
-      "You must be signed in to view this page"
+  if (authError) {
+    redirect(
+      getErrorRedirect("/", "Error fetching user data", authError.message)
     );
   }
 

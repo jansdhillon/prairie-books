@@ -20,7 +20,7 @@ export type Database = {
           id: string
           image_directory: string | null
           is_featured: boolean | null
-          isbn: string
+          isbn: string | null
           language: string | null
           num_images: number | null
           original_release_date: string | null
@@ -41,7 +41,7 @@ export type Database = {
           id?: string
           image_directory?: string | null
           is_featured?: boolean | null
-          isbn: string
+          isbn?: string | null
           language?: string | null
           num_images?: number | null
           original_release_date?: string | null
@@ -62,7 +62,7 @@ export type Database = {
           id?: string
           image_directory?: string | null
           is_featured?: boolean | null
-          isbn?: string
+          isbn?: string | null
           language?: string | null
           num_images?: number | null
           original_release_date?: string | null
@@ -177,24 +177,33 @@ export type Database = {
       }
       order_items: {
         Row: {
+          book_author: string | null
           book_id: string
+          book_title: string | null
           id: string
+          image_directory: string | null
           order_id: string
           price: number
           product_id: string | null
           quantity: number
         }
         Insert: {
+          book_author?: string | null
           book_id: string
+          book_title?: string | null
           id?: string
+          image_directory?: string | null
           order_id: string
           price: number
           product_id?: string | null
           quantity: number
         }
         Update: {
+          book_author?: string | null
           book_id?: string
+          book_title?: string | null
           id?: string
+          image_directory?: string | null
           order_id?: string
           price?: number
           product_id?: string | null
@@ -226,29 +235,23 @@ export type Database = {
       }
       orders: {
         Row: {
-          billing_address: Json | null
           id: string
           ordered_at: string
-          payment_intent_id: string | null
-          shipping_address: Json | null
+          session_id: string | null
           status: Database["public"]["Enums"]["order_status"] | null
           user_id: string
         }
         Insert: {
-          billing_address?: Json | null
           id?: string
           ordered_at?: string
-          payment_intent_id?: string | null
-          shipping_address?: Json | null
+          session_id?: string | null
           status?: Database["public"]["Enums"]["order_status"] | null
           user_id: string
         }
         Update: {
-          billing_address?: Json | null
           id?: string
           ordered_at?: string
-          payment_intent_id?: string | null
-          shipping_address?: Json | null
+          session_id?: string | null
           status?: Database["public"]["Enums"]["order_status"] | null
           user_id?: string
         }
@@ -414,10 +417,12 @@ export type Database = {
           avatar_url: string | null
           billing_address: Json | null
           created_at: string | null
+          customer_id: string | null
           email: string
           full_name: string | null
           id: string
           is_admin: boolean | null
+          payment_method: Json | null
           shipping_address: Json | null
           updated_at: string | null
         }
@@ -425,10 +430,12 @@ export type Database = {
           avatar_url?: string | null
           billing_address?: Json | null
           created_at?: string | null
+          customer_id?: string | null
           email: string
           full_name?: string | null
           id: string
           is_admin?: boolean | null
+          payment_method?: Json | null
           shipping_address?: Json | null
           updated_at?: string | null
         }
@@ -436,14 +443,23 @@ export type Database = {
           avatar_url?: string | null
           billing_address?: Json | null
           created_at?: string | null
+          customer_id?: string | null
           email?: string
           full_name?: string | null
           id?: string
           is_admin?: boolean | null
+          payment_method?: Json | null
           shipping_address?: Json | null
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "users_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "users_id_fkey"
             columns: ["id"]

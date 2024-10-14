@@ -9,6 +9,7 @@ import { sendEmail } from "../actions/send-email";
 import { FormMessage, Message } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
 import { useRef } from "react";
+import { contactFormAction } from "../actions/contact-form-action";
 
 export default function ContactPage({
   searchParams,
@@ -21,7 +22,7 @@ export default function ContactPage({
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     formRef?.current?.reset();
-    sendEmail(formData);
+    await contactFormAction(formData);
   };
   return (
     <div className="flex flex-1 flex-col space-y-6">

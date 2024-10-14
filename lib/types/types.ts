@@ -16,7 +16,8 @@ export type ProductType = Database["public"]["Tables"]["products"]["Row"];
 
 export type PriceType = Database["public"]["Tables"]["prices"]["Row"];
 
-export type PaymentType = Database["public"]["Tables"]["payments"]["Row"];
+export type OrderItemInsertType = Database["public"]["Tables"]["order_items"]["Insert"];
+
 
 export type EnhancedCartItemType =  {
     id: string;
@@ -25,3 +26,41 @@ export type EnhancedCartItemType =  {
     book: BookType;
     product: ProductType;
   }
+
+
+  export type EmailType =
+  | "contact"
+  | "newsletter"
+  | "order-confirmation"
+  | "shipping-confirmation"
+  | "delivery-confirmation";
+
+interface BaseEmailData {
+  email: string;
+}
+
+export interface ContactEmailData extends BaseEmailData {
+  name: string;
+  message: string;
+}
+
+export interface NewsletterEmailData extends BaseEmailData {
+  content: string;
+}
+
+
+export interface OrderConfirmationEmailData extends BaseEmailData {
+  orderId: string;
+  orderItems: OrderItemInsertType[];
+  totalAmount: string;
+}
+
+export interface ShippingConfirmationEmailData extends BaseEmailData {
+  orderId: string;
+  trackingNumber: string;
+  shippingProvider: string;
+}
+
+export interface DeliveryConfirmationEmailData extends BaseEmailData {
+  orderId: string;
+}

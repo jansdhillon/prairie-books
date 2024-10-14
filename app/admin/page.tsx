@@ -11,10 +11,9 @@ import {
 import { EllipsisIcon } from "lucide-react";
 import { fetchBooks } from "../actions/fetch-books";
 import { redirect } from "next/navigation";
-import { getUserAndUserData } from "@/app/actions/get-user";
+
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { getOrdersByUserId } from "../actions/get-orders";
 import { deleteBook } from "../actions/delete-book";
 import { Message } from "@/components/form-message";
 import { DeleteBookForm } from "@/components/delete-book-form";
@@ -30,27 +29,45 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { format } from "date-fns";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import { getProductByBookId } from "../actions/get-product";
+import { getUserDataAction } from "../actions/get-user";
+import { createClient } from "@/utils/supabase/server";
+import { getErrorRedirect } from "@/utils/helpers";
+import { getOrdersWithOrderItems } from "@/utils/supabase/queries";
 
 export default async function AdminDashboard({
   searchParams,
 }: {
   searchParams: Message;
 }) {
-  const data = await getUserAndUserData();
-
-  const user = data?.user;
-  const userData = data?.userData;
-
-  if (!user || userData.is_admin !== true) {
-    return redirect("/");
+  const { data: userData, error: authError } = await getUserDataAction();
+  if (authError || userData.is_admin !== true) {
+    redirect("/sign-in");
   }
 
   const books = await fetchBooks();
 
-  const orders = await getOrdersByUserId(user.id);
+  const supabase = createClient();
+
+  const { data: orders, error } = await getOrdersWithOrderItems(
+    supabase,
+    userData.id
+  );
+
+
+
+  if (error) {
+    console.error("Error fetching orders:", error.message);
+    redirect(
+      getErrorRedirect("/admin", "Error fetching orders", error.message)
+    );
+  }
 
   return (
     <div className="space-y-8 px-0">
@@ -147,7 +164,7 @@ export default async function AdminDashboard({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {orders.map((order) => (
+                  {orders?.map((order) => (
                     <TableRow key={order.id}>
                       <TableCell>{order.id}</TableCell>
                       <TableCell>{order.user?.name}</TableCell>
@@ -157,7 +174,7 @@ export default async function AdminDashboard({
                       <TableCell>{order.payment?.status}</TableCell>
                     </TableRow>
                   ))}
-                  {orders.length === 0 && (
+                  {orders?.length === 0 && (
                     <TableRow>
                       <TableCell colSpan={4} align={"center"}>
                         No Orders

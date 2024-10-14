@@ -1,49 +1,61 @@
-import { redirect } from "next/navigation";
-import { Button } from "@/components/ui/button";
+"use client";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft } from "lucide-react";
-import { getOrderAction } from "@/app/actions/get-order-by-id";
-import Link from "next/link";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import Loading from "../loading";
+import { postData } from "@/utils/helpers";
 import Image from "next/image";
-import { OrderItemType } from "@/lib/types/types";
 
-export default async function OrderDetailsPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const orderId = params.id;
+export default function SuccessPage() {
+  const [order, setOrder] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
-  if (!orderId) {
-    return redirect("/");
-  }
+  const sessionId = searchParams?.get("session_id");
 
+  useEffect(() => {
+    if (!sessionId) {
+      router.push("/");
+    }
 
-  const { data, error } = await getOrderAction(orderId);
+    const fetchOrderDetails = async () => {
+      try {
+        const res = await postData({
+          url: "/api/get-order-details",
+          data: { session_id: sessionId },
+        });
 
-  if (error || !data) {
-    console.error("Error fetching order details:", error);
-    return redirect("/");
-  }
+        setOrder(res?.orderWithItems);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchOrderDetails();
+  }, [sessionId]);
 
   return (
-    <div className="container mx-auto w-full space-y-8">
-      <div>
-        <Link href="/">
-          <Button variant="ghost">
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Orders
-          </Button>
-        </Link>
-      </div>
+    <div className="container mx-auto p-6 space-y-8">
+      <h1 className="text-3xl font-bold">Thank you for your purchase!</h1>
+      <p>Your order has been successfully processed.</p>
 
       <div className="space-y-6">
         <Card>
           <CardHeader>
             <CardTitle>Order Summary</CardTitle>
           </CardHeader>
-          <CardContent>
-          <Table>
+          {!isLoading ? (
+            <CardContent>
+              <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Book</TableHead>
@@ -53,7 +65,7 @@ export default async function OrderDetailsPage({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data?.map((item: any) => (
+                  {order?.map((item: any) => (
                     <TableRow key={item.id}>
                       <TableCell>
                         {item?.image_directory && (
@@ -72,7 +84,10 @@ export default async function OrderDetailsPage({
                   ))}
                 </TableBody>
               </Table>
-          </CardContent>
+            </CardContent>
+          ) : (
+            <Loading />
+          )}
         </Card>
       </div>
     </div>
