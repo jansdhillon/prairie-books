@@ -74,7 +74,7 @@ export default async function HomePage() {
 
         <BookDisplay books={featuredBooks} />
       </section>
-      <section className="space-y-6">
+      {/* <section className="space-y-6">
         <h2 className="text-3xl font-semibold mb-2">What Readers Are Saying</h2>
 
         <Separator />
@@ -94,7 +94,7 @@ export default async function HomePage() {
           </p>
           <p className="mt-2 text-right ">- B. Bean</p>
         </div>
-      </section>
+      </section> */}
       <section className="space-y-6">
         <h2 className="text-3xl font-semibold mb-2">About</h2>
 
