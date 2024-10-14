@@ -10,14 +10,10 @@ export default async function Layout({
 }) {
   const supabase = createClient();
 
-  const { data: {authUser, usersData}, error } = await getAllUserData(supabase);
+  const { data: userData, error } = await getAllUserData(supabase);
 
-  if (!authUser || error) {
-    getErrorRedirect(
-      "error",
-      "/sign-in",
-      "You must be signed in to view this page"
-    );
+  if (error) {
+    return encodedRedirect("error", "/sign-in", error.message);
   }
 
 

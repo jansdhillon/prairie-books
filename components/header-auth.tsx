@@ -6,14 +6,13 @@ import { getAllUserData } from "@/utils/supabase/queries";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { getErrorRedirect } from "@/utils/helpers";
+import { encodedRedirect } from "@/utils/utils";
 
 export default async function AuthButton() {
   const supabase = createClient();
-  const { data: userData, error: authError} = await getAllUserData(supabase);
+  const { data: userData} = await getAllUserData(supabase);
 
-  if (authError){
-    redirect(getErrorRedirect("/sign-in", "Error fetching user data", authError.message));
-  }
+
 
   if (!userData) {
     return (

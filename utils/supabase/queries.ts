@@ -2,17 +2,18 @@ import { EnhancedCartItemType, OrderItemType } from "@/lib/types/types";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { cache } from "react";
 
-export const getAllUserData = cache(async (supabase: SupabaseClient) => {
+export const getAllUserData = async (supabase: SupabaseClient) => {
   const { data: user, error: authError } = await supabase.auth.getUser();
 
   if (authError) {
+    console.error("Error fetching user data:", authError.message);
     return { data: null, error: authError };
   }
 
   const {data: userData} = await getUserDataById(supabase, user.user.id);
 
   return { data: userData, error: authError };
-});
+};
 
 export const getUserDataById = async (
   supabase: SupabaseClient,
