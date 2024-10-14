@@ -56,6 +56,6 @@ export const removeFromCartAction = async (cartItemId: string) => {
     }
 
     return redirect(
-      getStatusRedirect("/cart", "Success", "Item removed from cart")
+      getStatusRedirect("/cart", "Item removed from cart")
     );
   };

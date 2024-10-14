@@ -1,16 +1,10 @@
 import HeaderAuth from "@/components/header-auth";
-import { ThemeSwitcher } from "@/components/theme-switcher";
 import { GeistSans } from "geist/font/sans";
 import { ThemeProvider } from "next-themes";
-import Link from "next/link";
 import "./globals.css";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
-import Head from "next/head";
 import Feedback from "@/components/feedback";
-import { Suspense } from "react";
-import Loading from "./loading";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Toaster } from "@/components/ui/toaster";
 import { Viewport } from "next";
 import { getURL } from "@/utils/helpers";
@@ -34,20 +28,22 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={GeistSans.className} suppressHydrationWarning>
-      <body >
+      <body>
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >
-          <main className="flex-1 mt-10 bg-background text-primary font-normal container  mx-auto max-w-5xl flex flex-col space-y-12   px-8 md:px-12 py-8">
+          <div className="bg-background h-full flex flex-col justify-between ">
             <Nav headerAuth={<HeaderAuth />} />
+            <main className="mt-20   text-primary font-normal container  mx-auto max-w-5xl flex flex-col space-y-12   px-8 md:px-12 py-8">
+              <Feedback>{children}</Feedback>
+            </main>
+            <Footer />
+          </div>
 
-            <Feedback>{children}</Feedback>
-          </main>
           <Toaster />
-          <Footer />
         </ThemeProvider>
       </body>
     </html>

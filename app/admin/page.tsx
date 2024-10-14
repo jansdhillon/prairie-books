@@ -28,7 +28,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { format } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -202,11 +202,12 @@ export default async function AdminDashboard() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Title</TableHead>
-                    <TableHead>Price</TableHead>
                     <TableHead className="hidden md:table-cell">
                       Author
                     </TableHead>
-                    <TableHead className="hidden md:table-cell">Date</TableHead>
+                    <TableHead>Price</TableHead>
+
+                    <TableHead className="hidden md:table-cell">Posted</TableHead>
                     <TableHead className="p-0 md:px-4">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -217,13 +218,14 @@ export default async function AdminDashboard() {
                       <TableCell>
                         <Link href={`/books/${book.id}`}>{book.title}</Link>
                       </TableCell>
-
-                      <TableCell>${book.price?.toFixed(2)}</TableCell>
                       <TableCell className="hidden md:table-cell">
                         {book.author}
                       </TableCell>
+
+                      <TableCell>${book.price?.toFixed(2)}</TableCell>
+
                       <TableCell className="hidden md:table-cell">
-                        {format(new Date(book.created_at), "MM-dd-yyyy")}
+                        {formatDistanceToNow(new Date(book.created_at), { addSuffix: true })}
                       </TableCell>
                       <TableCell className="hidden md:flex space-x-4">
                         <Link href={`/admin/edit/${book.id}`}>

@@ -1,6 +1,5 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { Resend } from "resend";
 
 import { ContactEmailTemplate } from "@/components/email-templates/contact";
@@ -38,7 +37,7 @@ export const sendEmail = async (data: EmailData, type: EmailType) => {
 
         if (!name || !email || !message) {
           console.error("Missing required fields for contact email");
-          return redirect("/contact");
+          throw new Error("Missing required fields for contact email");
         }
 
         emailTemplate = (
@@ -54,7 +53,6 @@ export const sendEmail = async (data: EmailData, type: EmailType) => {
 
         if (!email || !content) {
           console.error("Missing required fields for newsletter email");
-          return redirect("/newsletter");
         }
 
         emailTemplate = <NewsletterTemplate  content={content} />;
@@ -69,7 +67,7 @@ export const sendEmail = async (data: EmailData, type: EmailType) => {
 
         if (!email || !orderId || !orderItems || !totalAmount) {
           console.error("Missing required fields for order confirmation email");
-          return redirect("/");
+          throw new Error("Missing required fields for order confirmation email");
         }
 
         emailTemplate = (
@@ -97,7 +95,7 @@ export const sendEmail = async (data: EmailData, type: EmailType) => {
           console.error(
             "Missing required fields for shipping confirmation email"
           );
-          return redirect("/");
+          throw new Error("Missing required fields for shipping confirmation email");
         }
 
         emailTemplate = (
@@ -119,7 +117,7 @@ export const sendEmail = async (data: EmailData, type: EmailType) => {
           console.error(
             "Missing required fields for delivery confirmation email"
           );
-          return redirect("/");
+          throw new Error("Missing required fields for delivery confirmation email");
         }
 
         emailTemplate = (
@@ -132,7 +130,7 @@ export const sendEmail = async (data: EmailData, type: EmailType) => {
 
       default:
         console.error("Invalid email type");
-        return redirect("/");
+        throw new Error("Invalid email type");
     }
 
     await resend.emails.send({
@@ -142,9 +140,7 @@ export const sendEmail = async (data: EmailData, type: EmailType) => {
       react: emailTemplate,
     });
 
-    return redirect("/success");
   } catch (error) {
     console.error("Error sending email:", error);
-    return redirect("/");
   }
 };

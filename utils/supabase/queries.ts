@@ -96,59 +96,72 @@ export const createCart = async (supabase: SupabaseClient, userId: string) => {
 
 export const getOrCreateCart = cache(
   async (supabase: SupabaseClient, userId: string) => {
-    const { data: cart, error: cartError } = await getCartByUserId(supabase, userId);
+    const { data: existingCart, error: existingCartError } = await getCartByUserId(supabase, userId);
 
-    if (cartError) {
-      return { error: cartError };
+    if (existingCartError) {
+      return { error: existingCartError };
     }
 
-    if (cart) {
-      return { data: cart, error: null };
+    let cart;
+    if (existingCart) {
+      cart = existingCart;
+    } else {
+      const { data: newCart, error: newCartError } = await createCart(supabase, userId);
+
+      if (newCartError) {
+        return { error: newCartError };
+      }
+
+      cart = newCart;
     }
 
-    const { data: newCart, error: newCartError } = await createCart(supabase, userId);
+    const { data: cartItemsData, error: cartItemsError } = await supabase
+      .from('cart_items')
+      .select(`
+        *,
+        product:products(*),
+        book:books(*),
+        product_price:products!inner(prices(*))
+      `)
+      .eq('cart_id', cart.id);
 
+    if (cartItemsError) {
+      return { error: cartItemsError };
+    }
 
     let amount = 0;
-    let cartDetails = {
-      id: newCart?.id,
-      total: amount,
-      cart_items: [] as EnhancedCartItemType[],
-    };
+    let cartItems: EnhancedCartItemType[] = [];
 
-    for (const item of newCart.cart_items) {
-      const price = item.product.price[item.product.price.length - 1];
-
+    for (const item of cartItemsData) {
       const quantity = item.quantity;
 
-      const { data: currentBook, error: bookError } = await supabase
-        .from("books")
-        .select("*")
-        .eq("id", item.book_id)
-        .single();
-
-      if (bookError) {
-        throw new Error(`Error fetching book stock: ${bookError.message}`);
-      }
+      const currentBook = item.book;
 
       if (currentBook.stock < quantity) {
         throw new Error(`Insufficient stock for book with id ${item.book_id}.`);
       }
 
-      amount += (quantity * price.unit_amount) / 100;
+      // Get the latest price
+      const price = item.product_price.prices[0].unit_amount;
 
-      cartDetails.cart_items?.push({
+      amount += (quantity * price) / 100;
+
+      cartItems.push({
         id: item.id,
-        price: price.unit_amount / 100,
+        price: price / 100,
         quantity: quantity,
         book: currentBook,
         product: item.product,
       });
     }
 
-    cartDetails.total = amount;
+    const cartDetails = {
+      id: cart.id,
+      total: amount,
+      cart_items: cartItems,
+    };
 
-    return { data: cartDetails, error: cartError };
+    return { data: cartDetails, error: null };
   }
 );
 

@@ -38,7 +38,7 @@ export const deleteBook = async (formData: FormData) => {
     console.error("Error deleting images from Google Cloud Storage:", error);
   }
 
-  await supabase.from("books").delete().eq("id", book.id);
+
 
   const { data: product, error: productError } = await getProductAndPriceByBookId(supabase, book.id);
 
@@ -51,11 +51,27 @@ export const deleteBook = async (formData: FormData) => {
     return encodedRedirect("error", "/admin", "Product not found.");
   }
 
-  for (const price of product.prices.data) {
+  console.log("product", product);
+
+  for (const price of product.prices) {
     await stripe.prices.update(price.id, { active: false });
   }
 
-  await stripe.products.del(productId);
+  await stripe.products.update(product.id, { active: false });
+
+
+  const { error: deleteBookError } = await supabase
+    .from("books")
+    .delete()
+    .eq("id", bookId);
+
+
+  if (deleteBookError) {
+    console.error("Error deleting book:", deleteBookError.message);
+    return encodedRedirect("error", "/admin", "Failed to delete book.");
+  }
+
+  return encodedRedirect("success", "/admin", "Book deleted successfully.");
 
 
 

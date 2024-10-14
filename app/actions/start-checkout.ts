@@ -30,6 +30,10 @@ export const startCheckoutAction = async () => {
     userData.id
   );
 
+  if (cartError){
+    return encodedRedirect("error", "/", "Error fetching cart details");
+  }
+
   return {
     amount: cartDetails.total,
     cartDetails: cartDetails.cart_items,

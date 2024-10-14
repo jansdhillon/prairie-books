@@ -349,6 +349,7 @@ async function handleCheckoutSucceeded(session: Stripe.Checkout.Session) {
           `Error reducing stock for book ID ${item.book_id}:`,
           stockUpdateError.message
         );
+        throw new Error("Error reducing stock for book.");
       }
     }
 
@@ -360,7 +361,7 @@ async function handleCheckoutSucceeded(session: Stripe.Checkout.Session) {
 
     if (cartFetchError || !cartData) {
       console.error("Error fetching cart data:", cartFetchError?.message);
-      return;
+      throw new Error("Error fetching cart data.");
     }
 
     const cartId = cartData.id;
@@ -372,10 +373,10 @@ async function handleCheckoutSucceeded(session: Stripe.Checkout.Session) {
 
     if (cartClearError) {
       console.error("Error clearing cart items:", cartClearError.message);
+      throw new Error("Error clearing cart items.");
     }
   } catch (error: any) {
     console.error("Error placing order:", error?.message);
-    return;
   }
 }
 

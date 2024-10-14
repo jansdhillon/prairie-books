@@ -1,10 +1,6 @@
-"use server";
+"use server";;
 import { getStatusRedirect } from "@/utils/helpers";
-import {
-  createCart,
-  getOrCreateCart,
-  getProductAndPriceByBookId,
-} from "@/utils/supabase/queries";
+import { getOrCreateCart, getProductAndPriceByBookId } from "@/utils/supabase/queries";
 import { createClient } from "@/utils/supabase/server";
 import { encodedRedirect } from "@/utils/utils";
 import { redirect } from "next/navigation";
@@ -31,10 +27,6 @@ export const addToCartAction = async (formData: FormData) => {
 
   if (!product) {
     return encodedRedirect("error", "/books", "Product not found.");
-  }
-
-  if (!bookId) {
-    return encodedRedirect("error", "/books", "Book ID is required.");
   }
 
   const {
@@ -90,5 +82,5 @@ export const addToCartAction = async (formData: FormData) => {
     }
   }
 
-  return redirect(getStatusRedirect("/cart", "Success", "Item added to cart!"));
+  return redirect(getStatusRedirect("/cart", "Item added to cart."));
 };
