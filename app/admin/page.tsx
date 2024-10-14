@@ -58,7 +58,11 @@ export default async function AdminDashboard() {
 
   const { data: userData } = await getUserDataById(supabase, user?.user!.id);
   if (userData.is_admin !== true) {
-    redirect("/sign-in");
+    return encodedRedirect(
+      "error",
+      "/",
+      "You must be an admin to view this page"
+    );
   }
 
   const books = await fetchBooks();
