@@ -182,7 +182,7 @@ export default function AddBookForm({
             placeholder="English"
           />
         </div>
-        <div className="space-y-2 col-span-2">
+        <div className="space-y-2">
           <Label htmlFor="images">Images</Label>
           <Input
             type="file"
