@@ -35,19 +35,19 @@ const ThemeSwitcher = () => {
             <Sun
               key="light"
               size={ICON_SIZE}
-              className={"text-muted-foreground"}
+              className={"text-muted-foreground fill-muted-foreground hover:fill-primary hover:text-primary active:fill-primary active:text-primary"}
             />
           ) : theme === "dark" ? (
             <Sun
               key="dark"
               size={ICON_SIZE}
-              className={"text-muted-foreground"}
+              className={"text-muted-foreground fill-muted-foreground hover:fill-primary hover:text-primary active:fill-primary active:text-primary"}
             />
           ) : (
             <Sun
               key="system"
               size={ICON_SIZE}
-              className={"text-muted-foreground"}
+              className={"text-muted-foreground fill-muted-foreground hover:fill-primary hover:text-primary active:fill-primary active:text-primary"}
             />
           )}
         </Button>

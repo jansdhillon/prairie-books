@@ -18,8 +18,8 @@ export default async function AuthButton() {
         </Button>
       </form>
       <Link href="/cart">
-        <Button variant={"outline"}>
-          <ShoppingCart className="h-4" />
+        <Button variant={"ghost"}>
+          <ShoppingCart className="h-4 fill-muted-foreground text-muted-foreground" />
         </Button>
       </Link>
     </div>

@@ -1,4 +1,4 @@
-"use client";;
+"use client";
 import { ReactNode, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { NavLink } from "@/components/nav-link";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import Image from "next/image";
 
 const navItems = [
   { href: "/books", label: "Books" },
@@ -41,12 +42,19 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
     <header className="fixed top-0 left-0 right-0 z-50 border-b">
       {/* Logo */}
 
-      <nav className="hidden md:flex space-x-5 items-center justify-center gap-2 py-4 px-12 bg-accent">
-        <Link
-          href="/"
-          className="text-primary text-base font-black  tracking-wider hover:text-muted-foreground pr-2"
-        >
-          Kathrin's Books
+      <nav className="hidden lg:flex space-x-4 items-center justify-center gap-2 py-4 px-12 bg-accent">
+        <Link href="/" className="flex items-center gap-4 ">
+          <div className="w-6 h-6 relative">
+            <Image
+              src="/logo.png"
+              alt="Kathrin's Books"
+              className="object-contain"
+              fill
+            />
+          </div>
+          <div className=" text-primary text-base font-bold  tracking-wider hover:text-muted-foreground min-w-max">
+            Kathrin's Books
+          </div>
         </Link>
         <div className="relative">
           <Input
@@ -76,17 +84,24 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
           </Button> */}
       </nav>
 
-      <div className="flex items-center w-full justify-between md:hidden py-4 px-12 bg-accent ">
-        <Link
-          href="/"
-          className="text-primary text-base font-black line-clamp-1 tracking-wider hover:text-muted-foreground"
-        >
-        Kathrin's Books
+      <div className="flex items-center w-full justify-between lg:hidden py-4 px-12 bg-accent ">
+        <Link href="/" className="flex items-center gap-4 ">
+          <div className="w-6 h-6 relative ">
+            <Image
+              src="/logo.png"
+              alt="Kathrin's Books"
+              className="object-contain"
+              fill
+            />
+          </div>
+          <div className=" text-primary text-base font-bold  tracking-wider hover:text-muted-foreground ">
+            Kathrin's Books
+          </div>
         </Link>
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon">
-              <RxHamburgerMenu className="h-5 w-5" />
+              <RxHamburgerMenu className="h-5 w-5 " />
             </Button>
           </SheetTrigger>
           <SheetContent>
@@ -96,7 +111,9 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
                   <NavLink href={item.href} onClick={() => setIsOpen(false)}>
                     {item.label}
                   </NavLink>
-                  {index !== navItems.length - 1 && <Separator className="my-2" />}
+                  {index !== navItems.length - 1 && (
+                    <Separator className="my-2" />
+                  )}
                 </div>
               ))}
               <div className="relative my-4">

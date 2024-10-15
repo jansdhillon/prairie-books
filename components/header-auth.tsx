@@ -10,8 +10,6 @@ export default async function AuthButton() {
   const supabase = createClient();
   const { data: user } = await supabase.auth.getUser();
 
-
-
   if (!user.user) {
     return (
       <div className="flex gap-5">
@@ -26,7 +24,7 @@ export default async function AuthButton() {
   } else {
     const { data: userData } = await getUserDataById(supabase, user?.user!.id);
     return (
-      <div className="flex items-center gap-3 md:gap-5">
+      <div className="flex items-center gap-3 md:gap-6">
         {userData && userData.is_admin ? (
           <Link href="/admin">
             <Button variant={"outline"} size={"sm"}>
@@ -36,7 +34,7 @@ export default async function AuthButton() {
         ) : null}
         <Link href="/cart">
           <Button variant={"ghost"} size={"sm"}>
-            <ShoppingCart className="h-4 text-muted-foreground" />
+            <ShoppingCart className="h-4 text-muted-foreground fill-muted-foreground" />
           </Button>
         </Link>
         <NavAvatar userData={userData} />

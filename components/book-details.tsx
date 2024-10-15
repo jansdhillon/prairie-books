@@ -159,7 +159,9 @@ export function BookDetails({ book }: BookDetailsProps) {
                     .split(",")
                     .filter((g) => g.trim().length > 0)
                     .map((g) => (
-                      <Badge key={g.trim()}>{g.trim()}</Badge>
+                      <Link href={`/search?query=${g.trim()}`} key={g.trim()}>
+                        <Badge key={g.trim()}>{g.trim()}</Badge>
+                      </Link>
                     ))}
                 </div>
               )}
