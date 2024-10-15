@@ -20,6 +20,7 @@ import { Badge } from "./ui/badge";
 import { BookType, UserType } from "@/lib/types/types";
 import { getUserDataAction } from "@/app/actions/get-user";
 import { Skeleton } from "./ui/skeleton";
+import { imageLoader } from "./book";
 
 type BookDetailsProps = {
   book: BookType;
@@ -89,7 +90,7 @@ export function BookDetails({ book }: BookDetailsProps) {
                     height={600}
                     className="object-contain rounded-xl  h-auto border"
                     sizes="(max-width: 500px) 100vw, 50vw"
-                    priority
+                    loader={imageLoader}
                   />
                 </Suspense>
                 </div>
@@ -112,6 +113,7 @@ export function BookDetails({ book }: BookDetailsProps) {
                         height={800}
                         className="object-contain rounded-xl max-w-full h-auto border "
                         sizes="(max-width: 768px) 100vw, 50vw"
+                        loader={imageLoader}
                       />
                     </Suspense>
                     </div>

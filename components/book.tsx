@@ -1,5 +1,4 @@
-"use client";
-
+"use client";;
 import {
   Card,
   CardContent,
@@ -9,20 +8,21 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { addToCartAction } from "@/app/actions/add-to-cart";
-import { Suspense, useTransition } from "react";
+import { useTransition } from "react";
 import Image from "next/image";
-import { CarouselItem } from "@/components/ui/carousel";
 import { Separator } from "@/components/ui/separator";
-import { ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { BookType } from "@/lib/types/types";
 import { useRouter } from "next/navigation";
-import { Skeleton } from "./ui/skeleton";
 
 type BookProps = {
   book: BookType;
 };
+
+export const imageLoader = ({ src, width, quality }: any) => {
+  return `${src}?w=${width}&q=${quality || 75}`
+}
 
 export function Book({ book }: BookProps) {
   const [isPending, startTransition] = useTransition();
@@ -41,6 +41,7 @@ export function Book({ book }: BookProps) {
     ? `${book.image_directory}image-1.png`
     : "/placeholder.png";
 
+
   return (
     <Card className=" rounded-xl drop-shadow-sm flex flex-col justify-between h-full max-h-[800px] ">
       <CardHeader className="text-muted-foreground ">
@@ -48,7 +49,6 @@ export function Book({ book }: BookProps) {
           href={`/books/${book.id}`}
           className="relative w-full cursor-pointer space-y-4  "
         >
-          <Suspense fallback={<Skeleton className="w-[600px] h-[800px]" />}>
             <Image
               src={coverImage}
               alt={book.title}
@@ -56,9 +56,9 @@ export function Book({ book }: BookProps) {
               height={800}
               className="object-contain rounded-xl border"
               sizes="(max-width: 600px) 100vw, 50vw"
-              priority
+              loader={imageLoader}
             />
-          </Suspense>
+
           <CardTitle className="text-xl font-semibold text-primary line-clamp-2 text-ellipsis ">
             {book.title}
           </CardTitle>
