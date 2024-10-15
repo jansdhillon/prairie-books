@@ -6,7 +6,7 @@ import Link from "next/link";
 export default function ShippingAndDeliveryPage() {
   return (
     <div className="flex flex-1 flex-col space-y-6">
-      <h1 className="text-3xl font-bold text-left">Shipping & Delivery</h1>
+      <h1 className="text-2xl font-bold text-left">Shipping & Delivery</h1>
       <Separator />
 
       <p className="text-lg text-muted-foreground">

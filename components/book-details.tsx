@@ -1,10 +1,5 @@
 "use client";
-
-import {
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { addToCartAction } from "@/app/actions/add-to-cart";
 import { Suspense, useEffect, useState, useTransition } from "react";
@@ -22,8 +17,7 @@ import {
 import Loading from "@/app/loading";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
-import { Database } from "@/utils/database.types";
-import { BookType } from "@/lib/types/types";
+import { BookType, UserType } from "@/lib/types/types";
 import { getUserDataAction } from "@/app/actions/get-user";
 
 type BookDetailsProps = {
@@ -34,9 +28,10 @@ export function BookDetails({ book }: BookDetailsProps) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
-  const coverImage = book.image_directory
-    ? `${book.image_directory}image-1.png`
-    : "/placeholder.png";
+  const coverImage =
+    book.image_directory !== null && book.num_images && book.num_images > 0
+      ? `${book.image_directory}image-1.png`
+      : "/placeholder.png";
 
   const additionalImages =
     book.num_images && book.num_images > 1
@@ -55,9 +50,7 @@ export function BookDetails({ book }: BookDetailsProps) {
     });
   };
 
-  const [userData, setUserData] = useState<
-    Database["public"]["Tables"]["users"]["Row"] | null
-  >(null);
+  const [userData, setUserData] = useState<UserType | null>(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -76,48 +69,50 @@ export function BookDetails({ book }: BookDetailsProps) {
         </Button>
       </div>
       <Suspense fallback={<Loading />}>
-        <Carousel className="mx-6 md:mx-0">
+        <Carousel className="mx-10 md:mx-0">
           <CarouselContent>
             <CarouselItem
-              className={`flex flex-col rounded-xl ${
+              className={`flex flex-col rounded-xl justify-center ${
                 book.num_images && book.num_images > 1
                   ? "md:basis-1/2 lg:basis-1/3"
                   : ""
               }`}
             >
               <Link href={coverImage}>
-                <div className="relative w-full cursor-pointer">
+                <div className="relative cursor-pointer mb-5 flex justify-center ">
                   <Image
                     src={coverImage}
                     alt={book.title}
-                    width={600}
-                    height={800}
-                    className="object-contain rounded-xl"
-                    sizes="(max-width: 768px) 100vw, 50vw"
+                    width={400}
+                    height={600}
+                    className="object-contain rounded-xl  h-auto border"
+                    sizes="(max-width: 500px) 100vw, 50vw"
                     priority
                   />
                 </div>
               </Link>
             </CarouselItem>
-            {book?.image_directory !== null && additionalImages.map((image, index) => (
-              <CarouselItem
-                key={index}
-                className="flex flex-col md:basis-1/2 lg:basis-1/3 rounded-xl justify-center"
-              >
-                <Link href={image}>
-                  <div className="relative w-full cursor-pointer mb-5">
-                    <Image
-                      src={image}
-                      alt={`${book.title} - Image ${index + 2}`}
-                      width={600}
-                      height={800}
-                      className="object-contain rounded-xl"
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                    />
-                  </div>
-                </Link>
-              </CarouselItem>
-            ))}
+            {/* Additional Images */}
+            {book?.image_directory !== null &&
+              additionalImages.map((image, index) => (
+                <CarouselItem
+                  key={index}
+                  className="flex flex-col md:basis-1/2 lg:basis-1/3 rounded-xl justify-center"
+                >
+                  <Link href={image}>
+                    <div className="relative cursor-pointer mb-5 flex justify-center">
+                      <Image
+                        src={image}
+                        alt={`${book.title} - Image ${index + 2}`}
+                        width={600}
+                        height={800}
+                        className="object-contain rounded-xl max-w-full h-auto border "
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                      />
+                    </div>
+                  </Link>
+                </CarouselItem>
+              ))}
           </CarouselContent>
           {book && (book.num_images ?? 0) > 1 && (
             <>
@@ -133,7 +128,7 @@ export function BookDetails({ book }: BookDetailsProps) {
           <CardHeader className="text-muted-foreground">
             <div className="flex md:flex-col justify-between items-start flex-row">
               <div className="flex items-baseline">
-                <CardTitle className="text-3xl font-semibold text-primary mb-4">
+                <CardTitle className="text-2xl font-semibold text-primary mb-4">
                   {book.title}
                 </CardTitle>
                 {userData && userData?.is_admin && (
@@ -178,9 +173,7 @@ export function BookDetails({ book }: BookDetailsProps) {
               )}
               {book.publisher && (
                 <p>
-                  <span className="text-primary font-semibold">
-                    Publisher:
-                  </span>{" "}
+                  <span className="text-primary font-semibold">Publisher:</span>{" "}
                   {book.publisher || "Not specified"}
                 </p>
               )}
@@ -192,9 +185,7 @@ export function BookDetails({ book }: BookDetailsProps) {
               )}
               {book.condition && (
                 <p>
-                  <span className="text-primary font-semibold">
-                    Condition:
-                  </span>{" "}
+                  <span className="text-primary font-semibold">Condition:</span>{" "}
                   {book.condition || "Not specified"}
                 </p>
               )}

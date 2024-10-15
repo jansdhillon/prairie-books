@@ -46,7 +46,7 @@ export default async function HomePage() {
 
 
       <section className="space-y-6">
-        <h2 className="text-3xl font-semibold">Latest Books</h2>
+        <h2 className="text-xl font-semibold">Latest Books</h2>
 
         <Separator />
         <p className="text-lg mb-6 text-muted-foreground">Just listed.</p>
@@ -63,7 +63,7 @@ export default async function HomePage() {
         </Link>
       </section>
       <section className="space-y-6">
-        <h2 className="text-3xl font-semibold" id="featured">
+        <h2 className="text-xl font-semibold" id="featured">
           Featured
         </h2>
 
@@ -75,7 +75,7 @@ export default async function HomePage() {
         <BookDisplay books={featuredBooks} />
       </section>
       {/* <section className="space-y-6">
-        <h2 className="text-3xl font-semibold mb-2">What Readers Are Saying</h2>
+        <h2 className="text-2xl font-semibold mb-2">What Readers Are Saying</h2>
 
         <Separator />
         <div className="p-4 space-y-4">
@@ -96,7 +96,7 @@ export default async function HomePage() {
         </div>
       </section> */}
       <section className="space-y-6">
-        <h2 className="text-3xl font-semibold mb-2">About</h2>
+        <h2 className="text-xl font-semibold mb-2">About</h2>
 
         <Separator />
 

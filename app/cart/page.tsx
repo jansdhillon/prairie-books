@@ -80,7 +80,7 @@ export default function CartPage() {
 
   return (
     <div className="flex flex-1 flex-col space-y-6">
-      <h1 className="text-3xl font-bold text-left">Your Cart</h1>
+      <h1 className="text-2xl font-bold text-left">Your Cart</h1>
 
       <p className="text-lg text-muted-foreground">
         Review and manage the items in your cart.
@@ -90,48 +90,42 @@ export default function CartPage() {
         <Loading />
       ) : (
         <>
-
-          <Card className="hidden md:block">
+          <Card className="hidden md:block ">
             <Table>
-              <TableHeader>
-                <TableRow>
+              <TableHeader >
+                <TableRow >
                   <TableHead>Book</TableHead>
                   <TableHead>Title</TableHead>
                   <TableHead>Author</TableHead>
-                  <TableHead className="text-center" colSpan={2}>
-                    Actions
-                  </TableHead>
-                  <TableHead>Price</TableHead>
+                  <TableHead className="text-center opacity-0">Actions</TableHead>
+                  <TableHead >Price</TableHead>
                 </TableRow>
               </TableHeader>
-              <TableBody>
+              <TableBody >
                 {cartItems?.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center">
+                    <TableCell colSpan={5} className="text-center">
                       Your cart is empty.
                     </TableCell>
                   </TableRow>
                 ) : (
                   cartItems?.map((item: EnhancedCartItemType) => (
                     <TableRow key={item.id}>
-                      <TableCell>
+                      <TableCell className="text-start">
                         <Image
-                          src={`${item.book.image_directory}image-1.png`}
+                          src={
+                            item.book.image_directory !== null
+                              ? `${item.book.image_directory}image-1.png`
+                              : "/placeholder.png"
+                          }
                           alt={item.book.title}
                           width={50}
                           height={75}
                         />
                       </TableCell>
-                      <TableCell>{item.book.title}</TableCell>
-                      <TableCell>{item.book.author}</TableCell>
-                      <TableCell>
-                        <Button
-                          variant="ghost"
-                          onClick={() => router.push(`/books/${item.book.id}`)}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
+                      <TableCell className="text-start">{item.book.title}</TableCell>
+                      <TableCell className="text-start">{item.book.author}</TableCell>
+
                       <TableCell>
                         <Button
                           variant="ghost"
@@ -139,22 +133,30 @@ export default function CartPage() {
                         >
                           <Trash className="h-4 w-4 text-destructive" />
                         </Button>
+                        <Button
+                          variant="ghost"
+                          onClick={() => router.push(`/books/${item.book.id}`)}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
                       </TableCell>
-                      <TableCell>${item.price.toFixed(2)}</TableCell>
+                      <TableCell className="text-start">
+                        ${item.price.toFixed(2)}
+                      </TableCell>
                     </TableRow>
                   ))
                 )}
               </TableBody>
 
-              <TableFooter className="text-end">
+              <TableFooter >
                 <TableRow>
-                  <TableCell colSpan={5} className="text-right">
+                  <TableCell colSpan={4} className="text-right">
                     Shipping:
                   </TableCell>
                   <TableCell>${shippingCost.toFixed(2)}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell colSpan={5} className="text-right font-bold">
+                  <TableCell colSpan={4} className="text-right font-bold">
                     Total:
                   </TableCell>
                   <TableCell className="font-bold">
@@ -163,17 +165,16 @@ export default function CartPage() {
                 </TableRow>
               </TableFooter>
             </Table>
-
           </Card>
           <div className="hidden md:flex justify-end items-center">
-              <Button
-                variant="default"
-                onClick={handleCheckout}
-                disabled={cartItems?.length === 0}
-              >
-                Proceed to Checkout
-              </Button>
-            </div>
+            <Button
+              variant="default"
+              onClick={handleCheckout}
+              disabled={cartItems?.length === 0}
+            >
+              Proceed to Checkout
+            </Button>
+          </div>
 
           <div className="block md:hidden space-y-4">
             {cartItems?.length === 0 ? (
@@ -206,21 +207,18 @@ export default function CartPage() {
                       size="sm"
                       onClick={() => router.push(`/books/${item.book.id}`)}
                     >
-                      <Eye className="h-4 w-4 mr-1" />
-                      View
+                      <Eye className="h-4 w-4 " />
                     </Button>
                     <Button
-                      variant="destructive"
+                      variant="ghost"
                       size="sm"
                       onClick={() => handleRemoveFromCart(item.id)}
                     >
-                      <Trash className="h-4 w-4 mr-1" />
-                      Remove
+                      <Trash className="h-4 w-4 text-destructive" />
                     </Button>
                   </div>
                 </Card>
               ))
-
             )}
             {cartItems && cartItems.length > 0 && (
               <Card className="p-4">
@@ -246,8 +244,6 @@ export default function CartPage() {
                 </Button>
               </Card>
             )}
-
-
           </div>
         </>
       )}

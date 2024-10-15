@@ -1,15 +1,4 @@
-"use client";
-
-import { useState } from "react";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogHeader,
-  AlertDialogTrigger,
-} from "./ui/alert-dialog";
-import { Label } from "./ui/label";
-import { Separator } from "./ui/separator";
+"use client";;
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -19,7 +8,6 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { signOutAction } from "@/app/actions/sign-out";
-import { Button } from "./ui/button";
 import Link from "next/link";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { UserType } from "@/lib/types/types";

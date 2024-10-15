@@ -21,7 +21,7 @@ export default async function SearchPage({
 
   return (
     <div className="flex flex-1 flex-col space-y-6">
-      <h1 className="text-3xl font-bold text-left">Search Results</h1>
+      <h1 className="text-2xl font-bold text-left">Search Results</h1>
       <Separator />
 
       <form className="flex w-full max-w-sm items-center space-x-2">

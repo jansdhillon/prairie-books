@@ -23,7 +23,7 @@ export default function ContactPage({
   };
   return (
     <div className="flex flex-1 flex-col space-y-6">
-      <h1 className="text-3xl font-bold text-left">Contact</h1>
+      <h1 className="text-2xl font-bold text-left">Contact</h1>
       <Separator />
 
       <p className="text-lg text-muted-foreground">

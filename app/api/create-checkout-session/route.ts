@@ -1,10 +1,23 @@
 import { NextResponse } from 'next/server';
 import { stripe } from '@/utils/stripe/config';
 import { getURL } from '@/utils/helpers';
+import { BookType } from '@/lib/types/types';
 
 export async function POST(req: Request) {
   const body = await req.json();
   const { cartItems, total, userId } = body;
+
+
+  const images = (book: BookType) => {
+    if (!book.num_images || book.num_images < 1) {
+      return ['/placeholder.png'];
+    } else {
+      return Array.from(
+        { length: book.num_images },
+        (_, i) => `${book.image_directory}image-${i + 1}.png`
+      );
+    }
+  };
 
   try {
     const session = await stripe.checkout.sessions.create({
@@ -15,7 +28,7 @@ export async function POST(req: Request) {
           product_data: {
             name: item.book.title,
             description: item.book.author,
-            images: [`${item.book.image_directory}image-1.png`],
+            images: images(item.book),
           },
           unit_amount: Math.round(item.price * 100),
         },

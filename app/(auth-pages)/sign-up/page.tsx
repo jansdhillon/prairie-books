@@ -8,7 +8,7 @@ import Link from "next/link";
 export default function Signup() {
   return (
     <div className="flex flex-1 flex-col space-y-6 mx-auto text-primary">
-      <h1 className="text-3xl font-bold text-left">Sign Up</h1>
+      <h1 className="text-2xl font-bold text-left">Sign Up</h1>
       <Separator />
       <p className="text-lg text-muted-foreground">
         Already have an account?{" "}

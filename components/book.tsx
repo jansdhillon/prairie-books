@@ -52,7 +52,7 @@ export function Book({ book }: BookProps) {
             alt={book.title}
             width={600}
             height={800}
-            className="object-contain rounded-xl"
+            className="object-contain rounded-xl border"
             sizes="(max-width: 768px) 100vw, 50vw"
             priority
           />
@@ -102,7 +102,7 @@ export function Book({ book }: BookProps) {
             <>
               {book.stock > 0 ? (
                 <>
-                  <ShoppingCart className="mr-2 h-4 w-4" /> $
+                   $
                   {book.price.toFixed(2)}
                 </>
               ) : (
