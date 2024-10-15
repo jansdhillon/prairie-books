@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { EnhancedCartItemType } from "@/lib/types/types";
 import { startCheckoutAction } from "../actions/start-checkout";
@@ -20,6 +20,7 @@ import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Eye, Trash } from "lucide-react";
 import { postData } from "@/utils/helpers";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function CartPage() {
   const router = useRouter();
@@ -92,16 +93,18 @@ export default function CartPage() {
         <>
           <Card className="hidden md:block ">
             <Table>
-              <TableHeader >
-                <TableRow >
+              <TableHeader>
+                <TableRow>
                   <TableHead>Book</TableHead>
                   <TableHead>Title</TableHead>
                   <TableHead>Author</TableHead>
-                  <TableHead className="text-center opacity-0">Actions</TableHead>
-                  <TableHead >Price</TableHead>
+                  <TableHead className="text-center opacity-0">
+                    Actions
+                  </TableHead>
+                  <TableHead>Price</TableHead>
                 </TableRow>
               </TableHeader>
-              <TableBody >
+              <TableBody>
                 {cartItems?.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={5} className="text-center">
@@ -112,19 +115,29 @@ export default function CartPage() {
                   cartItems?.map((item: EnhancedCartItemType) => (
                     <TableRow key={item.id}>
                       <TableCell className="text-start">
-                        <Image
-                          src={
-                            item.book.image_directory !== null
-                              ? `${item.book.image_directory}image-1.png`
-                              : "/placeholder.png"
+                        <Suspense
+                          fallback={
+                            <Skeleton className="w-[50px] h-[75px]" />
                           }
-                          alt={item.book.title}
-                          width={50}
-                          height={75}
-                        />
+                        >
+                          <Image
+                            src={
+                              item.book.image_directory !== null
+                                ? `${item.book.image_directory}image-1.png`
+                                : "/placeholder.png"
+                            }
+                            alt={item.book.title}
+                            width={50}
+                            height={75}
+                          />
+                        </Suspense>
                       </TableCell>
-                      <TableCell className="text-start">{item.book.title}</TableCell>
-                      <TableCell className="text-start">{item.book.author}</TableCell>
+                      <TableCell className="text-start">
+                        {item.book.title}
+                      </TableCell>
+                      <TableCell className="text-start">
+                        {item.book.author}
+                      </TableCell>
 
                       <TableCell>
                         <Button
@@ -148,7 +161,7 @@ export default function CartPage() {
                 )}
               </TableBody>
 
-              <TableFooter >
+              <TableFooter>
                 <TableRow>
                   <TableCell colSpan={4} className="text-right">
                     Shipping:
@@ -183,12 +196,16 @@ export default function CartPage() {
               cartItems?.map((item: EnhancedCartItemType) => (
                 <Card key={item.id} className="flex flex-col p-4">
                   <div className="flex items-center space-x-4">
-                    <Image
-                      src={`${item.book.image_directory}image-1.png`}
-                      alt={item.book.title}
-                      width={75}
-                      height={100}
-                    />
+                    <Suspense
+                      fallback={<Skeleton className="w-[75px] h-[100px]" />}
+                    >
+                      <Image
+                        src={`${item.book.image_directory}image-1.png`}
+                        alt={item.book.title}
+                        width={75}
+                        height={100}
+                      />
+                    </Suspense>
                     <div className="flex-1">
                       <h2 className="text-lg font-semibold">
                         {item.book.title}

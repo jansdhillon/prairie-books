@@ -1,30 +1,34 @@
-"use client";;
+"use client";
 import React, { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SubmitButton } from "./submit-button";
-import { Message } from "./form-message";
 import { Badge } from "./ui/badge";
 import { X } from "lucide-react";
 import { BookType } from "@/lib/types/types";
+import Image from "next/image";
 
 export default function EditBookForm({
   editBookAction,
   book,
-  searchParams,
 }: {
   editBookAction: (formData: FormData) => void;
   book: BookType;
-  searchParams: Message;
 }) {
   const formRef = useRef<HTMLFormElement>(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [deletedImageIndices, setDeletedImageIndices] = useState<number[]>([]);
   const handleSubmit = async (formData: FormData) => {
     setIsSubmitting(true);
     formData.append("genres", genres.join(","));
+    formData.append(
+      "deleted-image-indices",
+      JSON.stringify(deletedImageIndices)
+    );
+
     editBookAction(formData);
     if (formRef.current) {
       formRef.current.reset();
@@ -68,10 +72,27 @@ export default function EditBookForm({
     setGenres(genres.filter((genre) => genre !== genreToRemove));
   };
 
+  const removeImage = (imageToRemove: string, index: number) => {
+    setCurrentImages(currentImages.filter((image) => image !== imageToRemove));
+    setDeletedImageIndices([...deletedImageIndices, index]);
+  };
+
+  const [currentImages, setCurrentImages] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (book.image_directory !== null && book.num_images) {
+      const images = Array.from(
+        { length: book.num_images },
+        (_, i) => `${book.image_directory}image-${i + 1}.png`
+      );
+      setCurrentImages(images);
+    }
+  }, [book.image_directory, book.num_images]);
+
   return (
-    <form className="space-y-2 max-w-2xl mx-auto" ref={formRef}>
+    <form className="space-y-2" ref={formRef}>
       <div className="space-y-2">
-        <h2 className="text-2xl font-bold">Edit Book Details</h2>
+        <h2 className="text-2xl font-bold">Edit Book</h2>
         <p className="text-muted-foreground">
           Update the details of the book below.
         </p>
@@ -103,15 +124,12 @@ export default function EditBookForm({
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="isbn">
-            ISBN<span className="text-destructive">*</span>
-          </Label>
+          <Label htmlFor="isbn">ISBN</Label>
           <Input
             type="text"
             name="isbn"
             id="isbn"
             defaultValue={book?.isbn || ""}
-            required
           />
         </div>
         <div className="space-y-2">
@@ -192,15 +210,7 @@ export default function EditBookForm({
             placeholder="Like New"
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="original-release-date">Original Release Date</Label>
-          <Input
-            type="date"
-            name="original-release-date"
-            id="original-release-date"
-            defaultValue={book?.original_release_date || ""}
-          />
-        </div>
+
         <div className="space-y-2">
           <Label htmlFor="publication-date">Publication Date</Label>
           <Input
@@ -219,7 +229,7 @@ export default function EditBookForm({
             defaultValue={book?.language || ""}
           />
         </div>
-        <div className="space-y-2">
+        <div className="space-y-2 col-span-2">
           <Label htmlFor="images">Images</Label>
           <Input
             type="file"
@@ -228,6 +238,26 @@ export default function EditBookForm({
             accept="image/*"
             multiple
           />
+          <div className="flex flex-wrap gap-2 mt-2">
+            {currentImages.map((image, i) => (
+              <div key={i} className="mt-4 relative">
+                <div
+                  className="absolute top-0 right-0 bg-secondary hover:bg-secondary/80 rounded-full p-1 m-2"
+                  onClick={() => removeImage(image, i)}
+                >
+                  <X className="h-4 w-4 cursor-pointer" />
+                </div>
+                <Image
+                  src={image}
+                  alt={book.title}
+                  width={100}
+                  height={400}
+                  className="object-contain rounded-xl border"
+                  sizes="(max-width: 100px) 100vw, 50vw"
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 

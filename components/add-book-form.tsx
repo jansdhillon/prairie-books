@@ -14,20 +14,25 @@ import { Separator } from "./ui/separator";
 export default function AddBookForm({
   addBookAction,
 }: {
-  addBookAction: (formData: FormData) => void;
+  addBookAction: (formData: FormData) => Promise<void>;
 }) {
   const formRef = useRef<HTMLFormElement>(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const handleSubmit = async (formData: FormData) => {
-    setIsSubmitting(true);
-    formData.append("genres", genres.join(","));
-    addBookAction(formData);
-    if (formRef.current) {
-      formRef.current.reset();
+    try {
+      setIsSubmitting(true);
+      formData.append("genres", genres.join(","));
+      await addBookAction(formData);
+      if (formRef.current) {
+        formRef.current.reset();
+      }
+      setGenres([]);
+    } catch (error) {
+      console.error("Failed to add book: ", error);
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsSubmitting(false);
-    setGenres([]);
   };
 
   const [genres, setGenres] = useState<string[]>([]);
@@ -63,27 +68,43 @@ export default function AddBookForm({
           <Label htmlFor="title">
             Title<span className="text-destructive">*</span>
           </Label>
-          <Input type="text" name="title" id="title" required placeholder="The Count of Monte Cristo" />
+          <Input
+            type="text"
+            name="title"
+            id="title"
+            required
+            placeholder="The Count of Monte Cristo"
+          />
         </div>
         <div className="space-y-2">
           <Label htmlFor="author">
             Author<span className="text-destructive">*</span>
           </Label>
-          <Input type="text" name="author" id="author" required placeholder="Alexandre Dumas" />
+          <Input
+            type="text"
+            name="author"
+            id="author"
+            required
+            placeholder="Alexandre Dumas"
+          />
         </div>
         <div className="space-y-2">
           <Label htmlFor="price">
             Price ($)<span className="text-destructive">*</span>
           </Label>
-          <Input type="number" name="price" id="price" step="0.01" placeholder="10" required />
+          <Input
+            type="number"
+            name="price"
+            id="price"
+            step="0.01"
+            placeholder="10"
+            required
+          />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="isbn">
-            ISBN
-          </Label>
+          <Label htmlFor="isbn">ISBN</Label>
           <Input type="text" name="isbn" id="isbn" />
         </div>
-
         <div className="space-y-2">
           <Label htmlFor="genre">Genre</Label>
           <div className="flex items-center space-x-2">
@@ -154,9 +175,14 @@ export default function AddBookForm({
         </div>
         <div className="space-y-2">
           <Label htmlFor="language">Language</Label>
-          <Input type="text" name="language" id="language" defaultValue={"English"} />
+          <Input
+            type="text"
+            name="language"
+            id="language"
+            placeholder="English"
+          />
         </div>
-        <div className="space-y-2">
+        <div className="space-y-2 col-span-2">
           <Label htmlFor="images">Images</Label>
           <Input
             type="file"

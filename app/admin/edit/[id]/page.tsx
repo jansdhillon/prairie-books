@@ -16,5 +16,5 @@ export default async function EditBookPage({
     return <div>Book not found</div>;
   }
 
-  return <EditBookForm book={book} editBookAction={editBookAction} searchParams={searchParams} />;
+  return <EditBookForm book={book} editBookAction={editBookAction} />;
 }

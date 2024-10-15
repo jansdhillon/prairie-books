@@ -19,6 +19,7 @@ import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { BookType, UserType } from "@/lib/types/types";
 import { getUserDataAction } from "@/app/actions/get-user";
+import { Skeleton } from "./ui/skeleton";
 
 type BookDetailsProps = {
   book: BookType;
@@ -80,6 +81,7 @@ export function BookDetails({ book }: BookDetailsProps) {
             >
               <Link href={coverImage}>
                 <div className="relative cursor-pointer mb-5 flex justify-center ">
+                <Suspense fallback={<Skeleton className="w-[600px] h-[800px]" />}>
                   <Image
                     src={coverImage}
                     alt={book.title}
@@ -89,6 +91,7 @@ export function BookDetails({ book }: BookDetailsProps) {
                     sizes="(max-width: 500px) 100vw, 50vw"
                     priority
                   />
+                </Suspense>
                 </div>
               </Link>
             </CarouselItem>
@@ -101,6 +104,7 @@ export function BookDetails({ book }: BookDetailsProps) {
                 >
                   <Link href={image}>
                     <div className="relative cursor-pointer mb-5 flex justify-center">
+                    <Suspense fallback={<Skeleton className="w-[600px] h-[800px]" />}>
                       <Image
                         src={image}
                         alt={`${book.title} - Image ${index + 2}`}
@@ -109,6 +113,7 @@ export function BookDetails({ book }: BookDetailsProps) {
                         className="object-contain rounded-xl max-w-full h-auto border "
                         sizes="(max-width: 768px) 100vw, 50vw"
                       />
+                    </Suspense>
                     </div>
                   </Link>
                 </CarouselItem>

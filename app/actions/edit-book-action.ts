@@ -1,13 +1,13 @@
 "use server";
-import { Database } from "@/utils/database.types";
 import { stripe } from "@/utils/stripe/config";
-import { upsertPriceRecord, upsertProductRecord } from "@/utils/supabase/admin";
+
 import { getProductByBookId } from "./get-product";
 import { createClient } from "@/utils/supabase/server";
 import { encodedRedirect } from "@/utils/utils";
 import { Storage } from "@google-cloud/storage";
 import { redirect } from "next/navigation";
 import { getStatusRedirect } from "@/utils/helpers";
+import Stripe from "stripe";
 
 export const editBookAction = async (formData: FormData) => {
   const supabase = createClient();
@@ -28,8 +28,6 @@ export const editBookAction = async (formData: FormData) => {
   const edition = formData.get("edition")?.toString().trim() || null;
   const publicationDate =
     formData.get("publication-date")?.toString().trim() || null;
-  const originalReleaseDate =
-    formData.get("original-release-date")?.toString().trim() || null;
   const condition = formData.get("condition")?.toString().trim() || null;
 
   const filteredFiles = files.filter((file) => file.size > 0);
@@ -41,11 +39,11 @@ export const editBookAction = async (formData: FormData) => {
   const bucketName = "kathrins-books-images";
   const storage = new Storage();
 
-  if (!bookId || !title || !author || !isbn || price === null || isNaN(price)) {
+  if (!bookId || !title || !author || price === null || isNaN(price)) {
     return encodedRedirect(
       "error",
-      "/admin/edit",
-      "Title, Author, ISBN, and Price are required, and Price must be a number."
+      "/admin",
+      "Title, Author, and Price are required, and Price must be a number."
     );
   }
 
@@ -64,6 +62,46 @@ export const editBookAction = async (formData: FormData) => {
   }
 
   let imageDirectory = existingBook.image_directory;
+
+  const deletedImageIndicesStr = formData
+    .get("deleted-image-indices")
+    ?.toString()
+    .trim();
+  const deletedImageIndices = deletedImageIndicesStr
+    ? JSON.parse(deletedImageIndicesStr)
+    : [];
+
+  if (deletedImageIndices && deletedImageIndices.length > 0) {
+    for (const deletedImageIndex of deletedImageIndices) {
+      const imageIndex = parseInt(deletedImageIndex, 10);
+      if (imageIndex >= 0 && imageIndex < existingBook.num_images) {
+        const filename = `${directoryPath}image-${imageIndex + 1}.png`;
+        try {
+          await storage.bucket(bucketName).file(filename).delete();
+        } catch (error) {
+          console.error("Error deleting file:", error);
+        }
+      }
+    }
+  }
+
+  const existingNumImages = existingBook.num_images || 0;
+  const imagesToDelete = deletedImageIndices.length;
+
+  const allImageIndices = Array.from(
+    { length: existingNumImages },
+    (_, i) => i
+  );
+
+  const remainingImageIndices = allImageIndices.filter(
+    (index) => !deletedImageIndices.includes(index)
+  );
+
+  const highestExistingIndex =
+    remainingImageIndices.length > 0 ? Math.max(...remainingImageIndices) : -1;
+
+  let nextImageIndex = highestExistingIndex + 1;
+
   if (filteredFiles.length > 0) {
     hasImages = true;
     imageDirectory = `https://storage.googleapis.com/${bucketName}/${directoryPath}`;
@@ -72,7 +110,8 @@ export const editBookAction = async (formData: FormData) => {
       const file = filteredFiles[i];
       if (file && typeof file === "object" && file.size > 0) {
         const buffer = Buffer.from(await file.arrayBuffer());
-        const filename = `${directoryPath}image-${i + 1}.png`;
+        const filename = `${directoryPath}image-${nextImageIndex + 1}.png`;
+        nextImageIndex++;
 
         try {
           await storage.bucket(bucketName).file(filename).save(buffer);
@@ -82,8 +121,9 @@ export const editBookAction = async (formData: FormData) => {
       }
     }
   }
+  const updatedNumImages = remainingImageIndices.length + filteredFiles.length;
 
-  const updatedBook: Partial<Database["public"]["Tables"]["books"]["Update"]> = {
+  const updatedBook = {
     title,
     author,
     isbn,
@@ -96,8 +136,7 @@ export const editBookAction = async (formData: FormData) => {
     is_featured,
     edition,
     publication_date: publicationDate,
-    num_images: hasImages ? numImages : existingBook.num_images,
-    original_release_date: originalReleaseDate,
+    num_images: updatedNumImages,
     condition,
   };
 
@@ -109,26 +148,18 @@ export const editBookAction = async (formData: FormData) => {
   if (updateError) {
     console.error("Error updating book:", updateError.message);
     return redirect(
-      getStatusRedirect(
-        "/admin",
-        "Error",
-        "Failed to update book..."
-      )
+      getStatusRedirect("/admin", "Error", "Failed to update book...")
     );
   }
 
   const product = await getProductByBookId(bookId);
-
-
-
   const productId = product.id;
 
   if (productId) {
     try {
-      const metadata: any = {
+      const metadata: Stripe.MetadataParam = {
         bookId: bookId,
         author,
-        isbn,
         genres: JSON.stringify(genres),
         publisher,
         language,
@@ -137,19 +168,17 @@ export const editBookAction = async (formData: FormData) => {
 
       for (const key in metadata) {
         if (metadata[key]) {
-          metadata[key] = metadata[key].toString().substring(0, 500);
+          metadata[key] = metadata[key]!.toString().substring(0, 500);
         }
       }
 
-
       await stripe.products.update(productId, {
         name: title,
-        description: description || undefined,
+        description: author || undefined,
         metadata,
       });
 
       const existingPrices = product.prices;
-
       const existingPrice = existingPrices[0];
       const existingUnitAmount = existingPrice.unit_amount;
 
@@ -160,15 +189,13 @@ export const editBookAction = async (formData: FormData) => {
           });
         }
 
-        const newPrice = await stripe.prices.create({
+        await stripe.prices.create({
           unit_amount: Math.round(price * 100),
           currency: "cad",
           product: productId,
         });
-
-        await upsertPriceRecord(newPrice);
-
       }
+
     } catch (err) {
       console.error("Error updating Stripe product or price:", err);
       return encodedRedirect(

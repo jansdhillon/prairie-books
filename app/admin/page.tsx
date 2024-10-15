@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { EllipsisIcon } from "lucide-react";
+import { EllipsisIcon, Pen, Trash } from "lucide-react";
 import { fetchBooks } from "../actions/fetch-books";
 import { redirect } from "next/navigation";
 
@@ -168,25 +168,37 @@ export default async function AdminDashboard() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Order ID</TableHead>
-                    <TableHead>Customer</TableHead>
-                    <TableHead>Total</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead>User ID</TableHead>
+                    <TableHead>Order Items</TableHead>
+                    <TableHead>Order Date</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {orders?.map((order) => (
-                    <TableRow key={order.id}>
-                      <TableCell>{order.id}</TableCell>
-                      <TableCell>{order.user?.name}</TableCell>
-                      <TableCell>
-                        ${order.payment?.amount?.toFixed(2)}
-                      </TableCell>
-                      <TableCell>{order.payment?.status}</TableCell>
-                    </TableRow>
-                  ))}
-                  {orders?.length === 0 && (
+                  {orders.length > 0 ? (
+                    orders.map((order) => (
+                      <TableRow key={order.id}>
+                        <TableCell>{order.id}</TableCell>
+                        <TableCell>{order.user_id}</TableCell>
+                        <TableCell>
+                          {order.items.map((item: any) => (
+                            <div key={item.id}>
+                              <Link href={`/books/${item.book_id}`}>
+                                {item.book_title}
+                              </Link>{" "}
+
+                            </div>
+                          ))}
+                        </TableCell>
+                        <TableCell>
+                          {order.ordered_at
+                            ? new Date(order.ordered_at).toLocaleString()
+                            : "N/A"}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
                     <TableRow>
-                      <TableCell colSpan={4} align={"center"}>
+                      <TableCell colSpan={4} className="text-center">
                         No Orders
                       </TableCell>
                     </TableRow>
@@ -204,15 +216,17 @@ export default async function AdminDashboard() {
             <CardContent className=" w-fit md:w-full overflow-hidden container ">
               <Table>
                 <TableHeader>
-                  <TableRow>
+                  <TableRow className="w-full">
                     <TableHead>Title</TableHead>
                     <TableHead className="hidden md:table-cell">
                       Author
                     </TableHead>
                     <TableHead>Price</TableHead>
 
-                    <TableHead className="hidden md:table-cell">Posted</TableHead>
-                    <TableHead className="p-0 md:px-4">Actions</TableHead>
+                    <TableHead className="hidden md:table-cell min-w-[100px]">
+                      Posted
+                    </TableHead>
+                    <TableHead className="">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
 
@@ -229,16 +243,16 @@ export default async function AdminDashboard() {
                       <TableCell>${book.price?.toFixed(2)}</TableCell>
 
                       <TableCell className="hidden md:table-cell">
-                        {formatDistanceToNow(new Date(book.created_at), { addSuffix: true })}
+                        {format(new Date(book.created_at), "MMM dd, yyyy, hh:mm a")}
                       </TableCell>
-                      <TableCell className="hidden md:flex space-x-4">
+                      <TableCell className="hidden md:flex space-x-4 items-center">
                         <Link href={`/admin/edit/${book.id}`}>
-                          <Button>Edit</Button>
+                         <Pen className="h-4 w-4" />
                         </Link>
 
                         <AlertDialog>
-                          <AlertDialogTrigger className="h-10 rounded-md px-4 py-2 bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                            Delete
+                          <AlertDialogTrigger >
+                            <Trash className="h-4 w-4   text-destructive" />
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>

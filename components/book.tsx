@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { addToCartAction } from "@/app/actions/add-to-cart";
-import { useTransition } from "react";
+import { Suspense, useTransition } from "react";
 import Image from "next/image";
 import { CarouselItem } from "@/components/ui/carousel";
 import { Separator } from "@/components/ui/separator";
@@ -18,6 +18,7 @@ import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { BookType } from "@/lib/types/types";
 import { useRouter } from "next/navigation";
+import { Skeleton } from "./ui/skeleton";
 
 type BookProps = {
   book: BookType;
@@ -47,15 +48,17 @@ export function Book({ book }: BookProps) {
           href={`/books/${book.id}`}
           className="relative w-full cursor-pointer space-y-4  "
         >
-          <Image
-            src={coverImage}
-            alt={book.title}
-            width={600}
-            height={800}
-            className="object-contain rounded-xl border"
-            sizes="(max-width: 768px) 100vw, 50vw"
-            priority
-          />
+          <Suspense fallback={<Skeleton className="w-[600px] h-[800px]" />}>
+            <Image
+              src={coverImage}
+              alt={book.title}
+              width={600}
+              height={800}
+              className="object-contain rounded-xl border"
+              sizes="(max-width: 600px) 100vw, 50vw"
+              priority
+            />
+          </Suspense>
           <CardTitle className="text-xl font-semibold text-primary line-clamp-2 text-ellipsis ">
             {book.title}
           </CardTitle>
@@ -101,10 +104,7 @@ export function Book({ book }: BookProps) {
           ) : (
             <>
               {book.stock > 0 ? (
-                <>
-                   $
-                  {book.price.toFixed(2)}
-                </>
+                <>${book.price.toFixed(2)}</>
               ) : (
                 `Sold for $${book.price.toFixed(2)}`
               )}
