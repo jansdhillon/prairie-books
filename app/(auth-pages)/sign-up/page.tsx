@@ -18,10 +18,13 @@ export default function Signup() {
       </p>
 
       <form className="flex-1 flex flex-col text-base text-primary">
-        <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
+        <div className="flex flex-col gap-2 [&>input]:mb-3 ">
           <Label htmlFor="email">Email</Label>
           <Input name="email" placeholder="you@example.com" required />
-
+          <Label htmlFor="firstname">First Name</Label>
+          <Input name="firstname" placeholder="Your first name" required />
+          <Label htmlFor="lastname">Last Name</Label>
+          <Input name="lastname" placeholder="Your last name" required />
           <Label htmlFor="password">Password</Label>
           <Input
             type="password"

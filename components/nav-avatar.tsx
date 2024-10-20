@@ -1,4 +1,4 @@
-"use client";;
+"use client";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -22,21 +22,19 @@ export const NavAvatar = ({ userData }: { userData: UserType }) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuGroup>
-          <Link href="/" className=" text-ellipsis">
-            <DropdownMenuItem className="line-clamp-1">
-              Hello, {userData.email}!
-            </DropdownMenuItem>
-          </Link>
+          <DropdownMenuItem className="line-clamp-1">
+            Hello, {userData.full_name}!
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
 
-          <Link href="/orders">
-            <DropdownMenuItem>Orders</DropdownMenuItem>
+          <Link href="/orders" className="cursor-pointer">
+            <DropdownMenuItem>Your Orders</DropdownMenuItem>
           </Link>
           <DropdownMenuSeparator />
 
           <form action={signOutAction}>
             <button type="submit" className="block w-full cursor-pointer">
-              <DropdownMenuItem>Sign out</DropdownMenuItem>
+              <DropdownMenuItem>Sign Out</DropdownMenuItem>
             </button>
           </form>
         </DropdownMenuGroup>

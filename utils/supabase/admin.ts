@@ -248,6 +248,9 @@ const placeOrder = async (session: Stripe.Checkout.Session) => {
   const sessionId = session.id;
   const userId = session?.metadata?.userId;
 
+  const shippingCost = session.shipping_cost ?? 0;
+  const itemsTotal = session.line_items?.object === "list" ? session.line_items.data.reduce((acc, item) => acc + item.amount_total, 0) : 0;
+
   if (!userId) {
     throw new Error("User ID not found in session metadata");
   }
@@ -255,7 +258,9 @@ const placeOrder = async (session: Stripe.Checkout.Session) => {
   const { data: order, error: orderError } = await createOrder(
     supabaseAdmin,
     userId,
-    sessionId
+    sessionId,
+    itemsTotal,
+    shippingCost as number
   );
 
   if (orderError) {

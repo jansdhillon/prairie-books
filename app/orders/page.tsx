@@ -48,7 +48,7 @@ export default async function OrdersPage() {
           <TableHeader>
             <TableRow>
               <TableHead>Order ID</TableHead>
-              <TableHead>Date</TableHead>
+              <TableHead>Ordered On</TableHead>
               <TableHead>Items</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Actions</TableHead>
@@ -67,7 +67,7 @@ export default async function OrdersPage() {
                   {order.items && order.items.length > 0 ? (
                     order.items.map((item: any) => (
                       <div key={item.id}>
-                        {item.quantity} x {item.book?.title}
+                        {item?.book_title}
                       </div>
                     ))
                   ) : (
