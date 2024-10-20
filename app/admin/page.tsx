@@ -15,7 +15,6 @@ import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { deleteBook } from "../actions/delete-book";
-import { Message } from "@/components/form-message";
 import { DeleteBookForm } from "@/components/delete-book-form";
 import {
   AlertDialog,
@@ -28,7 +27,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { format, formatDistanceToNow } from "date-fns";
+import { format } from "date-fns";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -161,45 +160,67 @@ export default async function AdminDashboard() {
         <TabsContent value="orders" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Recent Orders</CardTitle>
+              <CardTitle>Orders</CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Order ID</TableHead>
-                    <TableHead>User ID</TableHead>
-                    <TableHead>Order Items</TableHead>
+                    <TableHead>Books Ordered</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Total Price</TableHead>
                     <TableHead>Order Date</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {orders.length > 0 ? (
                     orders.map((order) => (
                       <TableRow key={order.id}>
-                        <TableCell>{order.id}</TableCell>
-                        <TableCell>{order.user_id}</TableCell>
                         <TableCell>
                           {order.items.map((item: any) => (
                             <div key={item.id}>
                               <Link href={`/books/${item.book_id}`}>
                                 {item.book_title}
-                              </Link>{" "}
-
+                              </Link>
                             </div>
                           ))}
                         </TableCell>
+                        <TableCell>{order.status || "Pending"}</TableCell>
+                        <TableCell>
+                          $
+                          {order.items_total + order.shipping_cost || order.items
+                            .reduce(
+                              (total: number, item: any) =>
+                                total + item.price * item.quantity,
+                              0
+                            )
+                            .toFixed(2)}
+                        </TableCell>
                         <TableCell>
                           {order.ordered_at
-                            ? new Date(order.ordered_at).toLocaleString()
+                            ? format(
+                                new Date(order.ordered_at),
+                                "MMM dd, yyyy, hh:mm a"
+                              )
                             : "N/A"}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex space-x-2">
+                            <Link href={`/admin/orders/${order.id}`}>
+                              <Button variant="outline" size="sm">
+                                View
+                              </Button>
+                            </Link>
+
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={4} className="text-center">
-                        No Orders
+                      <TableCell colSpan={7} className="text-center">
+                        No Orders Found
                       </TableCell>
                     </TableRow>
                   )}
@@ -243,15 +264,18 @@ export default async function AdminDashboard() {
                       <TableCell>${book.price?.toFixed(2)}</TableCell>
 
                       <TableCell className="hidden md:table-cell">
-                        {format(new Date(book.created_at), "MMM dd, yyyy, hh:mm a")}
+                        {format(
+                          new Date(book.created_at),
+                          "MMM dd, yyyy, hh:mm a"
+                        )}
                       </TableCell>
                       <TableCell className="hidden md:flex space-x-4 items-center">
                         <Link href={`/admin/edit/${book.id}`}>
-                         <Pen className="h-4 w-4" />
+                          <Pen className="h-4 w-4" />
                         </Link>
 
                         <AlertDialog>
-                          <AlertDialogTrigger >
+                          <AlertDialogTrigger>
                             <Trash className="h-4 w-4   text-destructive" />
                           </AlertDialogTrigger>
                           <AlertDialogContent>

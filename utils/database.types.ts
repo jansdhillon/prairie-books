@@ -73,15 +73,7 @@ export type Database = {
           stock?: number
           title?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "books_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       cart: {
         Row: {
@@ -165,15 +157,7 @@ export type Database = {
           id?: string
           stripe_customer_id?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "customers_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       order_items: {
         Row: {
@@ -236,33 +220,32 @@ export type Database = {
       orders: {
         Row: {
           id: string
+          items_total: number | null
           ordered_at: string
           session_id: string | null
+          shipping_cost: number | null
           status: Database["public"]["Enums"]["order_status"] | null
           user_id: string
         }
         Insert: {
           id?: string
+          items_total?: number | null
           ordered_at?: string
           session_id?: string | null
+          shipping_cost?: number | null
           status?: Database["public"]["Enums"]["order_status"] | null
           user_id: string
         }
         Update: {
           id?: string
+          items_total?: number | null
           ordered_at?: string
           session_id?: string | null
+          shipping_cost?: number | null
           status?: Database["public"]["Enums"]["order_status"] | null
           user_id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "orders_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "orders_user_id_fkey1"
             columns: ["user_id"]
@@ -322,13 +305,6 @@ export type Database = {
             columns: ["price_id"]
             isOneToOne: false
             referencedRelation: "prices"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "payments_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -460,13 +436,6 @@ export type Database = {
             referencedRelation: "customers"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "users_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
         ]
       }
     }
@@ -577,4 +546,19 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof PublicSchema["CompositeTypes"]
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
+    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never

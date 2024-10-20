@@ -18,7 +18,7 @@ export default function Login() {
         </Link>
       </p>
       <form className="flex-1 flex flex-col text-base">
-        <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
+        <div className="flex flex-col gap-2 [&>input]:mb-3 ">
           <Label htmlFor="email">Email</Label>
           <Input name="email" placeholder="you@example.com" required />
           <div className="flex justify-between items-center">

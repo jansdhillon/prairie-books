@@ -1,7 +1,7 @@
 "use client";
 import { ReactNode, useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,7 @@ import Image from "next/image";
 
 const navItems = [
   { href: "/books", label: "Books" },
-  { href: "/delivery", label: "Shipping & Delivery" },
+  { href: "/delivery", label: "Shipping" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -22,7 +22,6 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
-  const pathname = usePathname();
 
   const handleSearch = () => {
     if (searchTerm.trim()) {
@@ -40,7 +39,6 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b">
-      {/* Logo */}
 
       <nav className="hidden lg:flex space-x-4 items-center justify-center gap-2 py-4 px-12 bg-accent">
         <Link href="/" className="flex items-center gap-4 ">

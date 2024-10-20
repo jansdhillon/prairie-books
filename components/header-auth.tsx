@@ -5,6 +5,7 @@ import { NavAvatar } from "./nav-avatar";
 
 import { createClient } from "@/utils/supabase/server";
 import { getUserDataById } from "@/utils/supabase/queries";
+import { NavLink } from "./nav-link";
 
 export default async function AuthButton() {
   const supabase = createClient();
@@ -26,18 +27,17 @@ export default async function AuthButton() {
     return (
       <div className="flex items-center gap-3 md:gap-6">
         {userData && userData.is_admin ? (
-          <Link href="/admin">
-            <Button variant={"outline"} size={"sm"}>
-              Admin
-            </Button>
-          </Link>
-        ) : null}
+          <NavLink href={`/admin`}>Admin</NavLink>
+        ) : (
+          <NavLink href={`/orders`}>Orders</NavLink>
+        )}
         <Link href="/cart">
           <Button variant={"ghost"} size={"sm"}>
             <ShoppingCart className="h-4 text-muted-foreground fill-muted-foreground" />
           </Button>
         </Link>
         <NavAvatar userData={userData} />
+
       </div>
     );
   }

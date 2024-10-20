@@ -1,4 +1,4 @@
-import { EnhancedCartItemType, OrderItemType } from "@/lib/types/types";
+import { EnhancedCartItemType, OrderItemType, OrderType } from "@/lib/types/types";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { cache } from "react";
 import { encodedRedirect } from "../utils";
@@ -35,6 +35,18 @@ export const getBookById = cache(
       .eq("id", bookId)
       .single();
     return { data: book, error };
+  }
+);
+
+
+export const getOrderById = cache(
+  async (supabase: SupabaseClient, orderId: string) => {
+    const { data: order, error } = await supabase
+      .from("orders")
+      .select("*")
+      .eq("id", orderId)
+      .single();
+    return { data: order as OrderType, error };
   }
 );
 
@@ -204,7 +216,9 @@ export const getCartByUserId = async (
 export const createOrder = async (
   supabase: SupabaseClient,
   userId: string,
-  sessionId: string
+  sessionId: string,
+  itemsTotal: number,
+  shippingCost: number,
 ) => {
   const { data: order, error } = await supabase
     .from("orders")
@@ -212,6 +226,9 @@ export const createOrder = async (
       user_id: userId,
       status: "Ordered",
       session_id: sessionId,
+      items_total: itemsTotal,
+      shipping_cost: shippingCost,
+
     })
     .select("*")
     .single();
