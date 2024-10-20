@@ -2,7 +2,6 @@ import { EnhancedCartItemType, OrderItemType, OrderType } from "@/lib/types/type
 import { SupabaseClient } from "@supabase/supabase-js";
 import { cache } from "react";
 import { encodedRedirect } from "../utils";
-import Stripe from "stripe";
 
 export const getUserDataById = cache(
   async (supabase: SupabaseClient, userId: string) => {

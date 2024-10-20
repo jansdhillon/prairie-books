@@ -22,10 +22,16 @@ export const NavAvatar = ({ userData }: { userData: UserType }) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuGroup>
-          <DropdownMenuItem className="line-clamp-1">
-            Hello, {userData.full_name}!
-          </DropdownMenuItem>
+          <div className="line-clamp-1 relative flex select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none">
+            Hello, {userData?.full_name?.split(" ")[0]}!
+          </div>
           <DropdownMenuSeparator />
+
+          {userData.is_admin && (
+            <Link href="/admin">
+              <DropdownMenuItem>Admin</DropdownMenuItem>
+            </Link>
+          )}
 
           <Link href="/orders" className="cursor-pointer">
             <DropdownMenuItem>Your Orders</DropdownMenuItem>

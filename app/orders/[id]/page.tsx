@@ -66,11 +66,10 @@ export default async function OrderDetailsPage({
         <Card>
           <CardHeader>
             <CardTitle>Order Summary</CardTitle>
-            <Separator />
-            <div className="text-sm space-y-4">
-              <p>Order ID: {order.id}</p>
-              <p>Order Date: {new Date(order.ordered_at).toLocaleDateString()}</p>
-              <p >Status: {order.status}</p>
+            <div className="text-sm space-y-4 pt-4">
+              <p><span className="font-semibold">Order ID:</span> {order.id}</p>
+              <p><span className="font-semibold">Order Date:</span> {new Date(order.ordered_at).toLocaleDateString()}</p>
+              <p ><span className="font-semibold">Status:</span> {order.status}</p>
               <p className="text-base">{statusMessage}</p>
             </div>
           </CardHeader>
@@ -83,7 +82,6 @@ export default async function OrderDetailsPage({
                   <TableHead>Title</TableHead>
                   <TableHead>Author (s)</TableHead>
                   <TableHead>Price</TableHead>
-                  <TableHead>Quantity</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -102,7 +100,6 @@ export default async function OrderDetailsPage({
                     <TableCell>{item?.book_title}</TableCell>
                     <TableCell>{item?.book_author}</TableCell>
                     <TableCell>${item?.price.toFixed(2)}</TableCell>
-                    <TableCell>{item?.quantity}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
