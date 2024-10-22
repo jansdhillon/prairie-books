@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { EllipsisIcon, Pen, Trash } from "lucide-react";
-import { fetchBooks } from "../actions/fetch-books";
+import { getAllBooks } from "../actions/get-all-books";
 import { redirect } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -64,7 +64,7 @@ export default async function AdminDashboard() {
     );
   }
 
-  const books = await fetchBooks();
+  const books = await getAllBooks();
 
   const { data: orders, error } = await getOrdersWithOrderItems(
     supabase,

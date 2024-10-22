@@ -1,4 +1,4 @@
-import { fetchBooks } from "../actions/fetch-books"
+import { getAllBooks } from "../actions/get-all-books"
 import BookDisplay from "@/components/book-display"
 import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
@@ -13,7 +13,7 @@ export default async function SearchPage({
   searchParams: { query?: string, message?: string }
 }) {
   const query = searchParams.query || ""
-  const books = await fetchBooks()
+  const books = await getAllBooks()
 
   const filteredBooks = books.filter((book) =>
     book.title.toLowerCase().includes(query.toLowerCase()) || book.author.toLowerCase().includes(query.toLowerCase()) || book.description?.toLowerCase().includes(query.toLowerCase()) || book.genre?.some((genre: string) => genre?.toLowerCase().includes(query.toLowerCase())) || book.publisher?.toLowerCase().includes(query.toLowerCase())
