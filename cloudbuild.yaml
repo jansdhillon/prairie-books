@@ -1,4 +1,8 @@
 steps:
+  - name: mcr.microsoft.com/playwright:v1.48.1-noble
+    script: 'npx playwright test'
+    env:
+    - 'CI=true'
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
     args:
@@ -95,6 +99,3 @@ steps:
       - 'gcr.io/prairie-books/prairie-books'
       - '--region'
       - 'us-central1'
-
-options:
-  logging: CLOUD_LOGGING_ONLY
