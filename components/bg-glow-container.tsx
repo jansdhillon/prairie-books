@@ -9,9 +9,9 @@ const BgGlowContainer = ({
   className?: string;
 }) => {
   return (
-    <div className="relative mx-auto p-4 ">
+    <div className="relative">
       <div
-        className={cn(className, `z-0 absolute -inset-10  rounded-3xl blur-3xl bg-cool-color  opacity-15  backdrop-blur-3xl `)}
+        className={cn(className, `z-0 absolute inset-10 rounded-3xl blur-3xl bg-cool-color  opacity-15  backdrop-blur-3xl `)}
       ></div>
       <div className="relative z-10 ">{children}</div>
     </div>
