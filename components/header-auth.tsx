@@ -26,11 +26,11 @@ export default async function AuthButton() {
     const { data: userData } = await getUserDataById(supabase, user?.user!.id);
     return (
       <div className="flex items-center gap-3 md:gap-6">
-        {userData && userData.is_admin ? (
+        {/* {userData && userData.is_admin ? (
           <NavLink href={`/admin`}>Admin</NavLink>
         ) : (
           <NavLink href={`/orders`}>Orders</NavLink>
-        )}
+        )} */}
         <Link href="/cart">
           <Button variant={"ghost"} size={"sm"}>
             <ShoppingCart className="h-4 text-muted-foreground fill-muted-foreground" />
