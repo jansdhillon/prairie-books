@@ -1,4 +1,3 @@
-
 import { getFeaturedBooks } from "./actions/get-featured-books";
 import BookDisplay from "@/components/book-display";
 import { Separator } from "@/components/ui/separator";
@@ -10,18 +9,41 @@ import { ArrowRightIcon } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import BgGlowContainer from "@/components/bg-glow-container";
 import { getAllBooks } from "./actions/get-all-books";
+import { Book } from "@/components/book";
+import { BookType } from "@/lib/types/types";
+
+const FeaturedBooks = ({ featuredBooks }: { featuredBooks: BookType[] }) => {
+  return (
+    <section className="space-y-6">
+      <h2 className="text-xl font-semibold" id="featured">
+        Featured
+      </h2>
+
+      <Separator />
+      <p className="text-lg mb-6 text-muted-foreground">
+        Handpicked by Kathrin.
+      </p>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+        {featuredBooks.map((book) => (
+          <Book key={book.id} book={book} />
+        ))}
+      </div>
+    </section>
+  );
+};
 
 export default async function HomePage() {
   const allBooks = await getAllBooks();
   const featuredBooks = await getFeaturedBooks();
 
-
   return (
     <div className="flex flex-col justify-center gap-16 py-16 ">
       <BgGlowContainer>
-        <div className=" flex flex-col gap-6 justify-center items-center text-center md:px-12 text-primary ">
+        <div className=" container flex flex-col gap-6 justify-center items-center text-center mx-auto text-primary ">
           <div className="text-5xl md:text-6xl font-black text-center ">
-            Find Your Next<br/> Great Read
+            Find Your Next
+            <br /> Great Read
           </div>
           <p className="text-lg md:text-2xl   md:px-12">
             Discover a curated selection of rare books. From classics to
@@ -42,6 +64,10 @@ export default async function HomePage() {
       </BgGlowContainer>
 
 
+
+      <FeaturedBooks featuredBooks={featuredBooks} />
+
+
       <section className="space-y-6">
         <h2 className="text-xl font-semibold">Latest Books</h2>
 
@@ -59,48 +85,7 @@ export default async function HomePage() {
           </Button>
         </Link>
       </section>
-      <section className="space-y-6">
-        <h2 className="text-xl font-semibold" id="featured">
-          Featured
-        </h2>
 
-        <Separator />
-        <p className="text-lg mb-6 text-muted-foreground">
-          Handpicked by Kathrin.
-        </p>
-
-        <BookDisplay books={featuredBooks} />
-        <Link
-          href="/featured"
-          className="flex items-center justify-center py-6 md:py-12"
-        >
-          <Button className="flex items-center justify-center space-x-2">
-            <span>View All Featured Books</span>
-            <ArrowRightIcon />
-          </Button>
-        </Link>
-      </section>
-      {/* <section className="space-y-6">
-        <h2 className="text-2xl font-semibold mb-2">What Readers Are Saying</h2>
-
-        <Separator />
-        <div className="p-4 space-y-4">
-          <p>⭐️ ⭐️ ⭐️ ⭐️ ⭐️</p>
-          <p className="italic font-medium">
-            "An amazing selection of books! I can always count on Kathrin to
-            find rare and unique books."
-          </p>
-          <p className="mt-2 text-right ">- Griffin Sherwood</p>
-        </div>
-        <div className="p-4 space-y-4">
-          <p>⭐️ ⭐️ ⭐️ ⭐️ ⭐️</p>
-          <p className="italic font-medium">
-            "Kathrin's Books has become my go-to place for books, much better
-            than Facebook Marketplace!"
-          </p>
-          <p className="mt-2 text-right ">- B. Bean</p>
-        </div>
-      </section> */}
       <section className="space-y-6">
         <h2 className="text-xl font-semibold mb-2">About</h2>
 

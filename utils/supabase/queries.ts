@@ -36,7 +36,8 @@ export const getFeaturedBooks = cache(async (supabase: SupabaseClient) => {
     .from("books")
     .select("*")
     .eq("is_featured", true)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .limit(9);
 
   return { data: books, error };
 });
