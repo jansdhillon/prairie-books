@@ -1,4 +1,8 @@
-import { EnhancedCartItemType, OrderItemType, OrderType } from "@/lib/types/types";
+import {
+  EnhancedCartItemType,
+  OrderItemType,
+  OrderType,
+} from "@/lib/types/types";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { cache } from "react";
 import { encodedRedirect } from "../utils";
@@ -27,6 +31,16 @@ export const getAllBooks = cache(async (supabase: SupabaseClient) => {
   return { data: books, error };
 });
 
+export const getFeaturedBooks = cache(async (supabase: SupabaseClient) => {
+  const { data: books, error } = await supabase
+    .from("books")
+    .select("*")
+    .eq("is_featured", true)
+    .order("created_at", { ascending: false });
+
+  return { data: books, error };
+});
+
 export const getBookById = cache(
   async (supabase: SupabaseClient, bookId: string) => {
     const { data: book, error } = await supabase
@@ -37,7 +51,6 @@ export const getBookById = cache(
     return { data: book, error };
   }
 );
-
 
 export const getOrderById = cache(
   async (supabase: SupabaseClient, orderId: string) => {
@@ -104,7 +117,6 @@ export const createCart = async (supabase: SupabaseClient, userId: string) => {
   return { data: cart, error };
 };
 
-
 export const createCartItem = async (
   supabase: SupabaseClient,
   cartId: string,
@@ -117,8 +129,7 @@ export const createCartItem = async (
     .select("*")
     .single();
   return { data: cartItem, error };
-}
-
+};
 
 export const getOrCreateCart = async (
   supabase: SupabaseClient,
@@ -172,7 +183,6 @@ export const getOrCreateCart = async (
 
     const currentBook = item.book;
 
-
     if (currentBook.stock < quantity) {
       return encodedRedirect("error", "/", "Not enough stock.");
     }
@@ -197,7 +207,6 @@ export const getOrCreateCart = async (
     cart_items: cartItems,
   };
 
-
   return { data: cartDetails, error: null };
 };
 
@@ -218,7 +227,7 @@ export const createOrder = async (
   userId: string,
   sessionId: string,
   itemsTotal: number,
-  shippingCost: number,
+  shippingCost: number
 ) => {
   const { data: order, error } = await supabase
     .from("orders")
@@ -228,7 +237,6 @@ export const createOrder = async (
       session_id: sessionId,
       items_total: itemsTotal,
       shipping_cost: shippingCost,
-
     })
     .select("*")
     .single();

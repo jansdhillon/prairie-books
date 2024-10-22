@@ -1,4 +1,4 @@
-import { fetchBooks } from "./actions/fetch-books";
+
 import { getFeaturedBooks } from "./actions/get-featured-books";
 import BookDisplay from "@/components/book-display";
 import { Separator } from "@/components/ui/separator";
@@ -9,15 +9,12 @@ import Image from "next/image";
 import { ArrowRightIcon } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import BgGlowContainer from "@/components/bg-glow-container";
+import { getAllBooks } from "./actions/get-all-books";
 
 export default async function HomePage() {
-  const books = await fetchBooks();
+  const allBooks = await getAllBooks();
   const featuredBooks = await getFeaturedBooks();
 
-  const sortedBooks = books.sort(
-    (a, b) =>
-      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-  );
 
   return (
     <div className="flex flex-col justify-center gap-16 py-16 ">
@@ -50,7 +47,7 @@ export default async function HomePage() {
 
         <Separator />
         <p className="text-lg mb-6 text-muted-foreground">Just listed.</p>
-        <BookDisplay books={sortedBooks} />
+        <BookDisplay books={allBooks} />
 
         <Link
           href="/books"
@@ -73,6 +70,15 @@ export default async function HomePage() {
         </p>
 
         <BookDisplay books={featuredBooks} />
+        <Link
+          href="/featured"
+          className="flex items-center justify-center py-6 md:py-12"
+        >
+          <Button className="flex items-center justify-center space-x-2">
+            <span>View All Featured Books</span>
+            <ArrowRightIcon />
+          </Button>
+        </Link>
       </section>
       {/* <section className="space-y-6">
         <h2 className="text-2xl font-semibold mb-2">What Readers Are Saying</h2>

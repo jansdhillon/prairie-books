@@ -1,11 +1,11 @@
 "use server";
-import { getAllBooks } from "@/utils/supabase/queries";
+import { getAllBooks as fetchBooks } from "@/utils/supabase/queries";
 import { createClient } from "@/utils/supabase/server";
 import { cache } from "react";
 
-const fetchBooks = cache(async () => {
+const getAllBooks = cache(async () => {
   const supabase = createClient();
-  const { data: books, error } = await getAllBooks(supabase);
+  const { data: books, error } = await fetchBooks(supabase);
 
   if (error) {
     console.error("Error fetching books:", error.message);
@@ -18,4 +18,4 @@ const fetchBooks = cache(async () => {
   return books;
 });
 
-export { fetchBooks };
+export { getAllBooks };

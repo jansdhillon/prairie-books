@@ -1,12 +1,12 @@
 "use server";
 import { createClient } from "@/utils/supabase/server";
+import { cache } from "react";
+import { getFeaturedBooks as fetchFeaturedBooks } from "@/utils/supabase/queries";
 
-const getFeaturedBooks = async () => {
+const getFeaturedBooks = cache(async () => {
   const supabase = createClient();
-  const { data: books, error } = await supabase
-    .from("books")
-    .select("*")
-    .eq("is_featured", true);
+
+  const { data: books, error } = await fetchFeaturedBooks(supabase);
 
   if (error) {
     console.error("Error fetching books:", error.message);
@@ -17,6 +17,6 @@ const getFeaturedBooks = async () => {
   }
 
   return books;
-};
+});
 
 export { getFeaturedBooks };
