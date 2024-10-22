@@ -48,7 +48,7 @@ export default function AllBooksPage() {
   };
 
   const getPaginationRange = () => {
-    const maxPagesToShow = 1;
+    const maxPagesToShow = 3;
     const halfRange = Math.floor(maxPagesToShow / 2);
 
     let start = currentPage - halfRange;

@@ -2,6 +2,7 @@
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -15,6 +16,8 @@ import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { BookType } from "@/lib/types/types";
 import { useRouter } from "next/navigation";
+import { Textarea } from "@/components/ui/textarea"
+
 
 type BookProps = {
   book: BookType;
@@ -87,8 +90,8 @@ export function Book({ book }: BookProps) {
         )}
       </CardHeader>
       {book.description && (
-        <CardContent className="overflow-scroll">
-          {book.description || "No description available."}
+        <CardContent className="overflow-y-scroll overflow-x-hidden">
+          <CardDescription>{book.description || "No description available."}</CardDescription>
         </CardContent>
       )}
 
