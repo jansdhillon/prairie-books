@@ -8,6 +8,7 @@ import Image from "next/image";
 import { format } from "date-fns";
 
 export const columns: ColumnDef<BookType>[] = [
+
   {
     accessorKey: "cover",
     header: ({ column }) => (

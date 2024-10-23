@@ -90,7 +90,7 @@ export function Book({ book }: BookProps) {
         )}
       </CardHeader>
       {book.description && (
-       <CardContent className=" overflow-ellipsis">
+       <CardContent className="overflow-hidden flex-grow">
        <CardDescription className=" line-clamp-6 text-ellipsis">
          {book.description || "No description available."}
        </CardDescription>
