@@ -1,7 +1,7 @@
 "use client";
 import { ReactNode, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Button } from "@/components/ui/button";
@@ -22,11 +22,13 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const query = searchParams.get("query");
 
   const handleSearch = () => {
     if (searchTerm.trim()) {
       router.push(`/search?query=${encodeURIComponent(searchTerm.trim())}`);
-      setSearchTerm("");
+      setSearchTerm(query || "");
       setIsOpen(false);
     }
   };

@@ -19,10 +19,11 @@ interface BookPageProps {
   books: BookType[];
   title: string;
   subtitle: string;
+  query?: string;
 }
 
-export const BookPage = ({ books, title, subtitle }: BookPageProps) => {
-  const [globalFilter, setGlobalFilter] = React.useState<string>("");
+export const BookPage = ({ books, title, subtitle, query }: BookPageProps) => {
+  const [globalFilter, setGlobalFilter] = React.useState<string>(query || "");
 
   const columns: ColumnDef<BookType>[] = [
     {
