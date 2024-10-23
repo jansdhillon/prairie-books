@@ -8,6 +8,7 @@ import Feedback from "@/components/feedback";
 import { Toaster } from "@/components/ui/toaster";
 import { Viewport } from "next";
 import { getURL } from "@/utils/helpers";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 export const viewport: Viewport = {
   initialScale: 1,
@@ -35,16 +36,17 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="bg-background h-full flex flex-col justify-between ">
-            <Nav headerAuth={<HeaderAuth />} />
-            <main className="mt-20 font-normal container  mx-auto max-w-5xl flex flex-col space-y-12   px-8 md:px-12 py-8 overflow-x-clip">
-              <Feedback>{children}</Feedback>
+          <TooltipProvider delayDuration={0}>
+            <div className="bg-background h-full flex flex-col justify-between ">
+              <Nav headerAuth={<HeaderAuth />} />
+              <main className="mt-20 font-normal container  mx-auto max-w-5xl flex flex-col space-y-12   px-8 md:px-12 py-8 overflow-x-clip">
+                <Feedback>{children}</Feedback>
+              </main>
+              <Footer />
+            </div>
 
-            </main>
-            <Footer />
-          </div>
-
-          <Toaster />
+            <Toaster />
+          </TooltipProvider>
         </ThemeProvider>
       </body>
     </html>
