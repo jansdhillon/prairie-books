@@ -22,13 +22,11 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const query = searchParams.get("query");
 
   const handleSearch = () => {
     if (searchTerm.trim()) {
       router.push(`/search?query=${encodeURIComponent(searchTerm.trim())}`);
-      setSearchTerm(query || "");
+      setSearchTerm("");
       setIsOpen(false);
     }
   };

@@ -1,5 +1,7 @@
+import { Suspense } from "react";
 import { getAllBooks } from "../actions/get-all-books";
 import { BookPage } from "../books/components/book-page";
+import Loading from "../loading";
 
 export default async function SearchPage({
   searchParams,
@@ -10,11 +12,12 @@ export default async function SearchPage({
 
   const allBooks = await getAllBooks();
   return (
-    <BookPage
-      books={allBooks}
-      title="Search Results"
-      subtitle={`Showing results for "${query}"`}
-      query={query}
-    />
+
+      <BookPage
+        books={allBooks}
+        title="Search Results"
+        subtitle={`Showing results for "${query}"`}
+        query={query}
+      />
   );
 }
