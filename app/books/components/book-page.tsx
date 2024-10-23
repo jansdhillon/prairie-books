@@ -79,7 +79,7 @@ export const BookPage = ({ books, title, subtitle, query }: BookPageProps) => {
   });
 
   const genreOptions = Array.from(
-    new Set(books.flatMap((book) => book.genre ?? []))
+    new Set(books.flatMap((book) => (book.genre?.toString())?.split(",") ?? []))
   )?.map((genre) => ({ label: genre, value: genre }));
 
   return (

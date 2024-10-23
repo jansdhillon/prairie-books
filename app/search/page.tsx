@@ -16,7 +16,7 @@ export default async function SearchPage({
       <BookPage
         books={allBooks}
         title="Search Results"
-        subtitle={`Showing results for "${query}"`}
+        subtitle={query ? `Showing results for "${query}"` : "Showing all books"}
         query={query}
       />
   );
