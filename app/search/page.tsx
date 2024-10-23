@@ -1,5 +1,5 @@
 import { getAllBooks } from "../actions/get-all-books"
-import BookDisplay from "@/components/book-display"
+import BookDisplay from "@/app/books/components/book-display"
 import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"

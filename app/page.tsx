@@ -1,5 +1,5 @@
 import { getFeaturedBooks } from "./actions/get-featured-books";
-import BookDisplay from "@/components/book-display";
+import BookDisplay from "@/app/books/components/book-display";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import { ArrowRightIcon } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import BgGlowContainer from "@/components/bg-glow-container";
 import { getAllBooks } from "./actions/get-all-books";
-import { Book } from "@/components/book";
+import { Book } from "@/app/books/components/book";
 import { BookType } from "@/lib/types/types";
 
 const FeaturedBooks = ({ featuredBooks }: { featuredBooks: BookType[] }) => {

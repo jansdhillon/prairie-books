@@ -2,14 +2,14 @@
 import { Database } from "@/utils/database.types";
 import { Book } from "./book";
 import { Suspense, useEffect } from "react";
-import { Card, CardContent } from "./ui/card";
+import { Card, CardContent } from "../../../components/ui/card";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "./ui/carousel";
+} from "../../../components/ui/carousel";
 import Loading from "@/app/loading";
 import { BookType } from "@/lib/types/types";
 
@@ -21,11 +21,11 @@ const BookDisplay = ({ books }: { books: BookType[] }) => {
   return (
     <>
       <Suspense fallback={<Loading />}>
-        <Carousel className="mx-6 md:mx-0">
+        <Carousel >
           <CarouselContent>
             {books.map((book: BookType) => (
               <CarouselItem
-                className="flex flex-col md:basis-1/2 lg:basis-1/3 rounded-xl"
+              className="md:basis-1/2 lg:basis-1/3 flex "
                 key={book.id}
               >
                 <Book key={book.id} book={book} />

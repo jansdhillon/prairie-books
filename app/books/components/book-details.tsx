@@ -13,13 +13,13 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "./ui/carousel";
+} from "../../../components/ui/carousel";
 import Loading from "@/app/loading";
 import Link from "next/link";
-import { Badge } from "./ui/badge";
+import { Badge } from "../../../components/ui/badge";
 import { BookType, UserType } from "@/lib/types/types";
 import { getUserDataAction } from "@/app/actions/get-user";
-import { Skeleton } from "./ui/skeleton";
+import { Skeleton } from "../../../components/ui/skeleton";
 import { imageLoader } from "./book";
 
 type BookDetailsProps = {
@@ -149,7 +149,7 @@ export function BookDetails({ book }: BookDetailsProps) {
 
             <div className="space-y-2 pb-4">
               <p>
-                <span className="text-primary font-semibold">Author(s):</span>{" "}
+                <span className="text-primary font-semibold">Author:</span>{" "}
                 {book.author}
               </p>
               {book.isbn && (
@@ -160,7 +160,7 @@ export function BookDetails({ book }: BookDetailsProps) {
               )}
               {book.genre && book.genre.length > 0 && (
                 <div className="flex gap-1 flex-wrap">
-                  <span className="text-primary font-semibold">Genre(s):</span>
+                  <span className="text-primary font-semibold">Genre:</span>
                   {book.genre
                     .join(",")
                     .split(",")
@@ -220,7 +220,7 @@ export function BookDetails({ book }: BookDetailsProps) {
               Description
             </h3>
             <Separator className="my-4" />
-            <p className="leading-relaxed">
+            <p className="leading-loose">
               {book.description || "No description available."}
             </p>
           </CardContent>

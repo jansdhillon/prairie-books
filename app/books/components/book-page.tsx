@@ -12,7 +12,7 @@ import {
 } from "@tanstack/react-table";
 import { BookType } from "@/lib/types/types";
 import { DataTablePagination } from "./data-table-pagination";
-import { Book } from "../../../components/book";
+import { Book } from "./book";
 import { DataTableToolbar } from "./data-table-toolbar";
 
 interface BookPageProps {

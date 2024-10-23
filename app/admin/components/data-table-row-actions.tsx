@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { deleteBook } from "@/app/actions/delete-book";
 import { getProductByBookId } from "@/app/actions/get-product";
-import { DeleteBookForm } from "@/components/delete-book-form";
+import { DeleteBookForm } from "@/app/admin/components/delete-book-form";
 import {
   DropdownMenu,
   DropdownMenuContent,

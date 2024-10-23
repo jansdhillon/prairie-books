@@ -1,4 +1,4 @@
-"use client";;
+"use client";
 import {
   Card,
   CardContent,
@@ -13,19 +13,18 @@ import { useTransition } from "react";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
-import { Badge } from "./ui/badge";
+import { Badge } from "../../../components/ui/badge";
 import { BookType } from "@/lib/types/types";
 import { useRouter } from "next/navigation";
-import { Textarea } from "@/components/ui/textarea"
-
+import { Textarea } from "@/components/ui/textarea";
 
 type BookProps = {
   book: BookType;
 };
 
 export const imageLoader = ({ src, width, quality }: any) => {
-  return `${src}?w=${width}&q=${quality || 75}`
-}
+  return `${src}?w=${width}&q=${quality || 75}`;
+};
 
 export function Book({ book }: BookProps) {
   const [isPending, startTransition] = useTransition();
@@ -44,23 +43,21 @@ export function Book({ book }: BookProps) {
     ? `${book.image_directory}image-1.png`
     : "/placeholder.png";
 
-
   return (
-    <Card className=" rounded-xl drop-shadow-sm flex flex-col justify-between h-full ">
+    <Card className=" rounded-xl drop-shadow-sm flex flex-col justify-between  flex-1 overflow-hidden overflow-ellipsis ">
       <CardHeader className="text-muted-foreground ">
         <Link
           href={`/books/${book.id}`}
           className="relative cursor-pointer space-y-4   "
         >
-            <Image
-              src={coverImage}
-              alt={book.title}
-              width={500}
-              height={600}
-              className="object-contain rounded-xl border w-full  "
-              sizes="(max-width: 500px, max-height: 600px) 100vw, 50vw"
-              loader={imageLoader}
-            />
+          <Image
+            src={coverImage}
+            alt={book.title}
+            width={300}
+            height={400}
+            className="object-contain rounded-xl border w-full  "
+            loader={imageLoader}
+          />
 
           <CardTitle className="text-xl font-semibold text-primary line-clamp-2 text-ellipsis ">
             {book.title}
@@ -90,14 +87,14 @@ export function Book({ book }: BookProps) {
         )}
       </CardHeader>
       {book.description && (
-       <CardContent className="overflow-hidden flex-grow">
-       <CardDescription className=" line-clamp-6 text-ellipsis">
-         {book.description || "No description available."}
-       </CardDescription>
-     </CardContent>
+        <CardContent >
+          <CardDescription className="line-clamp-[8] text-ellipsis leading-relaxed">
+            {book.description || "No description available."}
+          </CardDescription>
+        </CardContent>
       )}
 
-      <CardFooter className="p-4 flex my-4 justify-end gap-4">
+      <CardFooter className=" flex justify-end gap-4">
         <Button
           onClick={handleAddToCart}
           size="sm"
