@@ -44,7 +44,7 @@ export function Book({ book }: BookProps) {
     : "/placeholder.png";
 
   return (
-    <Card className=" rounded-xl drop-shadow-sm flex flex-col justify-between  flex-1 overflow-hidden overflow-ellipsis ">
+    <Card className=" rounded-xl drop-shadow-sm flex flex-col justify-between h-full  flex-1 overflow-hidden overflow-ellipsis ">
       <CardHeader className="text-muted-foreground ">
         <Link
           href={`/books/${book.id}`}
