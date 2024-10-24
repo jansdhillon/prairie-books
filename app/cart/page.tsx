@@ -29,6 +29,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Label } from "@/components/ui/label";
 
 export default function CartPage() {
   const router = useRouter();
@@ -219,17 +220,17 @@ export default function CartPage() {
                   setAgreedToTerms(checked === true)
                 }
               />
-              <label htmlFor="terms" className="text-sm leading-none">
+              <Label htmlFor="terms" className="text-sm leading-none">
                 I agree to the{" "}
-                <Link href="/terms" className="underline">
+                <Link href="/terms-of-service" className="underline">
                   Terms of Service
                 </Link>{" "}
                 and{" "}
-                <Link href="/privacy" className="underline">
+                <Link href="/privacy-policy" className="underline">
                   Privacy Policy
                 </Link>
                 .
-              </label>
+              </Label>
             </div>
           )}
 
