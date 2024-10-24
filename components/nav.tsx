@@ -1,5 +1,5 @@
 "use client";
-import { ReactNode, use, useEffect, useState } from "react";
+import { ReactNode, Suspense, use, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { RxHamburgerMenu } from "react-icons/rx";
@@ -11,6 +11,7 @@ import { NavLink } from "@/components/nav-link";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import Image from "next/image";
+import Loading from "@/app/loading";
 
 const navItems = [
   { href: "/books", label: "Books" },
@@ -18,37 +19,51 @@ const navItems = [
   { href: "/contact", label: "Contact" },
 ];
 
-export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const pathname = usePathname();
+const Searchbar = ({setIsOpen} : {setIsOpen?: (isOpen: boolean) => void}) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const query = searchParams.get("query");
   const [searchTerm, setSearchTerm] = useState(query || "");
 
-  useEffect(() => {
-    if (query) {
-      console.log("query", query);
-      setSearchTerm(decodeURIComponent(query));
-
-    }
-  }, [query]);
-
   const handleSearch = () => {
     if (searchTerm.trim()) {
       router.push(`/search?query=${encodeURIComponent(searchTerm.trim())}`);
-
-      setIsOpen(false);
+      setIsOpen && setIsOpen(false);
     }
   };
-
 
   const handleKeyDown = (e: any) => {
     if (e.key === "Enter") {
       handleSearch();
     }
   };
+
+  useEffect(() => {
+    if (query) {
+      console.log("query", query);
+      setSearchTerm(decodeURIComponent(query));
+    }
+  }, [query]);
+
+  return (
+    <div className="relative">
+      <Input
+        placeholder="Search books..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        onKeyDown={handleKeyDown}
+        className="pl-8"
+      />
+      <Search
+        className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
+        size={10}
+      />
+    </div>
+  );
+};
+
+export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b">
@@ -66,19 +81,11 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
             Kathrin's Books
           </div>
         </Link>
-        <div className="relative">
-          <Input
-            placeholder="Search books..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className="pl-8"
-          />
-          <Search
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
-            size={10}
-          />
-        </div>
+
+        <Suspense fallback={<Loading />}>
+          <Searchbar />
+        </Suspense>
+
         {navItems.map((item) => (
           <NavLink key={item.href} href={item.href}>
             {item.label}
@@ -126,19 +133,10 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
                   )}
                 </div>
               ))}
-              <div className="relative my-4">
-                <Input
-                  placeholder="Search books..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  className="pl-10"
-                />
-                <Search
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
-                  size={14}
-                />
-              </div>
+              <Separator className="my-2" />
+              <Suspense fallback={<Loading />}>
+                <Searchbar setIsOpen={setIsOpen} />
+              </Suspense>
               <div
                 className="flex items-center justify-start gap-3"
                 onClick={() => setIsOpen(false)}

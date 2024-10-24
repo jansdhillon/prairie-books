@@ -22,7 +22,7 @@ export const metadata = {
   description: "A curated online book store",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
