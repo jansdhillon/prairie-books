@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { EnhancedCartItemType } from "@/lib/types/types";
 import { startCheckoutAction } from "../actions/start-checkout";
@@ -21,6 +21,14 @@ import { Card } from "@/components/ui/card";
 import { Eye, Trash } from "lucide-react";
 import { postData } from "@/utils/helpers";
 import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
+import { Checkbox } from "@/components/ui/checkbox";
+import { set } from "date-fns";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function CartPage() {
   const router = useRouter();
@@ -32,6 +40,7 @@ export default function CartPage() {
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const [userId, setUserId] = useState<string | undefined>();
   const [isLoading, setIsLoading] = useState(true);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -62,7 +71,18 @@ export default function CartPage() {
     setCartItems(cartItems?.filter((item) => item.id !== cartItemId));
   };
 
+  useEffect(() => {
+    if (cartItems) {
+      const newTotal = cartItems.reduce((acc, item) => acc + item.price, 0);
+      setInitialAmount(newTotal);
+      const calculatedShipping = newTotal > 75 || !newTotal ? 0.0 : 15.0;
+      setShippingCost(calculatedShipping);
+      setTotalAmount(newTotal + calculatedShipping);
+    }
+  }, [cartItems]);
+
   const handleCheckout = async () => {
+    if (!agreedToTerms) return;
     if (cartItems == undefined || !cartItems.length) return;
 
     const { sessionId } = await postData({
@@ -98,9 +118,7 @@ export default function CartPage() {
                   <TableHead>Book</TableHead>
                   <TableHead>Title</TableHead>
                   <TableHead>Author</TableHead>
-                  <TableHead className="text-center opacity-0">
-                    Actions
-                  </TableHead>
+                  <TableHead className="text-center ">Actions</TableHead>
                   <TableHead>Price</TableHead>
                 </TableRow>
               </TableHeader>
@@ -116,9 +134,7 @@ export default function CartPage() {
                     <TableRow key={item.id}>
                       <TableCell className="text-start">
                         <Suspense
-                          fallback={
-                            <Skeleton className="w-[50px] h-[75px]" />
-                          }
+                          fallback={<Skeleton className="w-[50px] h-[75px]" />}
                         >
                           <Image
                             src={
@@ -132,26 +148,40 @@ export default function CartPage() {
                           />
                         </Suspense>
                       </TableCell>
-                      <TableCell className="text-start">
-                        {item.book.title}
+                      <TableCell className="text-start max-w-[200px]">
+                        <p className="line-clamp-1">{item.book.title}</p>
                       </TableCell>
                       <TableCell className="text-start">
                         {item.book.author}
                       </TableCell>
 
                       <TableCell>
-                        <Button
-                          variant="ghost"
-                          onClick={() => handleRemoveFromCart(item.id)}
-                        >
-                          <Trash className="h-4 w-4 text-destructive" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          onClick={() => router.push(`/books/${item.book.id}`)}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
+                        <div className="flex justify-center gap-2 items-center space-x-2 ">
+                          <Button
+                            variant="ghost"
+                            onClick={() =>
+                              router.push(`/books/${item.book.id}`)
+                            }
+                          >
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Eye size={16} />
+                              </TooltipTrigger>
+                              <TooltipContent>View Book</TooltipContent>
+                            </Tooltip>
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            onClick={() => handleRemoveFromCart(item.id)}
+                          >
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Trash className="text-destructive" size={16} />
+                              </TooltipTrigger>
+                              <TooltipContent>Remove From Cart</TooltipContent>
+                            </Tooltip>
+                          </Button>
+                        </div>
                       </TableCell>
                       <TableCell className="text-start">
                         ${item.price.toFixed(2)}
@@ -179,11 +209,35 @@ export default function CartPage() {
               </TableFooter>
             </Table>
           </Card>
+
+          {cartItems && cartItems.length > 0 && (
+            <div className="flex items-center justify-end space-x-2 mt-4">
+              <Checkbox
+                id="terms"
+                checked={agreedToTerms}
+                onCheckedChange={(checked) =>
+                  setAgreedToTerms(checked === true)
+                }
+              />
+              <label htmlFor="terms" className="text-sm leading-none">
+                I agree to the{" "}
+                <Link href="/terms" className="underline">
+                  Terms of Service
+                </Link>{" "}
+                and{" "}
+                <Link href="/privacy" className="underline">
+                  Privacy Policy
+                </Link>
+                .
+              </label>
+            </div>
+          )}
+
           <div className="hidden md:flex justify-end items-center">
             <Button
               variant="default"
               onClick={handleCheckout}
-              disabled={cartItems?.length === 0}
+              disabled={cartItems?.length === 0 || !agreedToTerms}
             >
               Proceed to Checkout
             </Button>
@@ -200,7 +254,11 @@ export default function CartPage() {
                       fallback={<Skeleton className="w-[75px] h-[100px]" />}
                     >
                       <Image
-                        src={`${item.book.image_directory}image-1.png`}
+                        src={
+                          item.book.image_directory !== null
+                            ? `${item.book.image_directory}image-1.png`
+                            : "/placeholder.png"
+                        }
                         alt={item.book.title}
                         width={75}
                         height={100}
@@ -252,10 +310,35 @@ export default function CartPage() {
                   <p>Total:</p>
                   <p>${totalAmount.toFixed(2)}</p>
                 </div>
+
+                <div className="flex items-center space-x-2 mt-4">
+                  <Checkbox
+                    id="terms-mobile"
+                    checked={agreedToTerms}
+                    onCheckedChange={(checked) =>
+                      setAgreedToTerms(checked === true)
+                    }
+                  />
+                  <label
+                    htmlFor="terms-mobile"
+                    className="text-sm leading-none"
+                  >
+                    I agree to the{" "}
+                    <Link href="/terms" className="underline">
+                      Terms of Service
+                    </Link>{" "}
+                    and{" "}
+                    <Link href="/privacy" className="underline">
+                      Privacy Policy
+                    </Link>
+                    .
+                  </label>
+                </div>
+
                 <Button
                   className="w-full mt-4"
                   onClick={handleCheckout}
-                  disabled={cartItems?.length === 0}
+                  disabled={cartItems?.length === 0 || !agreedToTerms}
                 >
                   Proceed to Checkout
                 </Button>
