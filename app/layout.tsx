@@ -22,11 +22,13 @@ export const metadata = {
   description: "A curated online book store",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+
+
   return (
     <html lang="en" className={GeistSans.className} suppressHydrationWarning>
       <body>

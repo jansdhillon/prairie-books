@@ -1,7 +1,7 @@
 "use client";
-import { ReactNode, useState } from "react";
+import { ReactNode, use, useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Button } from "@/components/ui/button";
@@ -20,16 +20,29 @@ const navItems = [
 
 export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
+
+  const pathname = usePathname();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const query = searchParams.get("query");
+  const [searchTerm, setSearchTerm] = useState(query || "");
+
+  useEffect(() => {
+    if (query) {
+      console.log("query", query);
+      setSearchTerm(decodeURIComponent(query));
+
+    }
+  }, [query]);
 
   const handleSearch = () => {
     if (searchTerm.trim()) {
       router.push(`/search?query=${encodeURIComponent(searchTerm.trim())}`);
-      setSearchTerm("");
+
       setIsOpen(false);
     }
   };
+
 
   const handleKeyDown = (e: any) => {
     if (e.key === "Enter") {
@@ -39,7 +52,6 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b">
-
       <nav className="hidden lg:flex space-x-5 items-center justify-center gap-3 py-4 px-10 bg-accent">
         <Link href="/" className="flex items-center gap-4 ">
           <div className="w-6 h-6 relative">

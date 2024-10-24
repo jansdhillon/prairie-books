@@ -12,16 +12,16 @@
     --popover-foreground: 0 0% 3.9%;
     --primary: 243.8 47.1% 20%;
     --primary-foreground: 0 0% 98%;
-    --secondary: 325.7 77.8% 94.7%;
+    --secondary:287 100% 95.5%;
     --secondary-foreground: 0 0% 9%;
     --muted: 0 0% 96.1%;
     --muted-foreground: 242.2 47.4% 34.3%;
-    --accent:  327.3 73.3% 97.1%;
+    --accent: 289.1 100% 97.8%;
     --accent-foreground: 0 0% 9%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 325.9 84.6% 89.8%;
-    --input:229.7 93.5% 81.8%;
+    --border: 288.3 95.8% 90.6%;
+    --input: 229.7 93.5% 81.8%;
     --ring: 238.7 83.5% 66.7%;
     --radius: 0.5rem;
     --chart-1: 12 76% 61%;
@@ -63,13 +63,16 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground h-full;
   }
+
   html {
     @apply antialiased h-[100dvh]
   }
+
   .bg-cool-color {
-    @apply bg-gradient-to-br from-orange-400 via-fuchsia-400 to-indigo-700;
+    @apply bg-gradient-to-br from-fuchsia-200 via-fuchsia-400 to-indigo-700;
   }
 }

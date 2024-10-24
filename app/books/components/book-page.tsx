@@ -79,7 +79,7 @@ export const BookPage = ({ books, title, subtitle, query }: BookPageProps) => {
   });
 
   const genreOptions = Array.from(
-    new Set(books.flatMap((book) => (book.genre?.toString())?.split(",") ?? []))
+    new Set(books.flatMap((book) => book.genre?.toString()?.split(",") ?? []))
   )?.map((genre) => ({ label: genre, value: genre }));
 
   return (
@@ -104,6 +104,7 @@ export const BookPage = ({ books, title, subtitle, query }: BookPageProps) => {
             ))}
           </div>
         ))}
+
       </div>
 
       <DataTablePagination table={table} />

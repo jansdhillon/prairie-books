@@ -1,10 +1,14 @@
-"use client";;
+"use client";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { Table } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTableFacetedFilter } from "./data-table-faceted-filter";
+import { Search } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -13,7 +17,6 @@ interface DataTableToolbarProps<TData> {
   genreOptions: { label: string; value: string }[];
 }
 
-
 export function DataTableToolbar<TData>({
   table,
   globalFilter,
@@ -21,20 +24,38 @@ export function DataTableToolbar<TData>({
   genreOptions,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const query = searchParams.get("query");
+  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const searchTerm = e.target.value;
+    router.push(`/search?query=${encodeURIComponent(searchTerm.trim())}`);
+    setGlobalFilter(searchTerm);
+  }
 
+  useEffect(() => {
+    if (query) {
+      console.log("query", query);
+      setGlobalFilter(decodeURIComponent(query));
 
-
-
+    }
+  }, [query]);
 
   return (
     <div className="flex items-center justify-between gap-4">
       <div className="flex flex-1 items-center space-x-2">
-      <Input
-          value={globalFilter ?? ""}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          placeholder="Search books..."
-          className="w-full max-w-sm"
-        />
+        <div className="relative">
+          <Input
+            value={globalFilter ?? ""}
+            onChange={handleFilterChange}
+            placeholder="Search books..."
+            className="w-full max-w-sm pl-8"
+          />
+          <Search
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
+            size={10}
+          />
+        </div>
 
         <DataTableFacetedFilter
           column={table.getColumn("genre")}
@@ -80,8 +101,6 @@ export function DataTableToolbar<TData>({
           </DropdownMenu>
         </Tooltip> */}
       </div>
-
-
     </div>
   );
 }
