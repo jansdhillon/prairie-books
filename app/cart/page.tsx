@@ -17,7 +17,7 @@ import { removeFromCartAction } from "../actions/remove-from-cart";
 import { getStripe } from "@/utils/stripe/client";
 import Loading from "../loading";
 import Image from "next/image";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, Trash } from "lucide-react";
 import { postData } from "@/utils/helpers";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -211,7 +211,7 @@ export default function CartPage() {
           </Card>
 
           {cartItems && cartItems.length > 0 && (
-            <div className="flex items-center justify-end space-x-2 mt-4">
+            <div className="hidden md:flex items-center justify-end space-x-2 mt-4">
               <Checkbox
                 id="terms"
                 checked={agreedToTerms}
@@ -249,7 +249,7 @@ export default function CartPage() {
             ) : (
               cartItems?.map((item: EnhancedCartItemType) => (
                 <Card key={item.id} className="flex flex-col p-4">
-                  <div className="flex items-center space-x-4">
+                  <CardContent className="flex items-center space-x-4">
                     <Suspense
                       fallback={<Skeleton className="w-[75px] h-[100px]" />}
                     >
@@ -265,18 +265,18 @@ export default function CartPage() {
                       />
                     </Suspense>
                     <div className="flex-1">
-                      <h2 className="text-lg font-semibold">
+                      <CardTitle className="text-base font-semibold">
                         {item.book.title}
-                      </h2>
-                      <p className="text-sm text-muted-foreground">
+                      </CardTitle>
+                      <CardDescription className="text-sm text-muted-foreground">
                         {item.book.author}
-                      </p>
-                      <p className="text-sm font-bold mt-2">
+                      </CardDescription>
+                      <CardDescription className="text-sm font-bold mt-2">
                         Price: ${item.price.toFixed(2)}
-                      </p>
+                      </CardDescription>
                     </div>
-                  </div>
-                  <div className="flex justify-end space-x-2 mt-4">
+                  </CardContent>
+                  <CardFooter className="flex justify-end space-x-2 mt-4">
                     <Button
                       variant="ghost"
                       size="sm"
@@ -291,7 +291,7 @@ export default function CartPage() {
                     >
                       <Trash className="h-4 w-4 text-destructive" />
                     </Button>
-                  </div>
+                  </CardFooter>
                 </Card>
               ))
             )}

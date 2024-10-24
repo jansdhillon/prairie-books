@@ -2,7 +2,7 @@
 import { Row } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
-import { BookSchema } from "./schema";
+import { BookSchema } from "@/lib/schemas/schemas";
 import { Ellipsis, Eye, Pen, Trash } from "lucide-react";
 import {
   Tooltip,
@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { deleteBook } from "@/app/actions/delete-book";
 import { getProductByBookId } from "@/app/actions/get-product";
-import { DeleteBookForm } from "@/app/admin/components/delete-book-form";
+import { DeleteBookForm } from "./delete-book-form";
 import {
   DropdownMenu,
   DropdownMenuContent,

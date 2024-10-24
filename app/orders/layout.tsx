@@ -1,7 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
 import { encodedRedirect } from "@/utils/utils";
-import { getErrorRedirect } from "@/utils/helpers";
-import { getUserDataById } from "@/utils/supabase/queries";
 
 export default async function Layout({
   children,

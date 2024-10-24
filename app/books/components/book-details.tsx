@@ -21,6 +21,7 @@ import { BookType, UserType } from "@/lib/types/types";
 import { getUserDataAction } from "@/app/actions/get-user";
 import { Skeleton } from "../../../components/ui/skeleton";
 import { imageLoader } from "./book";
+import { createClient } from "@/utils/supabase/client";
 
 type BookDetailsProps = {
   book: BookType;
@@ -82,17 +83,19 @@ export function BookDetails({ book }: BookDetailsProps) {
             >
               <Link href={coverImage}>
                 <div className="relative cursor-pointer mb-5 flex justify-center ">
-                <Suspense fallback={<Skeleton className="w-[600px] h-[800px]" />}>
-                  <Image
-                    src={coverImage}
-                    alt={book.title}
-                    width={400}
-                    height={600}
-                    className="object-contain rounded-xl  h-auto border"
-                    sizes="(max-width: 500px) 100vw, 50vw"
-                    loader={imageLoader}
-                  />
-                </Suspense>
+                  <Suspense
+                    fallback={<Skeleton className="w-[600px] h-[800px]" />}
+                  >
+                    <Image
+                      src={coverImage}
+                      alt={book.title}
+                      width={400}
+                      height={600}
+                      className="object-contain rounded-xl  h-auto border"
+                      sizes="(max-width: 500px) 100vw, 50vw"
+                      loader={imageLoader}
+                    />
+                  </Suspense>
                 </div>
               </Link>
             </CarouselItem>
@@ -105,17 +108,19 @@ export function BookDetails({ book }: BookDetailsProps) {
                 >
                   <Link href={image}>
                     <div className="relative cursor-pointer mb-5 flex justify-center">
-                    <Suspense fallback={<Skeleton className="w-[600px] h-[800px]" />}>
-                      <Image
-                        src={image}
-                        alt={`${book.title} - Image ${index + 2}`}
-                        width={600}
-                        height={800}
-                        className="object-contain rounded-xl max-w-full h-auto border "
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                        loader={imageLoader}
-                      />
-                    </Suspense>
+                      <Suspense
+                        fallback={<Skeleton className="w-[600px] h-[800px]" />}
+                      >
+                        <Image
+                          src={image}
+                          alt={`${book.title} - Image ${index + 2}`}
+                          width={600}
+                          height={800}
+                          className="object-contain rounded-xl max-w-full h-auto border "
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                          loader={imageLoader}
+                        />
+                      </Suspense>
                     </div>
                   </Link>
                 </CarouselItem>

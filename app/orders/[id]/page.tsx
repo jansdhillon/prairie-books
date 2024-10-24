@@ -4,16 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
 import { getOrderAction } from "@/app/actions/get-order-by-id";
 import Link from "next/link";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import Image from "next/image";
-import { Separator } from "@/components/ui/separator";
+import { orderItemColumns } from "@/app/orders/components/order-items-columns";
+import { DataTable } from "./data-table";
+
 
 export default async function OrderDetailsPage({
   params,
@@ -67,43 +60,22 @@ export default async function OrderDetailsPage({
           <CardHeader>
             <CardTitle>Order Summary</CardTitle>
             <div className="text-sm space-y-4 pt-4">
-              <p><span className="font-semibold">Order ID:</span> {order.id}</p>
-              <p><span className="font-semibold">Order Date:</span> {new Date(order.ordered_at).toLocaleDateString()}</p>
-              <p ><span className="font-semibold">Status:</span> {order.status}</p>
+              <p>
+                <span className="font-semibold">Order ID:</span> {order.id}
+              </p>
+              <p>
+                <span className="font-semibold">Order Date:</span>{" "}
+                {new Date(order.ordered_at).toLocaleDateString()}
+              </p>
+              <p>
+                <span className="font-semibold">Status:</span> {order.status}
+              </p>
               <p className="text-base">{statusMessage}</p>
             </div>
           </CardHeader>
 
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Book</TableHead>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Author (s)</TableHead>
-                  <TableHead>Price</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {orderItems?.map((item: any) => (
-                  <TableRow key={item.id}>
-                    <TableCell>
-                      {item?.image_directory && (
-                        <Image
-                          src={`${item?.image_directory}image-1.png`}
-                          alt={item.book_title}
-                          width={50}
-                          height={50}
-                        />
-                      )}
-                    </TableCell>
-                    <TableCell>{item?.book_title}</TableCell>
-                    <TableCell>{item?.book_author}</TableCell>
-                    <TableCell>${item?.price.toFixed(2)}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <DataTable columns={orderItemColumns} data={orderItems} />
           </CardContent>
         </Card>
       </div>

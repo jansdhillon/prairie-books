@@ -19,24 +19,19 @@ const BookDisplay = ({ books }: { books: BookType[] }) => {
   }
 
   return (
-    <>
-      <Suspense fallback={<Loading />}>
-        <Carousel >
-          <CarouselContent>
-            {books.map((book: BookType) => (
-              <CarouselItem
-              className="md:basis-1/2 lg:basis-1/3 flex "
-                key={book.id}
-              >
-                <Book key={book.id} book={book} />
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
-      </Suspense>
-    </>
+    <Suspense fallback={<Loading />}>
+      <Carousel>
+        <CarouselContent>
+          {books.map((book: BookType) => (
+            <CarouselItem className="md:basis-1/2 lg:basis-1/3 " key={book.id}>
+              <Book key={book.id} book={book} />
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
+    </Suspense>
   );
 };
 

@@ -25,8 +25,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { DataTablePagination } from "../../books/components/data-table-pagination";
-import { DataTableToolbar } from "./books/data-table-toolbar";
+
+
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -69,7 +69,6 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-4  w-full">
-      <DataTableToolbar table={table} />
       <div className="rounded-md border overflow-y-scroll max-h-[500px]">
         <Table>
           <TableHeader>
@@ -120,7 +119,6 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} />
     </div>
   );
 }

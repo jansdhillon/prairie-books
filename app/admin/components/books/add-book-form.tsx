@@ -6,10 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { SubmitButton } from "../../../components/submit-button";
-import { Badge } from "../../../components/ui/badge";
+import { SubmitButton } from "@/components/submit-button";
+import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
-import { Separator } from "../../../components/ui/separator";
+import { Separator } from "@/components/ui/separator";
 
 export default function AddBookForm({
   addBookAction,

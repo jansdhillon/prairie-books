@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode, useEffect, useState } from "react";
-import { Input } from "../../../components/ui/input";
+import { Input } from "@/components/ui/input";
 import { get } from "http";
 
 export const DeleteBookForm = ({

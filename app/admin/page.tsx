@@ -21,7 +21,10 @@ import {
   getUserDataById,
 } from "@/utils/supabase/queries";
 import { encodedRedirect } from "@/utils/utils";
-import { ClientWrapper } from "./components/client-wrapper";
+import { ClientWrapper as BookClientWrapper } from "./components/books/client-wrapper";
+import { ClientWrapper as OrderClientWrapper } from "./components/orders/client-wrapper";
+import { DataTable } from "@/app/orders/components/data-table";
+import { orderColumns } from "@/app/orders/components/order-columns";
 
 export default async function AdminDashboard() {
   const supabase = createClient();
@@ -71,79 +74,10 @@ export default async function AdminDashboard() {
           </TabsList>
         </div>
         <TabsContent value="orders" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Orders</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Books Ordered</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Total Price</TableHead>
-                    <TableHead>Order Date</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {orders.length > 0 ? (
-                    orders.map((order) => (
-                      <TableRow key={order.id}>
-                        <TableCell>
-                          {order.items.map((item: any) => (
-                            <div key={item.id}>
-                              <Link href={`/books/${item.book_id}`}>
-                                {item.book_title}
-                              </Link>
-                            </div>
-                          ))}
-                        </TableCell>
-                        <TableCell>{order.status || "Pending"}</TableCell>
-                        <TableCell>
-                          $
-                          {order.items_total + order.shipping_cost ||
-                            order.items
-                              .reduce(
-                                (total: number, item: any) =>
-                                  total + item.price * item.quantity,
-                                0
-                              )
-                              .toFixed(2)}
-                        </TableCell>
-                        <TableCell>
-                          {order.ordered_at
-                            ? format(
-                                new Date(order.ordered_at),
-                                "MMM dd, yyyy, hh:mm a"
-                              )
-                            : "N/A"}
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex space-x-2">
-                            <Link href={`/admin/orders/${order.id}`}>
-                              <Button variant="outline" size="sm">
-                                View
-                              </Button>
-                            </Link>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={7} className="text-center">
-                        No Orders Found
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+          <OrderClientWrapper data={orders} />
         </TabsContent>
         <TabsContent value="books" className="space-y-4 ">
-          <ClientWrapper data={books} />
+          <BookClientWrapper data={books} />
         </TabsContent>
       </Tabs>
     </div>

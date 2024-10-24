@@ -44,20 +44,22 @@ export function Book({ book }: BookProps) {
     : "/placeholder.png";
 
   return (
-    <Card className=" rounded-xl drop-shadow-sm flex flex-col justify-between h-full  flex-1 overflow-hidden overflow-ellipsis ">
+    <Card className=" rounded-xl  flex flex-col justify-between h-full   ">
       <CardHeader className="text-muted-foreground ">
         <Link
           href={`/books/${book.id}`}
           className="relative cursor-pointer space-y-4   "
         >
-          <Image
-            src={coverImage}
-            alt={book.title}
-            width={300}
-            height={400}
-            className="object-contain rounded-xl border w-full  "
-            loader={imageLoader}
-          />
+          <div className="w-full flex justify-center">
+            <Image
+              src={coverImage}
+              alt={book.title}
+              width={300}
+              height={400}
+              className="object-contain rounded-xl border  "
+              loader={imageLoader}
+            />
+          </div>
 
           <CardTitle className="text-xl font-semibold text-primary line-clamp-2 text-ellipsis ">
             {book.title}
@@ -87,8 +89,8 @@ export function Book({ book }: BookProps) {
         )}
       </CardHeader>
       {book.description && (
-        <CardContent >
-          <CardDescription className="line-clamp-[8] text-ellipsis leading-relaxed">
+        <CardContent className="flex flex-1 flex-grow line-clamp-[16] " >
+          <CardDescription className="line-clamp-[7] text-ellipsis leading-relaxed">
             {book.description || "No description available."}
           </CardDescription>
         </CardContent>

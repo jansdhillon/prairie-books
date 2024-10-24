@@ -25,7 +25,7 @@ export default async function AuthButton() {
   } else {
     const { data: userData } = await getUserDataById(supabase, user?.user!.id);
     return (
-      <div className="flex items-center gap-3 md:gap-6">
+      <div className="flex items-center gap-3 md:gap-7">
         {/* {userData && userData.is_admin ? (
           <NavLink href={`/admin`}>Admin</NavLink>
         ) : (

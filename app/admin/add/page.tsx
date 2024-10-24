@@ -1,6 +1,6 @@
 import { addBookAction } from "@/app/actions/add-book";
 
-import AddBookForm from "@/app/admin/components/add-book-form";
+import AddBookForm from "@/app/admin/components/books/add-book-form";
 import { Message } from "@/components/form-message";
 import { getErrorRedirect } from "@/utils/helpers";
 import { getUserDataById } from "@/utils/supabase/queries";

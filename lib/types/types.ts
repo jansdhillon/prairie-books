@@ -1,4 +1,5 @@
 import { Database } from "@/utils/database.types";
+import { OrderWithItemsType } from "../schemas/schemas";
 
 export type CartType = Database["public"]["Tables"]["cart"]["Row"];
 
@@ -64,4 +65,12 @@ export interface ShippingConfirmationEmailData extends BaseEmailData {
 
 export interface DeliveryConfirmationEmailData extends BaseEmailData {
   orderId: string;
+}
+
+export function isBookTypeArray(data: any[]): data is BookType[] {
+  return data.every(item => 'id' in item && 'title' in item && 'author' in item);
+}
+
+export function isOrderWithItemsTypeArray(data: any[]): data is OrderWithItemsType[] {
+  return data.every(item => 'orderId' in item && 'items' in item);
 }

@@ -1,13 +1,13 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
-import { DataTableColumnHeader } from "./data-table-column-header";
+import { DataTableColumnHeader } from "../data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-actions";
 import { BookType } from "@/lib/types/types";
 import Image from "next/image";
 import { format } from "date-fns";
 
-export const columns: ColumnDef<BookType>[] = [
+export const bookColumns: ColumnDef<BookType>[] = [
 
   {
     accessorKey: "cover",

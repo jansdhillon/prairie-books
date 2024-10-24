@@ -11,7 +11,7 @@ const BgGlowContainer = ({
   return (
     <div className="relative">
       <div
-        className={cn(className, `z-0 absolute -inset-10 rounded-3xl blur-3xl bg-cool-color mx-24 opacity-10 backdrop-blur-3xl `)}
+        className={cn(className, `z-0 absolute -inset-10 rounded-3xl blur-3xl bg-cool-color mx-10 md:mx-24 opacity-10 backdrop-blur-3xl `)}
       ></div>
       <div className="relative z-10 ">{children}</div>
     </div>
