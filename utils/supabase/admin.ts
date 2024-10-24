@@ -248,7 +248,7 @@ const placeOrder = async (session: Stripe.Checkout.Session) => {
   const sessionId = session.id;
   const userId = session?.metadata?.userId;
 
-  const shippingCost = session.shipping_cost ?? 0;
+  const shippingCost = session.shipping_cost;
   const itemsTotal = session.line_items?.object === "list" ? session.line_items.data.reduce((acc, item) => acc + item.amount_total, 0) : 0;
 
   if (!userId) {
@@ -260,7 +260,7 @@ const placeOrder = async (session: Stripe.Checkout.Session) => {
     userId,
     sessionId,
     itemsTotal,
-    shippingCost as number
+    shippingCost?.amount_total ?? 0,
   );
 
   if (orderError) {
