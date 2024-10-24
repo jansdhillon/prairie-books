@@ -73,6 +73,6 @@
   }
 
   .bg-cool-color {
-    @apply bg-gradient-to-br from-fuchsia-200 via-fuchsia-400 to-indigo-700;
+    @apply bg-gradient-to-bl from-fuchsia-300 via-fuchsia-400 to-indigo-700;
   }
 }

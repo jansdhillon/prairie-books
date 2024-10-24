@@ -40,12 +40,12 @@ export default async function HomePage() {
   return (
     <div className="flex flex-col justify-center gap-16 py-16 ">
       <BgGlowContainer>
-        <div className=" container flex flex-col gap-6 justify-center items-center text-center mx-auto text-primary ">
-          <div className="text-4xl md:text-6xl font-black text-center ">
+        <div className="flex flex-col gap-6 justify-start items-start text-left text-primary  ">
+          <div className="text-4xl md:text-5xl font-extrabold text-left ">
             Find Your Next
-            <br /> Great Read
+            <br /> Great Read.
           </div>
-          <p className="text-lg md:text-2xl   md:px-12">
+          <p className="text-lg md:text-2xl max-w-[75%] ">
             Discover a curated selection of rare books. From classics to
             lifestyle books and modern novels,{" "}
             <span className="font-bold">Kathrin&apos;s Books</span> has
@@ -53,7 +53,6 @@ export default async function HomePage() {
           </p>
           <Link href="/books">
             <Button
-              size={"lg"}
               className="flex items-center space-x-2 z-30 font-bold"
             >
               Browse Books

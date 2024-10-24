@@ -1,5 +1,5 @@
 import HeaderAuth from "@/components/header-auth";
-import { GeistSans } from "geist/font/sans";
+import {Inter} from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 import { Nav } from "@/components/nav";
@@ -16,6 +16,12 @@ export const viewport: Viewport = {
   maximumScale: 1,
 };
 
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+});
+
+
 export const metadata = {
   metadataBase: getURL(),
   title: "Kathrin's Books",
@@ -29,8 +35,9 @@ export default function RootLayout({
 }) {
 
 
+
   return (
-    <html lang="en" className={GeistSans.className} suppressHydrationWarning>
+    <html lang="en" className={inter.className} suppressHydrationWarning>
       <body>
         <ThemeProvider
           attribute="class"
