@@ -1,19 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { getAllBooks } from "../actions/get-all-books";
 import { redirect } from "next/navigation";
 
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { format } from "date-fns";
 import { createClient } from "@/utils/supabase/server";
 import { getErrorRedirect } from "@/utils/helpers";
 import {
@@ -23,8 +11,6 @@ import {
 import { encodedRedirect } from "@/utils/utils";
 import { ClientWrapper as BookClientWrapper } from "./components/books/client-wrapper";
 import { ClientWrapper as OrderClientWrapper } from "./components/orders/client-wrapper";
-import { DataTable } from "@/app/orders/components/data-table";
-import { orderColumns } from "@/app/orders/components/order-columns";
 
 export default async function AdminDashboard() {
   const supabase = createClient();
@@ -62,7 +48,7 @@ export default async function AdminDashboard() {
   }
 
   return (
-    <div className="space-y-8 px-0">
+    <div className="space-y-6" >
       <h1 className="text-2xl font-bold">Dashboard</h1>
 
       <Tabs defaultValue="books" className="space-y-4">

@@ -14,7 +14,7 @@ import { BookType } from "@/lib/types/types";
 
 const FeaturedBooks = ({ featuredBooks }: { featuredBooks: BookType[] }) => {
   return (
-    <section className="space-y-6">
+    <section className="space-y-6 container mx-auto ">
       <h2 className="text-xl font-semibold" id="featured">
         Featured
       </h2>
@@ -38,23 +38,21 @@ export default async function HomePage() {
   const featuredBooks = await getFeaturedBooks();
 
   return (
-    <div className="flex flex-col justify-center gap-16 py-16 ">
+    <div className="flex flex-col justify-center h-full gap-16 pt-6">
       <BgGlowContainer>
-        <div className="flex flex-col gap-6 justify-start items-start text-left text-primary  ">
+        <div className="flex flex-col gap-6 container mx-auto justify-between items-start text-left text-primary w-full ">
           <div className="text-4xl md:text-5xl font-extrabold text-left ">
             Find Your Next
             <br /> Great Read.
           </div>
-          <p className="text-lg md:text-2xl max-w-[75%] ">
-            Discover a curated selection of rare books. From classics to
-            lifestyle books and modern novels,{" "}
-            <span className="font-bold">Kathrin&apos;s Books</span> has
-            something for every reader.
+          <p className="text-lg md:text-2xl max-w-[50%] ">
+            Discover a curated selection of rare books. From classics to lifestyle
+            books and modern novels,{" "}
+            <span className="font-bold">Kathrin&apos;s Books</span> has something
+            for every reader.
           </p>
           <Link href="/books">
-            <Button
-              className="flex items-center space-x-2 z-30 font-bold"
-            >
+            <Button className="flex items-center space-x-2 z-30 font-bold">
               Browse Books
               <ArrowRightIcon />
             </Button>
@@ -62,12 +60,9 @@ export default async function HomePage() {
         </div>
       </BgGlowContainer>
 
-
-
       <FeaturedBooks featuredBooks={featuredBooks} />
 
-
-      <section className="space-y-6">
+      <section className="space-y-6 container mx-auto">
         <h2 className="text-xl font-semibold">Latest Books</h2>
 
         <Separator />
@@ -85,7 +80,7 @@ export default async function HomePage() {
         </Link>
       </section>
 
-      <section className="space-y-6">
+      <section className="space-y-6 container mx-auto">
         <h2 className="text-xl font-semibold mb-2">About</h2>
 
         <Separator />

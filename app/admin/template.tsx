@@ -25,5 +25,5 @@ export default async function Template({
     return encodedRedirect("error", "/", "You must be an admin to view this page");
   }
 
-  return <div className="max-w-7xl flex flex-col gap-12 ">{children}</div>;
+  return <div className="container mx-auto space-y-6 ">{children}</div>;
 }

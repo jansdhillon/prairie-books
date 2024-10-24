@@ -101,7 +101,7 @@ export default function CartPage() {
   };
 
   return (
-    <div className="flex flex-1 flex-col space-y-6">
+    <div className="flex flex-1 flex-col container mx-auto space-y-6">
       <h1 className="text-2xl font-bold text-left">Your Cart</h1>
 
       <p className="text-lg text-muted-foreground">

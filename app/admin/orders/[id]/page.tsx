@@ -16,9 +16,9 @@ import {
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { getOrderAction } from "@/app/actions/get-order-by-id"; // Adapt this for client-side fetching
+import { getOrderAction } from "@/app/actions/get-order-by-id";
 import Loading from "@/app/loading";
-// import { updateOrderStatus } from "@/app/actions/update-order-status"; // Adapt this for client-side action
+// import { updateOrderStatus } from "@/app/actions/update-order-status"; //
 
 export default function AdminOrderDetailsPage({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -68,12 +68,12 @@ export default function AdminOrderDetailsPage({ params }: { params: { id: string
   };
 
   const handleUpdateOrderStatus = async (newStatus: string) => {
-    // try {
-    //   await updateOrderStatus(order.id, newStatus);
-    //   router.refresh(); // Refresh the page to reflect the status change
-    // } catch (error) {
-    //   console.error("Error updating order status:", error);
-    // }
+    try {
+      // await updateOrderStatus(order.id, newStatus);
+      router.refresh();
+    } catch (error) {
+      console.error("Error updating order status:", error);
+    }
     console.log("Updating order status to:", newStatus);
   };
 

@@ -90,7 +90,7 @@ export default function EditBookForm({
   }, [book.image_directory, book.num_images]);
 
   return (
-    <form className="space-y-2" ref={formRef}>
+    <form className="space-y-2 container mx-auto" ref={formRef}>
       <div className="space-y-2">
         <h2 className="text-2xl font-bold">Edit Book</h2>
         <p className="text-muted-foreground">

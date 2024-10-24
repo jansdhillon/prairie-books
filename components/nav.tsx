@@ -66,8 +66,8 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 border-b">
-      <nav className="hidden lg:flex space-x-5 items-center justify-center gap-3 py-4 px-10 bg-accent">
+    <header className="fixed top-0 left-0 right-0 z-50 border-b w-full bg-accent py-2 ">
+      <nav className="hidden lg:flex items-center w-full container mx-auto gap-10 justify-start ">
         <Link href="/" className="flex items-center gap-4 ">
           <div className="w-6 h-6 relative">
             <Image
@@ -101,7 +101,7 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
           </Button> */}
       </nav>
 
-      <div className="flex items-center w-full justify-between lg:hidden py-4 px-12 bg-accent ">
+      <div className="flex items-center w-full justify-between lg:hidden  container mx-auto">
         <Link href="/" className="flex items-center gap-4 ">
           <div className="w-6 h-6 relative ">
             <Image
@@ -128,9 +128,6 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
                   <NavLink href={item.href} onClick={() => setIsOpen(false)}>
                     {item.label}
                   </NavLink>
-                  {index !== navItems.length - 1 && (
-                    <Separator className="my-2" />
-                  )}
                 </div>
               ))}
               <Separator className="my-2" />

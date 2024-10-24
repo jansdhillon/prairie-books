@@ -1,11 +1,9 @@
 "use client";
-
-import { BookType } from "@/lib/types/types";
-import { ReactNode } from "react";
 import { ResponsiveContainer } from "recharts";
-import { orderColumns } from "@/app/orders/components/order-columns";
+
 import { DataTable } from "@/app/orders/components/data-table";
 import { OrderWithItemsType } from "@/lib/schemas/schemas";
+import { orderColumns } from "./order-columns";
 
 export const ClientWrapper = ({ data }: { data: OrderWithItemsType[] }) => {
   return (

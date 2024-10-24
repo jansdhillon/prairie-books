@@ -9,21 +9,31 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { signOutAction } from "@/app/actions/sign-out";
 import Link from "next/link";
-import { Avatar, AvatarFallback } from "./ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { UserType } from "@/lib/types/types";
+import { CircleUserRound, UserIcon } from "lucide-react";
+import { Button } from "./ui/button";
 
 export const NavAvatar = ({ userData }: { userData: UserType }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar className="hover:cursor-pointer w-8 h-8 text-xs">
-          <AvatarFallback>{userData.email[0].toUpperCase()}</AvatarFallback>
-        </Avatar>
+        <Button variant="ghost" size={"sm"}>
+          <Avatar className="hover:cursor-pointer h-5 w-5">
+            <CircleUserRound className="h-5 w-5 stroke-muted-foreground" />
+          </Avatar>
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuGroup>
           <div className="line-clamp-1 relative flex select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none">
-            Hello, {userData?.full_name?.split(" ")[0] !== undefined ? userData?.full_name?.split(" ")[0] : userData?.email.includes("kathrin") ? "Kathrin" : "user"}!
+            Hello,{" "}
+            {userData?.full_name?.split(" ")[0] !== undefined
+              ? userData?.full_name?.split(" ")[0]
+              : userData?.email.includes("kathrin")
+                ? "Kathrin"
+                : "Jan"}
+            !
           </div>
           <DropdownMenuSeparator />
 

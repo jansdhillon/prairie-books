@@ -83,7 +83,7 @@ export const BookPage = ({ books, title, subtitle, query }: BookPageProps) => {
   )?.map((genre) => ({ label: genre, value: genre }));
 
   return (
-    <div className="flex flex-col space-y-6 w-full">
+    <div className="flex flex-col space-y-6 ">
       <h1 className="text-2xl font-bold">{title}</h1>
       <p className="text-lg text-muted-foreground">{subtitle}</p>
 

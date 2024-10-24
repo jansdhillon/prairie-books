@@ -1,5 +1,5 @@
 import HeaderAuth from "@/components/header-auth";
-import {Inter} from "next/font/google";
+import { Inter } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 import { Nav } from "@/components/nav";
@@ -21,7 +21,6 @@ const inter = Inter({
   display: "swap",
 });
 
-
 export const metadata = {
   metadataBase: getURL(),
   title: "Kathrin's Books",
@@ -33,12 +32,9 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-
-
-
   return (
     <html lang="en" className={inter.className} suppressHydrationWarning>
-      <body>
+      <body className="bg-background ">
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
@@ -46,9 +42,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <TooltipProvider delayDuration={0}>
-            <div className="bg-background h-full flex flex-col justify-between ">
+            <div className="flex flex-col justify-between h-full">
               <Nav headerAuth={<HeaderAuth />} />
-              <main className="mt-20 font-normal container  mx-auto max-w-5xl flex flex-col space-y-12   px-8 md:px-12 py-8 overflow-x-clip">
+              <main className="mt-14 w-full overflow-x-clip p-8 ">
                 <Feedback>{children}</Feedback>
               </main>
               <Footer />
