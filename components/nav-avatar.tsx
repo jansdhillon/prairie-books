@@ -23,7 +23,7 @@ export const NavAvatar = ({ userData }: { userData: UserType }) => {
       <DropdownMenuContent>
         <DropdownMenuGroup>
           <div className="line-clamp-1 relative flex select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none">
-            Hello, {userData?.full_name?.split(" ")[0]}!
+            Hello, {userData?.full_name?.split(" ")[0] !== undefined ? userData?.full_name?.split(" ")[0] : userData?.email.includes("kathrin") ? "Kathrin" : "user"}!
           </div>
           <DropdownMenuSeparator />
 
