@@ -25,7 +25,7 @@ export default async function OrdersPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col space-y-6">
+    <div className="flex flex-1 flex-col space-y-6 mx-auto container">
       <h1 className="text-2xl font-bold text-left">Your Orders</h1>
       <Separator />
       <p className="text-lg text-muted-foreground">

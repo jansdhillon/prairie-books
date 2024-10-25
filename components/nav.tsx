@@ -19,7 +19,11 @@ const navItems = [
   { href: "/contact", label: "Contact" },
 ];
 
-const Searchbar = ({setIsOpen} : {setIsOpen?: (isOpen: boolean) => void}) => {
+const Searchbar = ({
+  setIsOpen,
+}: {
+  setIsOpen?: (isOpen: boolean) => void;
+}) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const query = searchParams.get("query");
@@ -52,11 +56,11 @@ const Searchbar = ({setIsOpen} : {setIsOpen?: (isOpen: boolean) => void}) => {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         onKeyDown={handleKeyDown}
-        className="pl-8"
+        className="pl-8 font-medium"
       />
       <Search
         className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
-        size={10}
+        size={14}
       />
     </div>
   );
@@ -66,7 +70,7 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 border-b w-full bg-accent py-2 ">
+    <header className="fixed top-0 left-0 right-0 z-50 border-b w-full bg-background py-2 ">
       <nav className="hidden lg:flex items-center w-full container mx-auto gap-10 justify-start ">
         <Link href="/" className="flex items-center gap-4 ">
           <div className="w-6 h-6 relative">
@@ -92,8 +96,10 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
           </NavLink>
         ))}
 
-        {headerAuth}
-        <ThemeSwitcher />
+        <div className="flex items-center justify-start gap-4">
+          {headerAuth}
+          <ThemeSwitcher />
+        </div>
 
         {/* Search Button */}
         {/* <Button onClick={handleSearch} variant="outline" size={"sm"}>
@@ -118,11 +124,15 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon">
-              <RxHamburgerMenu className="h-5 w-5 " />
+              <RxHamburgerMenu className="h-5 w-5 font-semibold " />
             </Button>
           </SheetTrigger>
           <SheetContent>
             <div className="flex flex-col gap-4 mt-8">
+              <Suspense fallback={<Loading />}>
+                <Searchbar setIsOpen={setIsOpen} />
+              </Suspense>{" "}
+              <Separator className="my-2" />
               {navItems.map((item, index) => (
                 <div key={item.href}>
                   <NavLink href={item.href} onClick={() => setIsOpen(false)}>
@@ -131,11 +141,8 @@ export const Nav = ({ headerAuth }: { headerAuth: ReactNode }) => {
                 </div>
               ))}
               <Separator className="my-2" />
-              <Suspense fallback={<Loading />}>
-                <Searchbar setIsOpen={setIsOpen} />
-              </Suspense>
               <div
-                className="flex items-center justify-start gap-3"
+                className="flex items-center justify-start gap-4"
                 onClick={() => setIsOpen(false)}
               >
                 {headerAuth}

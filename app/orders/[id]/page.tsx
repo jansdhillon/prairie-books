@@ -46,9 +46,9 @@ export default async function OrderDetailsPage({
   const statusMessage = getOrderStatusMessage(order?.status);
 
   return (
-    <div className="container mx-auto w-full space-y-8">
+    <div className="container mx-auto w-full space-y-6">
       <div>
-        <Link href="/">
+        <Link href="/orders">
           <Button variant="ghost">
             <ArrowLeft className="mr-2 h-4 w-4" /> Back to Orders
           </Button>

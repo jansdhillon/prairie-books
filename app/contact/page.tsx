@@ -22,7 +22,7 @@ export default function ContactPage({
     await contactFormAction(formData);
   };
   return (
-    <div className="flex flex-1 flex-col space-y-6">
+    <div className="flex flex-1 flex-col space-y-6 container mx-auto">
       <h1 className="text-2xl font-bold text-left">Contact</h1>
       <Separator />
 

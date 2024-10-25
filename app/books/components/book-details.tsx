@@ -65,7 +65,7 @@ export function BookDetails({ book }: BookDetailsProps) {
   }, []);
 
   return (
-    <div className="w-full space-y-8 px-1">
+    <div className="space-y-6 mx-auto container">
       <div>
         <Button variant="ghost" onClick={() => router.back()}>
           <ArrowLeft className="mr-2 h-4 w-4" /> Back

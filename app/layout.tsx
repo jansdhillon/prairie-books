@@ -44,7 +44,7 @@ export default function RootLayout({
           <TooltipProvider delayDuration={0}>
             <div className="flex flex-col justify-between h-full">
               <Nav headerAuth={<HeaderAuth />} />
-              <main className="mt-14 w-full overflow-x-clip p-8 ">
+              <main className="mt-20 w-full overflow-x-clip ">
                 <Feedback>{children}</Feedback>
               </main>
               <Footer />

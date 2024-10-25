@@ -83,9 +83,9 @@ export const BookPage = ({ books, title, subtitle, query }: BookPageProps) => {
   )?.map((genre) => ({ label: genre, value: genre }));
 
   return (
-    <div className="flex flex-col space-y-6 ">
+    <div className="flex flex-col space-y-6 container mx-auto ">
       <h1 className="text-2xl font-bold">{title}</h1>
-      <p className="text-lg text-muted-foreground">{subtitle}</p>
+      <p className="text-lg text-muted-foreground font-medium">{subtitle}</p>
 
       <DataTableToolbar
         table={table}
@@ -94,7 +94,7 @@ export const BookPage = ({ books, title, subtitle, query }: BookPageProps) => {
         genreOptions={genreOptions}
       />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 overflow-hidden">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-hidden">
         {table.getRowModel().rows.map((row) => (
           <div key={row.id} className="h-full">
             {row.getVisibleCells().map((cell) => (

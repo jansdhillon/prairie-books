@@ -1,11 +1,10 @@
-"use client";
-import { Button } from "@/components/ui/button";
+"use client";;
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 
 export default function ShippingAndDeliveryPage() {
   return (
-    <div className="flex flex-1 flex-col space-y-6">
+    <div className="flex flex-1 flex-col space-y-6 container mx-auto">
       <h1 className="text-2xl font-bold text-left">Shipping</h1>
       <Separator />
 

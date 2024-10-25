@@ -20,16 +20,16 @@ const BookDisplay = ({ books }: { books: BookType[] }) => {
 
   return (
     <Suspense fallback={<Loading />}>
-      <Carousel>
+      <Carousel className="">
         <CarouselContent>
           {books.map((book: BookType) => (
-            <CarouselItem className="md:basis-1/2 lg:basis-1/3 " key={book.id}>
+            <CarouselItem className="md:basis-1/2 lg:basis-1/3 mr-2 lg:mr-0" key={book.id}>
               <Book key={book.id} book={book} />
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
+        <CarouselPrevious className="ml-5 lg:ml-0" />
+        <CarouselNext className="mr-5 lg:mr-0"/>
       </Carousel>
     </Suspense>
   );
